@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,9 +16,13 @@ export class LoginComponent {
     password: ''
   };
 
+  constructor(private router: Router) {}
+
   onSubmit() {
-    console.log('Login Attempt:', this.loginData);
-    // Implement authentication logic here
-    alert('Login submitted! Check console.');
+    if (this.loginData.username === 'asad' && this.loginData.password === 'asad123') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      alert('Invalid username or password');
+    }
   }
 }
