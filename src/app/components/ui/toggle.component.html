@@ -1,0 +1,15 @@
+<div class="flex items-center justify-between gap-4 w-full cursor-pointer" (click)="onToggle()" [class.opacity-50]="disabled" [class.pointer-events-none]="disabled">
+  <label [for]="id" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+    {{ label }}
+  </label>
+  <div 
+    [id]="id"
+    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none"
+    [ngClass]="checked ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'"
+  >
+    <span 
+      class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200"
+      [ngClass]="checked ? 'translate-x-6' : 'translate-x-1'"
+    ></span>
+  </div>
+</div>
