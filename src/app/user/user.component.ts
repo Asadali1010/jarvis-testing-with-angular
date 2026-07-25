@@ -1,42 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  department: string;
-  role: 'Admin' | 'Editor' | 'Viewer' | 'Manager';
-  status: 'Active' | 'Inactive' | 'Pending';
-  avatar: string;
-  lastLogin: string;
-}
-
-export interface UserStats {
-  total: number;
-  active: number;
-  inactive: number;
-  pending: number;
-}
+import { UserService, User, UserStats } from '../user/user.service';
+import { UserFormComponent } from './user-form.component';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UserFormComponent],
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-  users: User[] = [
-    { id: '1', name: 'John Doe', email: 'john.doe@example.com', department: 'Engineering', role: 'Admin', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=1', lastLogin: '2023-10-24 10:00' },
-    { id: '2', name: 'Jane Smith', email: 'jane.smith@example.com', department: 'Marketing', role: 'Editor', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=2', lastLogin: '2023-10-25 14:30' },
-    { id: '3', name: 'Michael Brown', email: 'michael.brown@example.com', department: 'Sales', role: 'Viewer', status: 'Inactive', avatar: 'https://i.pravatar.cc/150?u=3', lastLogin: '2023-09-12 09:15' },
-    { id: '4', name: 'Emily Davis', email: 'emily.davis@example.com', department: 'Engineering', role: 'Manager', status: 'Pending', avatar: 'https://i.pravatar.cc/150?u=4', lastLogin: 'Never' },
-    { id: '5', name: 'Chris Wilson', email: 'chris.wilson@example.com', department: 'HR', role: 'Viewer', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=5', lastLogin: '2023-10-26 11:00' },
-    { id: '6', name: 'Sarah Johnson', email: 'sarah.johnson@example.com', department: 'Marketing', role: 'Editor', status: 'Pending', avatar: 'https://i.pravatar.cc/150?u=6', lastLogin: 'Never' },
-  ];
+  private userService = inject(UserService);
 
+  users: User[] = [];
   filteredUsers: User[] = [];
   stats: UserStats = { total: 0, active: 0, inactive: 0, pending: 0 };
 
@@ -49,18 +27,31 @@ export class UserComponent implements OnInit {
   statuses: string[] = ['All', 'Active', 'Inactive', 'Pending'];
   departments: string[] = ['All', 'Engineering', 'Marketing', 'Sales', 'HR'];
 
+  showUserForm = false;
+
   ngOnInit(): void {
-    this.updateStats();
-    this.applyFilters();
+    this.userService.users$.subscribe(users => {
+      this.users = users;
+      this.applyFilters();
+    });
+
+    this.userService.getStats().subscribe(stats => {
+      this.stats = stats;
+    });
   }
 
-  updateStats(): void {
-    this.stats = {
-      total: this.users.length,
-      active: this.users.filter(u => u.status === 'Active').length,
-      inactive: this.users.filter(u => u.status === 'Inactive').length,
-      pending: this.users.filter(u => u.status === 'Pending').length,
-    };
+  openUserForm(): void {
+    this.showUserForm = true;
+  }
+
+  closeUserForm(): void {
+    this.showUserForm = false;
+  }
+
+  handleUserCreated(newUser: User): void {
+    this.userService.addUser(newUser);
+    this.closeUserForm();
+    this.applyFilters();
   }
 
   applyFilters(): void {
