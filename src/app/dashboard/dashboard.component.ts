@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserService, User } from '../user/user.service';
 import { Subscription } from 'rxjs';
+import { UploadDocumentsComponent } from '../components/ui/upload-documents/upload-documents.component';
 
 interface MetricCard {
   label: string;
@@ -32,7 +33,7 @@ interface UserActivity {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UploadDocumentsComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -49,6 +50,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
 
   recentActivities: UserActivity[] = [];
+  showUploadModal = false;
 
   quickActions: QuickAction[] = [
     { label: 'Create Report', icon: 'bi-file-earmark-plus', color: 'text-blue-600 bg-blue-50', action: () => this.handleAction('Create Report') },
@@ -94,6 +96,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   addUser(): void {
     this.userService.requestCreateUser();
     this.router.navigate(['/users']);
+  }
+
+  openUploadModal(): void {
+    this.showUploadModal = true;
   }
 
   handleAction(actionName: string) {
