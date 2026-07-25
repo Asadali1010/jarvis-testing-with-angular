@@ -1,0 +1,20 @@
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <span class="logo" *ngIf="!isCollapsed">Jarvis App</span>
+    <span class="logo-collapsed" *ngIf="isCollapsed">J</span>
+    <button (click)="toggleSidebar()" class="toggle-btn">
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li *ngFor="let item of navItems">
+        <a [routerLink]="item.path" routerLinkActive="active">
+          <i [class]="'bi ' + item.icon"></i>
+          <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
