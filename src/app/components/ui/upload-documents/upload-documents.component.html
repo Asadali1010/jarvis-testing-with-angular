@@ -1,4 +1,5 @@
-<div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
+<!-- z-[1055] clears Bootstrap's unlayered .sticky-top (z-index 1020) on the header. -->
+<div *ngIf="isOpen" class="fixed inset-0 z-[1055] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
   <div class="bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
     
     <!-- Header -->
@@ -19,13 +20,14 @@
         [class.border-indigo-500]="isDragging"
         [class.bg-indigo-50]="isDragging"
         class="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center transition-all cursor-pointer hover:border-indigo-400 group"
-        (click)="fileInput.nativeElement.click()"
+        (click)="fileInput.click()"
       >
-        <input 
-          #fileInput 
-          type="file" 
-          multiple 
-          (change)="onFileSelected($event)" 
+        <input
+          #fileInput
+          type="file"
+          multiple
+          (change)="onFileSelected($event)"
+          (click)="$event.stopPropagation()"
           class="hidden"
         >
         <div class="flex flex-col items-center gap-3">
