@@ -51,6 +51,7 @@ export class UserComponent implements OnInit {
   handleUserCreated(newUser: User): void {
     this.userService.addUser(newUser);
     this.closeUserForm();
+    this.applyFilters();
   }
 
   applyFilters(): void {
