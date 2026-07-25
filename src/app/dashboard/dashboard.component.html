@@ -2,7 +2,7 @@
     <!-- Top Navbar -->
     <main class="flex-1 overflow-y-auto p-8">
       <!-- Welcome Card -->
-      <div class="bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl p-8 mb-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl p-8 mb-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md bg-opacity-80">
         <div class="space-y-2">
           <h2 class="text-3xl font-bold">Welcome back, Administrator! 👋</h2>
           <p class="text-indigo-100 text-lg opacity-90">Here's what's happening with your projects and system performance today.</p>
@@ -19,23 +19,23 @@
 
       <!-- Quick Actions -->
       <div class="flex flex-wrap gap-4 mb-8">
-        <button (click)="addUser()" class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+        <button (click)="addUser()" class="flex items-center gap-3 px-4 py-2 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-xl text-sm font-medium text-[var(--text-color)] hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-[var(--glass-shadow)]">
           <i class="bi bi-person-plus text-indigo-500"></i> Add User
         </button>
-        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+        <button class="flex items-center gap-3 px-4 py-2 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-xl text-sm font-medium text-[var(--text-color)] hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-[var(--glass-shadow)]">
           <i class="bi bi-cloud-upload text-indigo-500"></i> Upload Docs
         </button>
-        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+        <button class="flex items-center gap-3 px-4 py-2 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-xl text-sm font-medium text-[var(--text-color)] hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-[var(--glass-shadow)]">
           <i class="bi bi-shield-lock text-indigo-500"></i> Security Audit
         </button>
-        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+        <button class="flex items-center gap-3 px-4 py-2 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-xl text-sm font-medium text-[var(--text-color)] hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-[var(--glass-shadow)]">
           <i class="bi bi-chat-dots text-indigo-500"></i> Support Ticket
         </button>
       </div>
 
       <!-- Metrics Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div *ngFor="let metric of metrics" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow group">
+        <div *ngFor="let metric of metrics" class="bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] p-6 rounded-2xl shadow-[var(--glass-shadow)] border border-[var(--glass-border)] hover:shadow-md transition-shadow group">
           <div class="flex justify-between items-start mb-4">
             <div [class]="'w-12 h-12 rounded-xl flex items-center justify-center text-xl ' + metric.color">
               <i [class]="'bi ' + metric.icon"></i>
@@ -45,14 +45,14 @@
             </span>
           </div>
           <div class="text-slate-500 text-sm font-medium">{{ metric.label }}</div>
-          <div class="text-2xl font-bold text-slate-900 mt-1">{{ metric.value }}</div>
+          <div class="text-2xl font-bold text-[var(--text-color)] mt-1">{{ metric.value }}</div>
         </div>
       </div>
 
       <!-- Table Section -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] rounded-2xl shadow-[var(--glass-shadow)] border border-[var(--glass-border)] overflow-hidden">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-          <h2 class="text-lg font-bold text-slate-800">Recent User Activity</h2>
+          <h2 class="text-lg font-bold text-[var(--text-color)]">Recent User Activity</h2>
           <button class="btn btn-sm btn-outline-primary rounded-lg px-4 py-1 text-sm font-medium hover:bg-indigo-600 hover:text-white transition-all">
             View All Reports
           </button>
@@ -60,7 +60,7 @@
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
             <thead class="table-light text-slate-500 text-xs uppercase font-bold">
-              <tr>
+              <tr class="bg-opacity-50 bg-[var(--glass-bg-strong)]">
                 <th class="px-6 py-3 border-b">User</th>
                 <th class="px-6 py-3 border-b">Role</th>
                 <th class="px-6 py-3 border-b">Status</th>
@@ -69,14 +69,14 @@
               </tr>
             </thead>
             <tbody class="text-slate-600 text-sm">
-              <tr *ngFor="let user of recentActivities">
+              <tr *ngFor="let user of recentActivities" class="bg-transparent">
                 <td class="px-6 py-4 border-b">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500">
                       {{ user.name.charAt(0) }}
                     </div>
                     <div>
-                      <div class="font-semibold text-slate-800">{{ user.name }}</div>
+                      <div class="font-semibold text-[var(--text-color)]">{{ user.name }}</div>
                       <div class="text-xs text-slate-400">{{ user.email }}</div>
                     </div>
                   </div>
