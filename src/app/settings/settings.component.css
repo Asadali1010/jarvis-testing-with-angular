@@ -1,4 +1,9 @@
-.container {
-  max-width: 800px;
-  margin: 0 auto;
+/* Reset and base styles for Settings component */
+:host {
+  display: block;
+}
+
+/* Ensure Tailwind styles apply correctly within component if scoped */
+:host ::ng-deep .dark {
+  color-scheme: dark;
 }
