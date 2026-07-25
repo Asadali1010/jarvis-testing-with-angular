@@ -1,19 +1,18 @@
+/*
+ * The host is just the dialog card; the Users page provides the backdrop and
+ * centring. It must NOT position itself fixed — the page's overlay uses
+ * backdrop-filter/transform, which would make a fixed host resolve against that
+ * wrapper instead of the viewport and collapse to zero height.
+ */
 :host {
   display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  z-index: 1055;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .modal-dialog {
   max-width: 600px;
-  width: 90%;
-  margin: 0;
+  width: 100%;
+  margin: 0 auto;
+  /* Bootstrap sets .modal-dialog { pointer-events: none } for its own backdrop. */
+  pointer-events: auto;
 }

@@ -35,6 +35,24 @@ export class UserService {
   private usersSubject = new BehaviorSubject<User[]>(this.initialUsers);
   users$ = this.usersSubject.asObservable();
 
+  /**
+   * Set when another page (e.g. the dashboard quick action) navigates to the
+   * Users page intending to open the create-user form. Kept out of the URL so
+   * prerendered pages hydrate with the form closed.
+   */
+  private createUserRequested = false;
+
+  requestCreateUser(): void {
+    this.createUserRequested = true;
+  }
+
+  /** Returns whether a create was requested, clearing the request. */
+  consumeCreateUserRequest(): boolean {
+    const requested = this.createUserRequested;
+    this.createUserRequested = false;
+    return requested;
+  }
+
   addUser(user: User): void {
     const currentUsers = this.usersSubject.value;
     this.usersSubject.next([...currentUsers, user]);

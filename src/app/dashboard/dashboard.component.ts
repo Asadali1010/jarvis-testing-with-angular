@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { UserService, User } from '../user/user.service';
 import { Subscription } from 'rxjs';
 
@@ -51,7 +52,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   quickActions: QuickAction[] = [
     { label: 'Create Report', icon: 'bi-file-earmark-plus', color: 'text-blue-600 bg-blue-50', action: () => this.handleAction('Create Report') },
-    { label: 'Add User', icon: 'bi-person-plus', color: 'text-emerald-600 bg-emerald-50', action: () => this.handleAction('Add User') },
+    { label: 'Add User', icon: 'bi-person-plus', color: 'text-emerald-600 bg-emerald-50', action: () => this.addUser() },
     { label: 'Settings', icon: 'bi-gear', color: 'text-purple-600 bg-purple-50', action: () => this.handleAction('Settings') },
     { label: 'Support', icon: 'bi-headset', color: 'text-amber-600 bg-amber-50', action: () => this.handleAction('Support') },
   ];
@@ -59,7 +60,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private statsSubscription: Subscription = new Subscription();
   private usersSubscription: Subscription = new Subscription();
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.statsSubscription = this.userService.getStats().subscribe(stats => {
@@ -84,6 +88,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.statsSubscription.unsubscribe();
     this.usersSubscription.unsubscribe();
+  }
+
+  /** Sends the user to the Users page with the create-user form already open. */
+  addUser(): void {
+    this.userService.requestCreateUser();
+    this.router.navigate(['/users']);
   }
 
   handleAction(actionName: string) {

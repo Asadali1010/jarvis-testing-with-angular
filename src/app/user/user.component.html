@@ -14,10 +14,9 @@
   </div>
 
   <!-- User Form Modal -->
-  <div *ngIf="showUserForm" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transition-all transform scale-100">
-      <app-user-form (userCreated)="handleUserCreated($event)" (cancel)="closeUserForm()"></app-user-form>
-    </div>
+  <!-- z-[1055] clears Bootstrap's unlayered .sticky-top (z-index 1020) on the header. -->
+  <div *ngIf="showUserForm" class="fixed inset-0 z-[1055] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+    <app-user-form (userCreated)="handleUserCreated($event)" (cancel)="closeUserForm()"></app-user-form>
   </div>
 
   <!-- Stats Cards -->

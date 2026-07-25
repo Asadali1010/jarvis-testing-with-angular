@@ -38,6 +38,11 @@ export class UserComponent implements OnInit {
     this.userService.getStats().subscribe(stats => {
       this.stats = stats;
     });
+
+    // Opened via the dashboard's "Add User" quick action.
+    if (this.userService.consumeCreateUserRequest()) {
+      this.showUserForm = true;
+    }
   }
 
   openUserForm(): void {
