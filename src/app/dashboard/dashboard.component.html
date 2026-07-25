@@ -55,6 +55,38 @@
 
     <!-- Page Content -->
     <main class="flex-1 overflow-y-auto p-8">
+      <!-- Welcome Card -->
+      <div class="bg-gradient-to-r from-indigo-600 to-violet-700 rounded-2xl p-8 mb-8 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2">
+          <h2 class="text-3xl font-bold">Welcome back, Administrator! 👋</h2>
+          <p class="text-indigo-100 text-lg opacity-90">Here's what's happening with your projects and system performance today.</p>
+        </div>
+        <div class="flex gap-3">
+          <button class="bg-white text-indigo-600 px-6 py-2 rounded-xl font-semibold hover:bg-indigo-50 transition-colors shadow-sm">
+            <i class="bi bi-plus-lg mr-2"></i> New Project
+          </button>
+          <button class="bg-indigo-500 bg-opacity-30 text-white border border-indigo-400 border-opacity-50 px-6 py-2 rounded-xl font-semibold hover:bg-opacity-50 transition-colors">
+            <i class="bi bi-download mr-2"></i> Export Data
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex flex-wrap gap-4 mb-8">
+        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+          <i class="bi bi-person-plus text-indigo-500"></i> Add User
+        </button>
+        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+          <i class="bi bi-cloud-upload text-indigo-500"></i> Upload Docs
+        </button>
+        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+          <i class="bi bi-shield-lock text-indigo-500"></i> Security Audit
+        </button>
+        <button class="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm">
+          <i class="bi bi-chat-dots text-indigo-500"></i> Support Ticket
+        </button>
+      </div>
+
       <!-- Metrics Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div *ngFor="let metric of metrics" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow group">

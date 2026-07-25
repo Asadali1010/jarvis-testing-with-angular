@@ -10,6 +10,13 @@ interface MetricCard {
   color: string;
 }
 
+interface QuickAction {
+  label: string;
+  icon: string;
+  color: string;
+  action: () => void;
+}
+
 interface UserActivity {
   id: number;
   name: string;
@@ -28,6 +35,8 @@ interface UserActivity {
 })
 export class DashboardComponent {
   title = 'Executive Overview';
+  userName = 'Alex';
+  greeting = 'Welcome back,';
 
   metrics: MetricCard[] = [
     { label: 'Total Revenue', value: '$45,231.89', change: '+20.1%', isPositive: true, icon: 'bi-currency-dollar', color: 'text-emerald-600 bg-emerald-100' },
@@ -44,4 +53,15 @@ export class DashboardComponent {
     { id: 5, name: 'Chris Wilson', email: 'chris@example.com', role: 'Administrator', status: 'Active', date: '2023-10-05' },
     { id: 6, name: 'Jessica Taylor', email: 'jessica@example.com', role: 'Viewer', status: 'Active', date: '2023-10-06' },
   ];
+
+  quickActions: QuickAction[] = [
+    { label: 'Create Report', icon: 'bi-file-earmark-plus', color: 'text-blue-600 bg-blue-50', action: () => this.handleAction('Create Report') },
+    { label: 'Add User', icon: 'bi-person-plus', color: 'text-emerald-600 bg-emerald-50', action: () => this.handleAction('Add User') },
+    { label: 'Settings', icon: 'bi-gear', color: 'text-purple-600 bg-purple-50', action: () => this.handleAction('Settings') },
+    { label: 'Support', icon: 'bi-headset', color: 'text-amber-600 bg-amber-50', action: () => this.handleAction('Support') },
+  ];
+
+  handleAction(actionName: string) {
+    console.log(`Action triggered: ${actionName}`);
+  }
 }
