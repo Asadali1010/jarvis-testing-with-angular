@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../theme.service';
 
 @Component({
   selector: 'app-header',
@@ -9,18 +10,18 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  private themeService = inject(ThemeService);
+  
   appTitle = 'Jarvis AI';
-  isDarkMode = false;
   notificationsCount = 5;
   userName = 'John Doe';
   userAvatar = 'https://i.pravatar.cc/150?u=john';
 
+  get isDarkMode() {
+    return this.themeService.theme() === 'dark';
+  }
+
   toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    this.themeService.toggleTheme();
   }
 }
