@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -34,6 +34,10 @@ export class ProjectsComponent implements OnInit {
   readonly sortColumn = signal<SortColumn>('createdAt');
   readonly sortDirection = signal<SortDirection>('desc');
   readonly showProjectForm = signal(false);
+  readonly projectToDelete = signal<Project | null>(null);
+  readonly feedbackMessage = signal<string | null>(null);
+  readonly feedbackType = signal<'success' | 'error'>('success');
+  readonly isDeleting = signal(false);
   readonly pageSize = 8;
 
   readonly filteredProjects = computed(() => {
@@ -146,6 +150,68 @@ export class ProjectsComponent implements OnInit {
 
   navigateToProject(id: string): void {
     this.router.navigate(['/projects', id]);
+  }
+
+  openDeleteDialog(project: Project, event: Event): void {
+    event.stopPropagation();
+    this.projectToDelete.set(project);
+  }
+
+  closeDeleteDialog(): void {
+    this.projectToDelete.set(null);
+    this.isDeleting.set(false);
+  }
+
+  onDeleteBackdropClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement).classList.contains('delete-dialog-backdrop')) {
+      this.closeDeleteDialog();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.projectToDelete()) {
+      this.closeDeleteDialog();
+    }
+  }
+
+  confirmDelete(): void {
+    const project = this.projectToDelete();
+    if (!project || this.isDeleting()) {
+      return;
+    }
+
+    this.isDeleting.set(true);
+    const deleted = this.projectService.deleteProject(project.id);
+    this.closeDeleteDialog();
+
+    if (deleted) {
+      const totalAfterDelete = this.sortedProjects().length;
+      if (totalAfterDelete > 0) {
+        const maxPage = Math.max(1, Math.ceil(totalAfterDelete / this.pageSize));
+        if (this.currentPage() > maxPage) {
+          this.currentPage.set(maxPage);
+        }
+      } else {
+        this.currentPage.set(1);
+      }
+      this.showFeedback(`"${project.name}" was deleted successfully.`, 'success');
+    } else {
+      this.showFeedback(`Could not delete "${project.name}". Please try again.`, 'error');
+    }
+  }
+
+  showFeedback(message: string, type: 'success' | 'error'): void {
+    this.feedbackMessage.set(message);
+    this.feedbackType.set(type);
+  }
+
+  dismissFeedback(): void {
+    this.feedbackMessage.set(null);
+  }
+
+  onDeleteKeydown(event: KeyboardEvent): void {
+    event.stopPropagation();
   }
 
   onRowKeydown(event: KeyboardEvent, id: string): void {

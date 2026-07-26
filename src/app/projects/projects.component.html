@@ -13,6 +13,26 @@
     </button>
   </div>
 
+  <div
+    *ngIf="feedbackMessage()"
+    role="alert"
+    [class]="'feedback-banner mb-6 flex items-start gap-3 rounded-xl border px-4 py-3 shadow-sm ' + (feedbackType() === 'success' ? 'feedback-banner--success' : 'feedback-banner--error')"
+  >
+    <i
+      [class]="'bi shrink-0 mt-0.5 ' + (feedbackType() === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill')"
+      aria-hidden="true"
+    ></i>
+    <p class="flex-1 text-sm font-medium">{{ feedbackMessage() }}</p>
+    <button
+      type="button"
+      (click)="dismissFeedback()"
+      class="feedback-dismiss shrink-0 rounded-lg p-1 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      aria-label="Dismiss message"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
   <div class="bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-2xl p-4 mb-6 shadow-[var(--glass-shadow)]">
     <div class="relative w-full md:max-w-md">
       <label for="project-search" class="sr-only">Search projects</label>
@@ -90,6 +110,9 @@
                 Start Date <span class="sort-indicator">{{ sortIndicator('startDate') }}</span>
               </button>
             </th>
+            <th class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 text-right">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="text-sm divide-y divide-slate-100 dark:divide-slate-700">
@@ -111,6 +134,18 @@
               <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + getStatusClass(project.status)">{{ project.status }}</span>
             </td>
             <td class="px-6 py-4 text-slate-500 dark:text-slate-400">{{ project.startDate | date:'mediumDate' }}</td>
+            <td class="px-6 py-4 text-right">
+              <button
+                type="button"
+                class="delete-btn"
+                [attr.aria-label]="'Delete project ' + project.name"
+                (click)="openDeleteDialog(project, $event)"
+                (keydown)="onDeleteKeydown($event)"
+              >
+                <i class="bi bi-trash" aria-hidden="true"></i>
+                Delete
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -129,7 +164,19 @@
       >
         <div class="flex items-start justify-between gap-3 mb-2">
           <h3 class="font-semibold text-indigo-600 dark:text-indigo-400">{{ project.name }}</h3>
-          <span [class]="'px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ' + getStatusClass(project.status)">{{ project.status }}</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <span [class]="'px-2 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(project.status)">{{ project.status }}</span>
+            <button
+              type="button"
+              class="delete-btn delete-btn--compact"
+              [attr.aria-label]="'Delete project ' + project.name"
+              (click)="openDeleteDialog(project, $event)"
+              (keydown)="onDeleteKeydown($event)"
+            >
+              <i class="bi bi-trash" aria-hidden="true"></i>
+              Delete
+            </button>
+          </div>
         </div>
         <p *ngIf="project.description" class="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">{{ project.description }}</p>
         <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-300">
@@ -185,4 +232,48 @@
     (projectCreated)="handleProjectCreated($event)"
     (cancel)="closeProjectForm()"
   ></app-project-form>
+
+  <div
+    *ngIf="projectToDelete() as project"
+    class="delete-dialog-backdrop fixed inset-0 z-[1055] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-dialog-title"
+    (click)="onDeleteBackdropClick($event)"
+  >
+    <div
+      class="delete-dialog-panel bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-modal-in"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-[var(--glass-bg-strong)]">
+        <h2 id="delete-dialog-title" class="text-xl font-bold text-[var(--text-color)]">Delete Project</h2>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <p class="text-slate-600 dark:text-slate-300">
+          Are you sure you want to delete
+          <span class="font-semibold text-[var(--text-color)]">"{{ project.name }}"</span>?
+          This action cannot be undone.
+        </p>
+
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+          <button
+            type="button"
+            (click)="closeDeleteDialog()"
+            class="px-6 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            (click)="confirmDelete()"
+            [disabled]="isDeleting()"
+            class="delete-confirm-btn px-6 py-2 rounded-xl font-semibold transition-colors shadow-lg disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+          >
+            {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

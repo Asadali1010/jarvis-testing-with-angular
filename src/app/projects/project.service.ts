@@ -110,4 +110,13 @@ export class ProjectService {
     next[index] = updated;
     this.projectsSubject.next(next);
   }
+
+  deleteProject(id: string): boolean {
+    const currentProjects = this.projectsSubject.value;
+    if (!currentProjects.some(p => p.id === id)) {
+      return false;
+    }
+    this.projectsSubject.next(currentProjects.filter(p => p.id !== id));
+    return true;
+  }
 }
