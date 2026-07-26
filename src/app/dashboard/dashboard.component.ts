@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService, User } from '../user/user.service';
 import { Subscription } from 'rxjs';
 import { UploadDocumentsComponent } from '../components/ui/upload-documents/upload-documents.component';
@@ -33,7 +33,7 @@ interface UserActivity {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, UploadDocumentsComponent],
+  imports: [CommonModule, RouterLink, UploadDocumentsComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
