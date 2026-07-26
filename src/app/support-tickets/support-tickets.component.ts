@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -21,16 +21,39 @@ interface SupportTicket {
   styleUrls: ['./support-tickets.component.css']
 })
 export class SupportTicketsComponent implements OnInit {
-  tickets: SupportTicket[] = [];
-  filteredTickets: SupportTicket[] = [];
-  searchTerm: string = '';
-  isLoading: boolean = true;
-  currentPage: number = 1;
-  pageSize: number = 10;
-  totalTickets: number = 0;
+  readonly tickets = signal<SupportTicket[]>([]);
+  readonly searchTerm = signal('');
+  readonly isLoading = signal(true);
+  readonly currentPage = signal(1);
+  readonly pageSize = 10;
+
+  readonly filteredTickets = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    if (!term) {
+      return this.tickets();
+    }
+    return this.tickets().filter(ticket =>
+      ticket.subject.toLowerCase().includes(term) ||
+      ticket.user.toLowerCase().includes(term) ||
+      ticket.id.toLowerCase().includes(term)
+    );
+  });
+
+  readonly totalPages = computed(() => Math.ceil(this.filteredTickets().length / this.pageSize));
+
+  readonly paginatedTickets = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize;
+    return this.filteredTickets().slice(startIndex, startIndex + this.pageSize);
+  });
+
+  /** 1-based index of the first row on the current page, for the "Showing X to Y" label. */
+  readonly rangeStart = computed(() => (this.currentPage() - 1) * this.pageSize + 1);
+  readonly rangeEnd = computed(() =>
+    Math.min(this.currentPage() * this.pageSize, this.filteredTickets().length)
+  );
 
   // Modal state
-  isModalOpen = false;
+  readonly isModalOpen = signal(false);
   ticketForm: FormGroup;
 
   categories = ['Technical', 'Billing', 'Account', 'General', 'Feature Request'];
@@ -53,7 +76,7 @@ export class SupportTicketsComponent implements OnInit {
   }
 
   fetchTickets(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     // Simulating API call
     setTimeout(() => {
       const mockTickets: SupportTicket[] = Array.from({ length: 25 }, (_, i) => ({
@@ -64,37 +87,20 @@ export class SupportTicketsComponent implements OnInit {
         priority: ['Low', 'Medium', 'High', 'Urgent'][i % 4] as any,
         createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000)),
       }));
-      
-      this.tickets = mockTickets;
-      this.totalTickets = mockTickets.length;
-      this.applyFilter();
-      this.isLoading = false;
+
+      this.tickets.set(mockTickets);
+      this.currentPage.set(1);
+      this.isLoading.set(false);
     }, 800);
   }
 
-  applyFilter(): void {
-    this.filteredTickets = this.tickets.filter(ticket => 
-      ticket.subject.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      ticket.user.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      ticket.id.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
-    this.currentPage = 1;
+  onSearchChange(term: string): void {
+    this.searchTerm.set(term);
+    this.currentPage.set(1);
   }
-
-  get paginatedTickets(): SupportTicket[] {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    return this.filteredTickets.slice(startIndex, startIndex + this.pageSize);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredTickets.length / this.pageSize);
-  }
-
-  // Helper for template to access Math.min
-  protected readonly Math = Math;
 
   goToPage(page: number): void {
-    this.currentPage = page;
+    this.currentPage.set(Math.max(1, Math.min(page, this.totalPages())));
   }
 
   getStatusClass(status: string): string {
@@ -110,9 +116,8 @@ export class SupportTicketsComponent implements OnInit {
   deleteTicket(id: string): void {
     const confirmed = window.confirm(`Are you sure you want to delete ticket ${id}? This action cannot be undone.`);
     if (confirmed) {
-      this.tickets = this.tickets.filter(ticket => ticket.id !== id);
-      this.totalTickets = this.tickets.length;
-      this.applyFilter();
+      this.tickets.update(tickets => tickets.filter(ticket => ticket.id !== id));
+      this.currentPage.set(1);
     }
   }
 
@@ -127,11 +132,11 @@ export class SupportTicketsComponent implements OnInit {
   }
 
   openModal(): void {
-    this.isModalOpen = true;
+    this.isModalOpen.set(true);
   }
 
   closeModal(): void {
-    this.isModalOpen = false;
+    this.isModalOpen.set(false);
     this.ticketForm.reset({
       priority: 'Medium',
       status: 'Open',
@@ -143,7 +148,7 @@ export class SupportTicketsComponent implements OnInit {
     if (this.ticketForm.valid) {
       const formValue = this.ticketForm.value;
       const newTicket: SupportTicket = {
-        id: `TICKET-${1000 + this.tickets.length}`,
+        id: `TICKET-${1000 + this.tickets().length}`,
         user: formValue.user,
         subject: formValue.subject,
         status: formValue.status as any,
@@ -153,9 +158,8 @@ export class SupportTicketsComponent implements OnInit {
         createdAt: new Date(),
       };
 
-      this.tickets = [newTicket, ...this.tickets];
-      this.totalTickets = this.tickets.length;
-      this.applyFilter();
+      this.tickets.update(tickets => [newTicket, ...tickets]);
+      this.currentPage.set(1);
       this.closeModal();
     } else {
       this.ticketForm.markAllAsTouched();

@@ -16,8 +16,8 @@
       <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
       <input 
         type="text" 
-        [(ngModel)]="searchTerm" 
-        (input)="applyFilter()"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchChange($event)"
         placeholder="Search tickets by ID, subject, or user..." 
         class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-[var(--text-color)] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
       />
@@ -36,13 +36,13 @@
   <!-- Table Section -->
   <div class="bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] border border-[var(--glass-border)] rounded-2xl shadow-[var(--glass-shadow)] overflow-hidden">
     <!-- Loading State -->
-    <div *ngIf="isLoading" class="p-12 flex flex-col items-center justify-center text-center">
+    <div *ngIf="isLoading()" class="p-12 flex flex-col items-center justify-center text-center">
       <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
       <p class="text-slate-500 dark:text-slate-400 font-medium">Fetching support tickets...</p>
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoading && filteredTickets.length === 0" class="p-12 flex flex-col items-center justify-center text-center">
+    <div *ngIf="!isLoading() && filteredTickets().length === 0" class="p-12 flex flex-col items-center justify-center text-center">
       <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
         <i class="bi bi-chat-left-text text-3xl text-slate-400"></i>
       </div>
@@ -50,13 +50,13 @@
       <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
         We couldn't find any support tickets matching your search criteria. Try adjusting your filters or search terms.
       </p>
-      <button (click)="searchTerm = ''; applyFilter()" class="text-indigo-600 font-semibold hover:underline">
+      <button (click)="onSearchChange('')" class="text-indigo-600 font-semibold hover:underline">
         Clear search
       </button>
     </div>
 
     <!-- Table Content -->
-    <div *ngIf="!isLoading && filteredTickets.length > 0" class="overflow-x-auto">
+    <div *ngIf="!isLoading() && filteredTickets().length > 0" class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead class="bg-[var(--glass-bg-strong)] text-slate-500 text-xs uppercase font-bold tracking-wider">
           <tr>
@@ -70,7 +70,7 @@
           </tr>
         </thead>
         <tbody class="text-sm divide-y divide-slate-100 dark:divide-slate-700">
-          <tr *ngFor="let ticket of paginatedTickets" class="hover:bg-white/30 dark:hover:bg-white/5 transition-colors group">
+          <tr *ngFor="let ticket of paginatedTickets()" class="hover:bg-white/30 dark:hover:bg-white/5 transition-colors group">
             <td class="px-6 py-4 font-medium text-indigo-600 dark:text-indigo-400">
               {{ ticket.id }}
             </td>
@@ -114,24 +114,24 @@
     </div>
 
     <!-- Pagination -->
-    <div *ngIf="!isLoading && filteredTickets.length > 0" class="p-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
+    <div *ngIf="!isLoading() && filteredTickets().length > 0" class="p-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
       <p class="text-sm text-slate-500 dark:text-slate-400">
-        Showing <span class="font-medium text-slate-900 dark:text-slate-200">{{ (currentPage-1)*pageSize + 1 }}</span> to 
-        <span class="font-medium text-slate-900 dark:text-slate-200">{{ Math.min(currentPage*pageSize, filteredTickets.length) }}</span> 
-        of <span class="font-medium text-slate-900 dark:text-slate-200">{{ filteredTickets.length }}</span> tickets
+        Showing <span class="font-medium text-slate-900 dark:text-slate-200">{{ rangeStart() }}</span> to
+        <span class="font-medium text-slate-900 dark:text-slate-200">{{ rangeEnd() }}</span>
+        of <span class="font-medium text-slate-900 dark:text-slate-200">{{ filteredTickets().length }}</span> tickets
       </p>
       <div class="flex gap-2">
-        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+        <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
           <i class="bi bi-chevron-left"></i>
         </button>
         <div class="flex items-center gap-1">
-          <button *ngFor="let page of [].constructor(totalPages); let i = index" 
-            (click)="goToPage(i + 1)" 
-            [class]="'w-8 h-8 rounded-lg text-sm font-medium transition-colors ' + (currentPage === i + 1 ? 'bg-indigo-600 text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-[var(--text-color)]')">
+          <button *ngFor="let page of [].constructor(totalPages()); let i = index"
+            (click)="goToPage(i + 1)"
+            [class]="'w-8 h-8 rounded-lg text-sm font-medium transition-colors ' + (currentPage() === i + 1 ? 'bg-indigo-600 text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-[var(--text-color)]')">
             {{ i + 1 }}
           </button>
         </div>
-        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+        <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
           <i class="bi bi-chevron-right"></i>
         </button>
       </div>
@@ -139,7 +139,7 @@
   </div>
 
   <!-- Create Ticket Modal -->
-  <div *ngIf="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
+  <div *ngIf="isModalOpen()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300">
     <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-modal-in">
       <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
         <h3 class="text-xl font-bold text-[var(--text-color)]">Create Support Ticket</h3>
