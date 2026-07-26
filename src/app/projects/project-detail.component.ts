@@ -60,6 +60,9 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     if (!found) {
       this.project = null;
       this.notFound = true;
+      this.isEditing = false;
+      this.isSaving = false;
+      this.form = {};
     } else {
       this.project = found;
       this.notFound = false;
@@ -87,7 +90,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    if (!this.project) {
+    if (!this.project || this.notFound) {
       return;
     }
 
