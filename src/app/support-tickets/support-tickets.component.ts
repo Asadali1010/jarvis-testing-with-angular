@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface SupportTicket {
   id: string;
@@ -8,13 +8,15 @@ interface SupportTicket {
   subject: string;
   status: 'Open' | 'In Progress' | 'Resolved' | 'Closed';
   priority: 'Low' | 'Medium' | 'High' | 'Urgent';
-  createdAt: date;
+  createdAt: Date;
+  category?: string;
+  description?: string;
 }
 
 @Component({
   selector: 'app-support-tickets',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './support-tickets.component.html',
   styleUrls: ['./support-tickets.component.css']
 })
@@ -26,6 +28,25 @@ export class SupportTicketsComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 10;
   totalTickets: number = 0;
+
+  // Modal state
+  isModalOpen = false;
+  ticketForm: FormGroup;
+
+  categories = ['Technical', 'Billing', 'Account', 'General', 'Feature Request'];
+  priorities: SupportTicket['priority'][] = ['Low', 'Medium', 'High', 'Urgent'];
+  statuses: SupportTicket['status'][] = ['Open', 'In Progress', 'Resolved', 'Closed'];
+
+  constructor(private fb: FormBuilder) {
+    this.ticketForm = this.fb.group({
+      subject: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+      priority: ['Medium', [Validators.required]],
+      description: ['', [Validators.required]],
+      status: ['Open', [Validators.required]],
+      user: ['Current User'] // Simplified for demo
+    });
+  }
 
   ngOnInit(): void {
     this.fetchTickets();
@@ -93,6 +114,42 @@ export class SupportTicketsComponent implements OnInit {
       case 'Medium': return 'text-amber-600 dark:text-amber-400';
       case 'Low': return 'text-slate-600 dark:text-slate-400';
       default: return 'text-gray-600';
+    }
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.ticketForm.reset({
+      priority: 'Medium',
+      status: 'Open',
+      user: 'Current User'
+    });
+  }
+
+  onSubmit(): void {
+    if (this.ticketForm.valid) {
+      const formValue = this.ticketForm.value;
+      const newTicket: SupportTicket = {
+        id: `TICKET-${1000 + this.tickets.length}`,
+        user: formValue.user,
+        subject: formValue.subject,
+        status: formValue.status as any,
+        priority: formValue.priority as any,
+        category: formValue.category,
+        description: formValue.description,
+        createdAt: new Date(),
+      };
+
+      this.tickets = [newTicket, ...this.tickets];
+      this.totalTickets = this.tickets.length;
+      this.applyFilter();
+      this.closeModal();
+    } else {
+      this.ticketForm.markAllAsTouched();
     }
   }
 }
