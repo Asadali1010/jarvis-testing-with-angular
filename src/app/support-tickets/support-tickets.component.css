@@ -1,0 +1,65 @@
+/* Support Tickets Page styles */
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Custom scrollbar for the table container */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+/* Animation for the loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Table row hover effect */
+/* Support Tickets Page styles */
+.container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Custom scrollbar for the table container */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+/* Animation for the loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Table row hover effect */
+tr.group:hover td {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Modal animation */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.2s ease-out forwards;
+}

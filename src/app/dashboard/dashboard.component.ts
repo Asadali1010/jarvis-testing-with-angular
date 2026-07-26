@@ -102,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.showUploadModal = true;
   }
 
-  handleAction(actionName: string) {
-    console.log(`Action triggered: ${actionName}`);
+  navigateToSupportTickets(): void {
+    this.router.navigate(['/support-tickets']);
   }
 }
