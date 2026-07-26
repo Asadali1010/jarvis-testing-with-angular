@@ -5,6 +5,7 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 import { SettingsComponent } from './settings/settings.component';
 import { UserComponent } from './user/user.component';
 import { ProfileComponent } from './profile/profile.component';
+import { SupportTicketsComponent } from './support-tickets/support-tickets.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'settings', component: SettingsComponent },
   { path: 'users', component: UserComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'support-tickets', component: SupportTicketsComponent },
   { path: '**', redirectTo: 'dashboard' },
 ];
