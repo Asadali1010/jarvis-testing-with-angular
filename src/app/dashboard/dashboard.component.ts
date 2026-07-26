@@ -105,4 +105,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   navigateToSupportTickets(): void {
     this.router.navigate(['/support-tickets']);
   }
+
+  handleAction(action: string): void {
+    switch (action) {
+      case 'Settings':
+        this.router.navigate(['/settings']);
+        break;
+      case 'Support':
+        this.router.navigate(['/support-tickets']);
+        break;
+      case 'Create Report':
+        this.router.navigate(['/analytics']);
+        break;
+    }
+  }
 }
