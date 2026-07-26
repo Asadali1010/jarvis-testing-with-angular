@@ -1,0 +1,133 @@
+<div
+  class="project-form-backdrop fixed inset-0 z-[1055] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="project-form-title"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="project-form-panel bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-modal-in"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-[var(--glass-bg-strong)]">
+      <h2 id="project-form-title" class="text-xl font-bold text-[var(--text-color)]">Create New Project</h2>
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        aria-label="Close dialog"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="p-6 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2 md:col-span-2">
+          <label for="project-name" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Project Name <span class="text-rose-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            #firstInput
+            id="project-name"
+            formControlName="name"
+            type="text"
+            placeholder="e.g. Website Redesign"
+            class="form-input"
+            [class.border-rose-500]="isInvalid('name')"
+            [attr.aria-invalid]="isInvalid('name')"
+            [attr.aria-describedby]="isInvalid('name') ? 'name-error' : null"
+          />
+          <span *ngIf="isInvalid('name')" id="name-error" class="text-xs text-rose-500" role="alert">
+            Project name is required (min 2 characters).
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2 md:col-span-2">
+          <label for="project-description" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Description
+          </label>
+          <textarea
+            id="project-description"
+            formControlName="description"
+            rows="3"
+            placeholder="Brief overview of the project goals..."
+            class="form-input resize-y"
+          ></textarea>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="project-owner" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Owner <span class="text-rose-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="project-owner"
+            formControlName="owner"
+            type="text"
+            placeholder="e.g. Jane Smith"
+            class="form-input"
+            [class.border-rose-500]="isInvalid('owner')"
+            [attr.aria-invalid]="isInvalid('owner')"
+            [attr.aria-describedby]="isInvalid('owner') ? 'owner-error' : null"
+          />
+          <span *ngIf="isInvalid('owner')" id="owner-error" class="text-xs text-rose-500" role="alert">
+            Owner is required.
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="project-start-date" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Start Date <span class="text-rose-500" aria-hidden="true">*</span>
+          </label>
+          <input
+            id="project-start-date"
+            formControlName="startDate"
+            type="date"
+            class="form-input"
+            [class.border-rose-500]="isInvalid('startDate')"
+            [attr.aria-invalid]="isInvalid('startDate')"
+            [attr.aria-describedby]="isInvalid('startDate') ? 'startDate-error' : null"
+          />
+          <span *ngIf="isInvalid('startDate')" id="startDate-error" class="text-xs text-rose-500" role="alert">
+            Start date is required.
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="project-priority" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Priority <span class="text-rose-500" aria-hidden="true">*</span>
+          </label>
+          <select id="project-priority" formControlName="priority" class="form-input">
+            <option *ngFor="let prio of priorities" [value]="prio">{{ prio }}</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="project-status" class="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Status <span class="text-rose-500" aria-hidden="true">*</span>
+          </label>
+          <select id="project-status" formControlName="status" class="form-input">
+            <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+        <button
+          type="button"
+          (click)="onCancel()"
+          class="px-6 py-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSubmitting"
+          class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-indigo-700 transition-colors shadow-lg disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+        >
+          {{ isSubmitting ? 'Creating...' : 'Create Project' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
