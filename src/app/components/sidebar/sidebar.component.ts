@@ -22,6 +22,7 @@ export class SidebarComponent {
     { path: '/dashboard', label: 'Dashboard', icon: 'bi-speedometer2' },
     { path: '/analytics', label: 'Analytics', icon: 'bi-graph-up' },
     { path: '/users', label: 'Users', icon: 'bi-people' },
+    { path: '/projects', label: 'Projects', icon: 'bi-kanban' },
     { path: '/settings', label: 'Settings', icon: 'bi-gear' },
   ];
 

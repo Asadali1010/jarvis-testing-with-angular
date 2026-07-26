@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { UserService, User } from '../user/user.service';
+import { ProjectService } from '../projects/project.service';
 import { Subscription } from 'rxjs';
 import { UploadDocumentsComponent } from '../components/ui/upload-documents/upload-documents.component';
 
@@ -64,6 +65,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
+    private projectService: ProjectService,
     private router: Router
   ) {}
 
@@ -96,6 +98,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   addUser(): void {
     this.userService.requestCreateUser();
     this.router.navigate(['/users']);
+  }
+
+  /** Sends the user to the Projects page with the create-project form already open. */
+  addProject(): void {
+    this.projectService.requestCreateProject();
+    this.router.navigate(['/projects']);
   }
 
   openUploadModal(): void {
