@@ -107,6 +107,15 @@ export class SupportTicketsComponent implements OnInit {
     }
   }
 
+  deleteTicket(id: string): void {
+    const confirmed = window.confirm(`Are you sure you want to delete ticket ${id}? This action cannot be undone.`);
+    if (confirmed) {
+      this.tickets = this.tickets.filter(ticket => ticket.id !== id);
+      this.totalTickets = this.tickets.length;
+      this.applyFilter();
+    }
+  }
+
   getPriorityClass(priority: string): string {
     switch (priority) {
       case 'Urgent': return 'text-rose-600 dark:text-rose-400 font-bold';
