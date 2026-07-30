@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { AUTH_CREDENTIALS } from '../constants/auth.constants';
+import { ActivityService } from './activity.service';
 import { AUTH_STORAGE, AuthUser } from './auth-storage';
 
 export type LoginResult =
@@ -10,6 +11,7 @@ export type LoginResult =
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly storage = inject(AUTH_STORAGE);
+  private readonly activityService = inject(ActivityService);
 
   private readonly token = signal<string | null>(this.storage.getToken());
   private readonly user = signal<AuthUser | null>(this.storage.getUser());
@@ -56,6 +58,10 @@ export class AuthService {
       this.storage.setToken(token, authenticatedUser);
       this.token.set(token);
       this.user.set(authenticatedUser);
+
+      const displayName =
+        trimmedEmail.split('@')[0]?.replace(/\./g, ' ') ?? trimmedEmail;
+      this.activityService.recordLogin(displayName);
 
       return { success: true, user: authenticatedUser };
     } finally {

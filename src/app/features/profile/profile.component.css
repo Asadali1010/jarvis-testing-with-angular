@@ -1,31 +1,91 @@
-.feature-page {
+.profile-page {
   max-width: 48rem;
 }
 
-.feature-header h2 {
+.profile-header h2 {
   margin: 0 0 0.5rem;
   font-size: 1.5rem;
   color: var(--color-text);
 }
 
-.feature-header p {
+.profile-header p {
   margin: 0;
   color: var(--color-text-muted);
 }
 
-.feature-body {
+.profile-card {
   margin-top: 1.5rem;
-  padding: 1.25rem;
+  padding: 1.5rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-bg-elevated);
   box-shadow: var(--shadow-sm);
 }
 
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 20%, var(--color-bg-muted)),
+    var(--color-bg-muted)
+  );
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-initials {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.profile-name {
+  margin: 0 0 0.25rem;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.profile-role {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
 .profile-details {
   margin: 0;
   display: grid;
   gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .profile-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-bio {
+    grid-column: 1 / -1;
+  }
 }
 
 .profile-details dt {
@@ -41,4 +101,17 @@
   margin: 0;
   font-size: 1rem;
   color: var(--color-text);
+}
+
+.profile-empty {
+  margin-top: 1.5rem;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+}
+
+.profile-empty p {
+  margin: 0;
 }

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { App } from './app';
+import { SETTINGS_STORAGE_KEY } from './core/models/settings.model';
 import { AUTH_STORAGE } from './core/services/auth-storage';
 import { LocalStorageAuthStorage } from './core/services/local-storage-auth-storage';
 import { ThemeService } from './core/services/theme.service';
@@ -33,8 +34,11 @@ describe('App', () => {
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 
-  it('should restore theme from localStorage on startup', () => {
-    localStorage.setItem(THEME_STORAGE_KEY, 'dark');
+  it('should restore theme from persisted settings on startup', () => {
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify({ appearance: { theme: 'dark' } }),
+    );
     const themeService = TestBed.inject(ThemeService);
     expect(themeService.theme()).toBe('dark');
   });
@@ -44,6 +48,10 @@ describe('App', () => {
 
     themeService.setTheme('dark');
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
+    expect(
+      JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) ?? '{}').appearance
+        .theme,
+    ).toBe('dark');
 
     themeService.toggleTheme();
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');

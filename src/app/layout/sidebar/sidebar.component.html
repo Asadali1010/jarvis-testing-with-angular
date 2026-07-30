@@ -1,17 +1,19 @@
 <aside
   class="sidebar"
-  [class.sidebar--collapsed]="collapsed()"
+  [class.sidebar--collapsed]="isCollapsedForDisplay()"
+  [class.sidebar--hover-expand]="hoverExpand()"
   [class.sidebar--mobile-open]="mobileOpen()"
   aria-label="Main navigation"
 >
   <div class="sidebar-header">
     <span class="sidebar-brand">Jarvis</span>
-    <button
-      type="button"
-      class="collapse-button"
-      [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-      (click)="toggleCollapsed()"
-    >
+    @if (showCollapseToggle()) {
+      <button
+        type="button"
+        class="collapse-button"
+        [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        (click)="toggleCollapsed()"
+      >
       <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
         <path
           fill="currentColor"
@@ -19,6 +21,7 @@
         />
       </svg>
     </button>
+    }
   </div>
 
   <nav class="sidebar-nav">
@@ -30,7 +33,7 @@
             [routerLink]="item.route"
             routerLinkActive="nav-link--active"
             [attr.aria-label]="item.label"
-            [attr.title]="collapsed() ? item.label : null"
+            [attr.title]="isCollapsedForDisplay() ? item.label : null"
             (click)="onNavigate()"
           >
             <span class="nav-icon" aria-hidden="true">

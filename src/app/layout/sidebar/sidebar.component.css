@@ -129,6 +129,28 @@
   transform: rotate(180deg);
 }
 
+.sidebar--hover-expand:not(:hover) {
+  width: 4.5rem;
+}
+
+.sidebar--hover-expand:not(:hover) .sidebar-brand,
+.sidebar--hover-expand:not(:hover) .nav-label {
+  opacity: 0;
+  width: 0;
+}
+
+@media (min-width: 768px) {
+  .sidebar--hover-expand:hover {
+    width: 16rem;
+  }
+
+  .sidebar--hover-expand:hover .sidebar-brand,
+  .sidebar--hover-expand:hover .nav-label {
+    opacity: 1;
+    width: auto;
+  }
+}
+
 @media (min-width: 768px) {
   .sidebar {
     position: sticky;

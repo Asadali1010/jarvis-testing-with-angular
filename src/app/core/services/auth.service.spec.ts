@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { AUTH_CREDENTIALS } from '../constants/auth.constants';
+import { ActivityService } from './activity.service';
 import { AUTH_STORAGE, AuthStorage, AuthUser } from './auth-storage';
 import { AuthService } from './auth.service';
 
@@ -37,6 +38,7 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuthService,
+        ActivityService,
         { provide: AUTH_STORAGE, useValue: storage },
       ],
     });
