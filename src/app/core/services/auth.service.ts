@@ -1,0 +1,83 @@
+import { Injectable, computed, inject, signal } from '@angular/core';
+
+import { AUTH_CREDENTIALS } from '../constants/auth.constants';
+import { AUTH_STORAGE, AuthUser } from './auth-storage';
+
+export type LoginResult =
+  | { success: true; user: AuthUser }
+  | { success: false; error: string };
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly storage = inject(AUTH_STORAGE);
+
+  private readonly token = signal<string | null>(this.storage.getToken());
+  private readonly user = signal<AuthUser | null>(this.storage.getUser());
+  readonly isLoading = signal(false);
+
+  readonly isAuthenticated = computed(() => this.token() !== null);
+  readonly currentUser = computed(() => this.user());
+
+  async login(email: string, password: string): Promise<LoginResult> {
+    if (this.isLoading()) {
+      return { success: false, error: 'A login request is already in progress.' };
+    }
+
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail) {
+      return { success: false, error: 'Email is required.' };
+    }
+
+    if (!trimmedPassword) {
+      return { success: false, error: 'Password is required.' };
+    }
+
+    if (!this.isValidEmail(trimmedEmail)) {
+      return { success: false, error: 'Enter a valid email address.' };
+    }
+
+    this.isLoading.set(true);
+
+    try {
+      await this.simulateNetworkDelay();
+
+      if (
+        trimmedEmail !== AUTH_CREDENTIALS.email ||
+        trimmedPassword !== AUTH_CREDENTIALS.password
+      ) {
+        return { success: false, error: 'Invalid email or password.' };
+      }
+
+      const authenticatedUser: AuthUser = { email: trimmedEmail };
+      const token = this.createMockToken(authenticatedUser);
+
+      this.storage.setToken(token, authenticatedUser);
+      this.token.set(token);
+      this.user.set(authenticatedUser);
+
+      return { success: true, user: authenticatedUser };
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  logout(): void {
+    this.storage.clear();
+    this.token.set(null);
+    this.user.set(null);
+  }
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  private createMockToken(user: AuthUser): string {
+    return btoa(JSON.stringify({ sub: user.email, iat: Date.now() }));
+  }
+
+  private simulateNetworkDelay(): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, 300));
+  }
+}
