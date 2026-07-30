@@ -13,7 +13,7 @@ import {
   selector: '[appFocusTrap]',
 })
 export class FocusTrapDirective implements OnDestroy {
-  private readonly el = inject(ElementRef<HTMLElement>);
+  private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly active = input(true, { alias: 'appFocusTrap' });
   readonly escape = output<void>();
