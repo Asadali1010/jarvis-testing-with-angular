@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 
-import { User, UserRole } from '../../core/models/user.model';
+import { UserRole } from '../../core/models/user.model';
 import { AuthService } from '../../core/services/auth.service';
-import { UserService } from '../../core/services/user.service';
+import { ProfileService } from '../../core/services/profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,11 +13,11 @@ import { UserService } from '../../core/services/user.service';
 })
 export class ProfileComponent {
   private readonly authService = inject(AuthService);
-  private readonly userService = inject(UserService);
+  private readonly profileService = inject(ProfileService);
 
   readonly currentUser = this.authService.currentUser;
 
-  readonly profile = computed(() => this.resolveProfile());
+  readonly profile = computed(() => this.profileService.getProfileForCurrentUser());
 
   readonly displayName = computed(() => {
     const user = this.profile();
@@ -51,34 +51,4 @@ export class ProfileComponent {
     }
   }
 
-  private resolveProfile(): User | null {
-    const auth = this.currentUser();
-    if (!auth) {
-      return null;
-    }
-
-    const matched = this.userService
-      .users()
-      .find((user) => user.email.toLowerCase() === auth.email.toLowerCase());
-
-    if (matched) {
-      return matched;
-    }
-
-    return {
-      id: 'auth-user',
-      firstName: 'Admin',
-      lastName: 'User',
-      email: auth.email,
-      phone: '+1 (555) 000-0000',
-      role: 'admin',
-      department: 'Administration',
-      status: 'active',
-      address: '123 Enterprise Way, Suite 100',
-      bio: 'System administrator for Jarvis Enterprise.',
-      company: 'Jarvis Corp',
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: new Date().toISOString(),
-    };
-  }
 }
