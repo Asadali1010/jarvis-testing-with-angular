@@ -1,0 +1,19 @@
+<section class="feature-page" aria-labelledby="profile-heading">
+  <header class="feature-header">
+    <h2 id="profile-heading">Your profile</h2>
+    <p>Review account details and personal workspace preferences.</p>
+  </header>
+
+  <div class="feature-body">
+    <dl class="profile-details">
+      <div>
+        <dt>Email</dt>
+        <dd>{{ currentUser()?.email ?? '—' }}</dd>
+      </div>
+      <div>
+        <dt>Role</dt>
+        <dd>Administrator</dd>
+      </div>
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,92 @@
+<header class="app-header">
+  <div class="header-start">
+    <button
+      type="button"
+      class="icon-button menu-button"
+      aria-label="Open navigation menu"
+      (click)="menuToggle.emit()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+        <path
+          fill="currentColor"
+          d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"
+        />
+      </svg>
+    </button>
+
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">JE</span>
+      <span class="brand-name">Jarvis Enterprise</span>
+    </div>
+
+    <h1 class="page-title">{{ pageTitle() }}</h1>
+  </div>
+
+  <div class="header-actions">
+    <button
+      type="button"
+      class="icon-button"
+      aria-label="View notifications"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+        <path
+          fill="currentColor"
+          d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2z"
+        />
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="icon-button"
+      [attr.aria-label]="isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      (click)="toggleTheme()"
+    >
+      @if (isDark()) {
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+          <path
+            fill="currentColor"
+            d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-16h1.5v3H12V2zm0 17h1.5v3H12v-3zM4.22 4.22l2.12 2.12-1.06 1.06-2.12-2.12 1.06-1.06zm13.36 13.36 2.12 2.12-1.06 1.06-2.12-2.12 1.06-1.06zM2 11.5h3v1.5H2V11.5zm17 0h3v1.5h-3V11.5zM4.22 19.78l1.06-1.06 2.12 2.12-2.12 2.12-1.06-1.06zm13.36-13.36 1.06-1.06 2.12 2.12-2.12 2.12-1.06-1.06z"
+          />
+        </svg>
+      } @else {
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+          <path
+            fill="currentColor"
+            d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5z"
+          />
+        </svg>
+      }
+    </button>
+
+    <div class="user-menu">
+      <button
+        type="button"
+        class="user-menu-trigger"
+        [attr.aria-expanded]="userMenuOpen()"
+        aria-haspopup="menu"
+        aria-controls="user-menu-panel"
+        (click)="toggleUserMenu()"
+      >
+        <span class="user-avatar" aria-hidden="true">
+          {{ currentUser()?.email?.charAt(0)?.toUpperCase() ?? 'U' }}
+        </span>
+        <span class="user-email">{{ currentUser()?.email ?? 'User' }}</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
+          <path fill="currentColor" d="M7 10l5 5 5-5H7z" />
+        </svg>
+      </button>
+
+      @if (userMenuOpen()) {
+        <div id="user-menu-panel" class="user-menu-panel" role="menu">
+          <a routerLink="/profile" class="menu-item" role="menuitem" (click)="userMenuOpen.set(false)">
+            Profile
+          </a>
+          <button type="button" class="menu-item" role="menuitem" (click)="logout()">
+            Log out
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>
