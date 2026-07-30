@@ -1,8 +1,0 @@
-:host {
-  display: block;
-  width: 100%;
-}
-
-.navbar {
-  /* Ensure no bootstrap default padding interferes with custom flex layouts if needed */
-}

@@ -1,6 +1,0 @@
-/* Additional styles if needed, Tailwind CSS is handled via global styles */
-.login-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
