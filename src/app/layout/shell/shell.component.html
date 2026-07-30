@@ -1,4 +1,8 @@
-<div class="app-shell">
+<div
+  class="app-shell"
+  [class.app-shell--compact]="compactMode()"
+  [class.app-shell--no-animations]="!animationsEnabled()"
+>
   @if (mobileNavOpen()) {
     <button
       type="button"

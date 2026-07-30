@@ -37,6 +37,23 @@
   .app-content {
     padding: 2rem;
   }
+
+  .app-shell--compact .app-content {
+    padding: 1rem 1.25rem;
+  }
+}
+
+.app-shell--no-animations *,
+.app-shell--no-animations *::before,
+.app-shell--no-animations *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.app-shell--compact .app-content {
+  padding: 1rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

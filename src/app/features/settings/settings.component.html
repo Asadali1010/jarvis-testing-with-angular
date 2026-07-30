@@ -1,12 +1,291 @@
-<section class="feature-page" aria-labelledby="settings-heading">
-  <header class="feature-header">
+<section class="settings-page" aria-labelledby="settings-heading">
+  <header class="settings-header">
     <h2 id="settings-heading">Workspace settings</h2>
-    <p>Configure preferences, security policies, and integration defaults.</p>
+    <p>Configure preferences, security policies, and application defaults.</p>
   </header>
 
-  <div class="feature-body">
-    <p class="placeholder-note">
-      Settings panels for notifications, security, and integrations will load here.
-    </p>
+  @if (appMessage(); as msg) {
+    <div
+      class="settings-alert"
+      [class.settings-alert-success]="msg.type === 'success'"
+      [class.settings-alert-error]="msg.type === 'error'"
+      role="status"
+    >
+      <p>{{ msg.text }}</p>
+    </div>
+  }
+
+  <div class="settings-sections">
+    <!-- Appearance -->
+    <section class="settings-section" aria-labelledby="appearance-heading">
+      <h3 id="appearance-heading" class="settings-section-title">Appearance</h3>
+      <p class="settings-section-desc">Customize the look and feel of the application.</p>
+
+      <div class="settings-fields">
+        <div class="settings-field">
+          <label for="setting-theme">Theme</label>
+          <select
+            id="setting-theme"
+            [ngModel]="appearance().theme"
+            (ngModelChange)="onThemeChange($event)"
+          >
+            @for (option of themeOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-sidebar">Sidebar behavior</label>
+          <select
+            id="setting-sidebar"
+            [ngModel]="appearance().sidebarBehavior"
+            (ngModelChange)="onAppearanceChange('sidebarBehavior', $event)"
+          >
+            @for (option of sidebarOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-compact">Compact mode</label>
+          <input
+            id="setting-compact"
+            type="checkbox"
+            [ngModel]="appearance().compactMode"
+            (ngModelChange)="onAppearanceChange('compactMode', $event)"
+          />
+        </div>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-animations">Enable animations</label>
+          <input
+            id="setting-animations"
+            type="checkbox"
+            [ngModel]="appearance().animationsEnabled"
+            (ngModelChange)="onAppearanceChange('animationsEnabled', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section class="settings-section" aria-labelledby="notifications-heading">
+      <h3 id="notifications-heading" class="settings-section-title">Notifications</h3>
+      <p class="settings-section-desc">Control how you receive alerts and updates.</p>
+
+      <div class="settings-fields">
+        <div class="settings-field settings-toggle">
+          <label for="setting-browser-notifications">Browser notifications</label>
+          <input
+            id="setting-browser-notifications"
+            type="checkbox"
+            [ngModel]="notifications().browserNotifications"
+            (ngModelChange)="onNotificationChange('browserNotifications', $event)"
+          />
+        </div>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-email-notifications">Email notifications</label>
+          <input
+            id="setting-email-notifications"
+            type="checkbox"
+            [ngModel]="notifications().emailNotifications"
+            (ngModelChange)="onNotificationChange('emailNotifications', $event)"
+          />
+        </div>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-sound-notifications">Sound notifications</label>
+          <input
+            id="setting-sound-notifications"
+            type="checkbox"
+            [ngModel]="notifications().soundNotifications"
+            (ngModelChange)="onNotificationChange('soundNotifications', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Security -->
+    <section class="settings-section" aria-labelledby="security-heading">
+      <h3 id="security-heading" class="settings-section-title">Security</h3>
+      <p class="settings-section-desc">Manage authentication and session preferences.</p>
+
+      <div class="settings-fields">
+        <fieldset class="password-fieldset">
+          <legend>Change password</legend>
+          <div class="settings-field">
+            <label for="password-current">Current password</label>
+            <input
+              id="password-current"
+              type="password"
+              autocomplete="current-password"
+              [ngModel]="passwordCurrent()"
+              (ngModelChange)="passwordCurrent.set($event)"
+            />
+          </div>
+          <div class="settings-field">
+            <label for="password-new">New password</label>
+            <input
+              id="password-new"
+              type="password"
+              autocomplete="new-password"
+              [ngModel]="passwordNew()"
+              (ngModelChange)="passwordNew.set($event)"
+            />
+          </div>
+          <div class="settings-field">
+            <label for="password-confirm">Confirm new password</label>
+            <input
+              id="password-confirm"
+              type="password"
+              autocomplete="new-password"
+              [ngModel]="passwordConfirm()"
+              (ngModelChange)="passwordConfirm.set($event)"
+            />
+          </div>
+          @if (passwordMessage(); as pwMsg) {
+            <p
+              class="field-feedback"
+              [class.field-feedback-error]="pwMsg.type === 'error'"
+              [class.field-feedback-success]="pwMsg.type === 'success'"
+              role="alert"
+            >
+              {{ pwMsg.text }}
+            </p>
+          }
+          <button type="button" class="btn btn-primary" (click)="onChangePassword()">
+            Update password
+          </button>
+        </fieldset>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-remember-me">Remember me</label>
+          <input
+            id="setting-remember-me"
+            type="checkbox"
+            [ngModel]="security().rememberMe"
+            (ngModelChange)="onSecurityChange('rememberMe', $event)"
+          />
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-session-timeout">Session timeout (minutes)</label>
+          <select
+            id="setting-session-timeout"
+            [ngModel]="security().sessionTimeoutMinutes"
+            (ngModelChange)="onSecurityChange('sessionTimeoutMinutes', +$event)"
+          >
+            @for (minutes of sessionTimeoutOptions; track minutes) {
+              <option [value]="minutes">{{ minutes }} minutes</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field settings-toggle">
+          <label for="setting-2fa">Two-factor authentication</label>
+          <input
+            id="setting-2fa"
+            type="checkbox"
+            [ngModel]="security().twoFactorEnabled"
+            (ngModelChange)="onSecurityChange('twoFactorEnabled', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Preferences -->
+    <section class="settings-section" aria-labelledby="preferences-heading">
+      <h3 id="preferences-heading" class="settings-section-title">Preferences</h3>
+      <p class="settings-section-desc">Set language, date, time, and timezone formats.</p>
+
+      <div class="settings-fields">
+        <div class="settings-field">
+          <label for="setting-language">Language</label>
+          <select
+            id="setting-language"
+            [ngModel]="preferences().language"
+            (ngModelChange)="onPreferenceChange('language', $event)"
+          >
+            @for (option of languageOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-date-format">Date format</label>
+          <select
+            id="setting-date-format"
+            [ngModel]="preferences().dateFormat"
+            (ngModelChange)="onPreferenceChange('dateFormat', $event)"
+          >
+            @for (option of dateFormatOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-time-format">Time format</label>
+          <select
+            id="setting-time-format"
+            [ngModel]="preferences().timeFormat"
+            (ngModelChange)="onPreferenceChange('timeFormat', $event)"
+          >
+            @for (option of timeFormatOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="settings-field">
+          <label for="setting-timezone">Timezone</label>
+          <select
+            id="setting-timezone"
+            [ngModel]="preferences().timezone"
+            (ngModelChange)="onPreferenceChange('timezone', $event)"
+          >
+            @for (tz of timezoneOptions; track tz) {
+              <option [value]="tz">{{ tz }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Application Settings -->
+    <section class="settings-section" aria-labelledby="app-settings-heading">
+      <h3 id="app-settings-heading" class="settings-section-title">Application settings</h3>
+      <p class="settings-section-desc">Export, import, reset, or clear cached data.</p>
+
+      <div class="settings-actions">
+        <button type="button" class="btn btn-secondary" (click)="exportSettings()">
+          Export settings
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="resetSettings()">
+          Reset to defaults
+        </button>
+        <button type="button" class="btn btn-danger" (click)="clearCachedData()">
+          Clear cached data
+        </button>
+      </div>
+
+      <div class="settings-field settings-import">
+        <label for="import-json">Import settings (JSON)</label>
+        <textarea
+          id="import-json"
+          rows="4"
+          placeholder='Paste exported settings JSON here…'
+          [ngModel]="importJson()"
+          (ngModelChange)="importJson.set($event)"
+        ></textarea>
+        <button type="button" class="btn btn-primary" (click)="importSettings()">
+          Import settings
+        </button>
+      </div>
+    </section>
   </div>
 </section>

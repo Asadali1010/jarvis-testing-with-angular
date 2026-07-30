@@ -1,19 +1,67 @@
-<section class="feature-page" aria-labelledby="profile-heading">
-  <header class="feature-header">
+<section class="profile-page" aria-labelledby="profile-heading">
+  <header class="profile-header">
     <h2 id="profile-heading">Your profile</h2>
-    <p>Review account details and personal workspace preferences.</p>
+    <p>Review your account details and workspace identity.</p>
   </header>
 
-  <div class="feature-body">
-    <dl class="profile-details">
-      <div>
-        <dt>Email</dt>
-        <dd>{{ currentUser()?.email ?? '—' }}</dd>
+  @if (profile(); as user) {
+    <div class="profile-card">
+      <div class="profile-identity">
+        <div class="profile-avatar" aria-hidden="true">
+          @if (user.avatar) {
+            <img [src]="user.avatar" [alt]="displayName() + ' avatar'" />
+          } @else {
+            <span class="profile-avatar-initials">{{ avatarInitials() }}</span>
+          }
+        </div>
+        <div class="profile-identity-text">
+          <h3 class="profile-name">{{ displayName() }}</h3>
+          <p class="profile-role">{{ roleLabel() }}</p>
+        </div>
       </div>
-      <div>
-        <dt>Role</dt>
-        <dd>Administrator</dd>
-      </div>
-    </dl>
-  </div>
+
+      <dl class="profile-details">
+        <div>
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd>{{ user.phone }}</dd>
+        </div>
+        <div>
+          <dt>Address</dt>
+          <dd>{{ user.address ?? 'Not provided' }}</dd>
+        </div>
+        <div class="profile-bio">
+          <dt>Bio</dt>
+          <dd>{{ user.bio ?? 'No bio added yet.' }}</dd>
+        </div>
+        <div>
+          <dt>Company</dt>
+          <dd>{{ user.company ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Department</dt>
+          <dd>{{ user.department }}</dd>
+        </div>
+        <div>
+          <dt>Role</dt>
+          <dd>{{ roleLabel() }}</dd>
+        </div>
+        <div>
+          <dt>Member since</dt>
+          <dd>
+            <time [attr.datetime]="user.createdAt">
+              {{ user.createdAt | date: 'longDate' }}
+            </time>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  } @else {
+    <div class="profile-empty" role="status">
+      <p>Sign in to view your profile information.</p>
+    </div>
+  }
 </section>

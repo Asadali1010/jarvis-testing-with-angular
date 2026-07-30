@@ -2,14 +2,15 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   Component,
   PLATFORM_ID,
+  computed,
   inject,
   input,
   output,
-  signal,
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
-const SIDEBAR_STORAGE_KEY = 'app.sidebar.collapsed';
+import { SidebarBehavior } from '../../core/models/settings.model';
+import { SettingsService } from '../../core/services/settings.service';
 
 interface NavItem {
   label: string;
@@ -32,38 +33,50 @@ const NAV_ITEMS: NavItem[] = [
 })
 export class SidebarComponent {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly settingsService = inject(SettingsService);
 
   readonly mobileOpen = input(false);
   readonly navigate = output<void>();
 
   readonly navItems = NAV_ITEMS;
-  readonly collapsed = signal(this.readCollapsedState());
+  readonly appearance = this.settingsService.appearance;
+
+  readonly sidebarBehavior = computed(
+    () => this.settingsService.appearance().sidebarBehavior,
+  );
+
+  readonly collapsed = computed(
+    () => this.settingsService.appearance().sidebarBehavior === 'collapsed',
+  );
+
+  readonly hoverExpand = computed(
+    () => this.settingsService.appearance().sidebarBehavior === 'hover',
+  );
+
+  readonly showCollapseToggle = computed(() => {
+    const behavior = this.sidebarBehavior();
+    return behavior === 'expanded' || behavior === 'collapsed';
+  });
 
   toggleCollapsed(): void {
-    this.collapsed.update((value) => {
-      const next = !value;
-      this.persistCollapsedState(next);
-      return next;
-    });
+    const behavior = this.sidebarBehavior();
+    if (behavior === 'hover') {
+      return;
+    }
+
+    const next: SidebarBehavior = behavior === 'expanded' ? 'collapsed' : 'expanded';
+    this.settingsService.updateAppearance({ sidebarBehavior: next });
   }
 
   onNavigate(): void {
     this.navigate.emit();
   }
 
-  private readCollapsedState(): boolean {
+  isCollapsedForDisplay(): boolean {
     if (!isPlatformBrowser(this.platformId)) {
       return false;
     }
 
-    return localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true';
-  }
-
-  private persistCollapsedState(collapsed: boolean): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    localStorage.setItem(SIDEBAR_STORAGE_KEY, String(collapsed));
+    return this.collapsed() && !this.hoverExpand();
   }
 }

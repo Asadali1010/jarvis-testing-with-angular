@@ -1,12 +1,363 @@
-<section class="feature-page" aria-labelledby="users-heading">
-  <header class="feature-header">
-    <h2 id="users-heading">User directory</h2>
-    <p>Search, invite, and manage members across your organization.</p>
+<section class="users-page" aria-labelledby="users-heading">
+  <header class="users-header">
+    <div>
+      <h2 id="users-heading">User directory</h2>
+      <p>Search, invite, and manage members across your organization.</p>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="openAdd()">
+      Add user
+    </button>
   </header>
 
-  <div class="feature-body">
-    <p class="placeholder-note">
-      User management tables and filters will be available in a future release.
-    </p>
+  @if (error(); as err) {
+    <div class="users-alert users-alert-error" role="alert">
+      <p>{{ err }}</p>
+      <button type="button" class="btn-dismiss" (click)="dismissError()" aria-label="Dismiss error">
+        ×
+      </button>
+    </div>
+  }
+
+  @if (formError(); as formErr) {
+    <div class="users-alert users-alert-error" role="alert">
+      <p>{{ formErr }}</p>
+      <button type="button" class="btn-dismiss" (click)="dismissError()" aria-label="Dismiss error">
+        ×
+      </button>
+    </div>
+  }
+
+  <div class="users-toolbar">
+    <div class="search-field">
+      <label for="user-search" class="visually-hidden">Search users</label>
+      <input
+        id="user-search"
+        type="search"
+        class="search-input"
+        placeholder="Search by name, email, phone, or role…"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label for="filter-status" class="visually-hidden">Filter by status</label>
+      <select
+        id="filter-status"
+        class="filter-select"
+        [ngModel]="filters().status ?? 'all'"
+        (ngModelChange)="onFilterChange('status', $event)"
+      >
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+
+      <label for="filter-role" class="visually-hidden">Filter by role</label>
+      <select
+        id="filter-role"
+        class="filter-select"
+        [ngModel]="filters().role ?? 'all'"
+        (ngModelChange)="onFilterChange('role', $event)"
+      >
+        @for (option of roleOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+
+      <label for="filter-department" class="visually-hidden">Filter by department</label>
+      <select
+        id="filter-department"
+        class="filter-select"
+        [ngModel]="filters().department ?? 'all'"
+        (ngModelChange)="onFilterChange('department', $event)"
+      >
+        <option value="all">All departments</option>
+        @for (dept of departments(); track dept) {
+          <option [value]="dept">{{ dept }}</option>
+        }
+      </select>
+    </div>
   </div>
+
+  @if (selectedCount() > 0) {
+    <div class="bulk-bar" role="toolbar" aria-label="Bulk actions">
+      <span class="bulk-count">{{ selectedCount() }} selected</span>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="bulkActivate()">
+        Activate
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" (click)="bulkDeactivate()">
+        Deactivate
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" (click)="openBulkDelete()">
+        Delete selected
+      </button>
+    </div>
+  }
+
+  <div class="users-table-wrapper">
+    @if (isLoading()) {
+      <div class="users-state" role="status">
+        <p>Loading users…</p>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="users-state" role="status">
+        <p>No users yet. Add your first team member to get started.</p>
+        <button type="button" class="btn btn-primary" (click)="openAdd()">Add user</button>
+      </div>
+    } @else if (hasNoResults()) {
+      <div class="users-state" role="status">
+        <p>No users match your search or filters. Try adjusting your criteria.</p>
+      </div>
+    } @else {
+      <table class="users-table" aria-label="User directory">
+        <thead>
+          <tr>
+            <th scope="col" class="col-checkbox">
+              <input
+                type="checkbox"
+                [checked]="allPageSelected()"
+                (change)="toggleSelectAll($any($event.target).checked)"
+                aria-label="Select all users on this page"
+              />
+            </th>
+            <th scope="col" class="col-avatar"><span class="visually-hidden">Avatar</span></th>
+            @for (col of sortableColumns; track col.field) {
+              @if (col.field === 'fullName') {
+                <th scope="col">
+                  <button
+                    type="button"
+                    class="sort-btn"
+                    (click)="toggleSort('firstName')"
+                    [attr.aria-sort]="sortField() === 'firstName' ? (sortDirection() === 'asc' ? 'ascending' : 'descending') : 'none'"
+                  >
+                    First name {{ sortIndicator('firstName') }}
+                  </button>
+                </th>
+                <th scope="col">
+                  <button
+                    type="button"
+                    class="sort-btn"
+                    (click)="toggleSort('lastName')"
+                    [attr.aria-sort]="sortField() === 'lastName' ? (sortDirection() === 'asc' ? 'ascending' : 'descending') : 'none'"
+                  >
+                    Last name {{ sortIndicator('lastName') }}
+                  </button>
+                </th>
+              } @else if (col.field !== 'firstName' && col.field !== 'lastName') {
+                <th scope="col">
+                  <button
+                    type="button"
+                    class="sort-btn"
+                    (click)="toggleSort(col.field)"
+                    [attr.aria-sort]="sortField() === col.field ? (sortDirection() === 'asc' ? 'ascending' : 'descending') : 'none'"
+                  >
+                    {{ col.label }} {{ sortIndicator(col.field) }}
+                  </button>
+                </th>
+              }
+            }
+            <th scope="col" class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of paginatedResult().items; track user.id) {
+            <tr [class.row-selected]="isSelected(user.id)">
+              <td class="col-checkbox">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(user.id)"
+                  (change)="toggleSelect(user.id, $any($event.target).checked)"
+                  [attr.aria-label]="'Select ' + user.firstName + ' ' + user.lastName"
+                />
+              </td>
+              <td class="col-avatar">
+                <div class="user-avatar" aria-hidden="true">
+                  @if (user.avatar) {
+                    <img [src]="user.avatar" [alt]="" />
+                  } @else {
+                    <span>{{ getInitials(user) }}</span>
+                  }
+                </div>
+              </td>
+              <td>{{ user.firstName }}</td>
+              <td>{{ user.lastName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone }}</td>
+              <td>{{ formatRole(user.role) }}</td>
+              <td>{{ user.department }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-active]="user.status === 'active'"
+                  [class.status-inactive]="user.status === 'inactive'"
+                >
+                  {{ user.status === 'active' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <time [attr.datetime]="user.createdAt">{{ user.createdAt | date: 'mediumDate' }}</time>
+              </td>
+              <td>
+                <time [attr.datetime]="user.updatedAt">{{ user.updatedAt | date: 'mediumDate' }}</time>
+              </td>
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <button
+                    type="button"
+                    class="btn-icon"
+                    (click)="openView(user)"
+                    [attr.aria-label]="'View ' + user.firstName + ' ' + user.lastName"
+                  >
+                    View
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-icon"
+                    (click)="openEdit(user)"
+                    [attr.aria-label]="'Edit ' + user.firstName + ' ' + user.lastName"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-icon btn-icon-danger"
+                    (click)="openDelete(user)"
+                    [attr.aria-label]="'Delete ' + user.firstName + ' ' + user.lastName"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  @if (!isLoading() && !isEmpty() && !hasNoResults()) {
+    <nav class="pagination" aria-label="User list pagination">
+      <div class="pagination-size">
+        <label for="page-size">Rows per page</label>
+        <select
+          id="page-size"
+          [ngModel]="pageSize()"
+          (ngModelChange)="onPageSizeChange(+$event)"
+        >
+          @for (size of pageSizeOptions; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="pagination-info">
+        Page {{ paginatedResult().page }} of {{ paginatedResult().totalPages }}
+        ({{ paginatedResult().total }} users)
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="goToPage(1)"
+          [disabled]="paginatedResult().page <= 1"
+          aria-label="First page"
+        >
+          First
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="goToPage(paginatedResult().page - 1)"
+          [disabled]="paginatedResult().page <= 1"
+          aria-label="Previous page"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="goToPage(paginatedResult().page + 1)"
+          [disabled]="paginatedResult().page >= paginatedResult().totalPages"
+          aria-label="Next page"
+        >
+          Next
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          (click)="goToPage(paginatedResult().totalPages)"
+          [disabled]="paginatedResult().page >= paginatedResult().totalPages"
+          aria-label="Last page"
+        >
+          Last
+        </button>
+      </div>
+    </nav>
+  }
 </section>
+
+@if (dialogMode() === 'add' || dialogMode() === 'edit') {
+  <div class="modal-backdrop" role="presentation" (click)="closeDialog()">
+    <div
+      class="modal-panel"
+      role="dialog"
+      [attr.aria-labelledby]="dialogMode() === 'add' ? 'add-user-title' : 'edit-user-title'"
+      [appFocusTrap]="true"
+      (escape)="closeDialog()"
+      tabindex="-1"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 [id]="dialogMode() === 'add' ? 'add-user-title' : 'edit-user-title'" class="modal-title">
+        {{ dialogMode() === 'add' ? 'Add user' : 'Edit user' }}
+      </h3>
+      <app-user-form
+        [user]="activeUser()"
+        [mode]="dialogMode() === 'add' ? 'add' : 'edit'"
+        (saved)="onUserSaved($event)"
+        (cancelled)="closeDialog()"
+      />
+    </div>
+  </div>
+}
+
+@if (dialogMode() === 'view') {
+  <div class="modal-backdrop" role="presentation" (click)="closeDialog()">
+    <div
+      class="modal-panel"
+      role="dialog"
+      aria-labelledby="view-user-title"
+      [appFocusTrap]="true"
+      (escape)="closeDialog()"
+      tabindex="-1"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 id="view-user-title" class="modal-title">User details</h3>
+      <app-user-detail
+        [user]="activeUser()"
+        (closed)="closeDialog()"
+        (editRequested)="onEditFromDetail($event)"
+      />
+    </div>
+  </div>
+}
+
+<app-confirm-dialog
+  [open]="dialogMode() === 'delete'"
+  title="Delete user"
+  [message]="'Are you sure you want to delete ' + (activeUser()?.firstName ?? '') + ' ' + (activeUser()?.lastName ?? '') + '? This action cannot be undone.'"
+  confirmLabel="Delete"
+  (confirmed)="confirmDelete()"
+  (cancelled)="closeDialog()"
+/>
+
+<app-confirm-dialog
+  [open]="dialogMode() === 'bulk-delete'"
+  title="Delete selected users"
+  [message]="'Are you sure you want to delete ' + selectedCount() + ' selected user(s)? This action cannot be undone.'"
+  confirmLabel="Delete all"
+  (confirmed)="confirmBulkDelete()"
+  (cancelled)="closeDialog()"
+/>
