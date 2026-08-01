@@ -1,0 +1,120 @@
+{
+  "overallScore": 25.0,
+  "verdict": "reject",
+  "summary": "KAN-83 is an epic-level ticket with no measurable acceptance criteria and the provided diff (origin/main...main) is completely empty. There is no implementation deliverable to verify against the ticket's standard execution rules. Prior child-task work (e.g. KAN-81, KAN-82) exists on main but is outside the scoped diff and cannot be credited to this review.",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 0,
+      "gaps": [
+        "Jira AC block states '(none listed — use description)' — no testable acceptance criteria",
+        "Description contains only generic epic execution rules, not a specific deliverable",
+        "Git diff origin/main...main is empty — zero files/commits/hunks to map to any requirement"
+      ],
+      "evidence": [
+        "Jira ticket AC: '(none listed — use description)'",
+        "DIFF block: 'Base: origin/main Branch: main' with no hunks",
+        "git diff origin/main...HEAD --stat: (empty)"
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 0,
+      "gaps": [
+        "No code changes to evaluate for logic, null handling, error paths, or edge cases"
+      ],
+      "evidence": [
+        "Empty diff — no src/app/ hunks present"
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 100,
+      "gaps": [],
+      "evidence": [
+        "Empty diff introduces zero blast radius from this changeset",
+        "git status: 'Your branch is up to date with origin/main', nothing to commit"
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 0,
+      "gaps": [
+        "No new or updated unit tests in diff",
+        "Execution rule #8 (validate user interactions) cannot be demonstrated"
+      ],
+      "evidence": [
+        "Empty diff — no *.spec.ts file changes"
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 0,
+      "gaps": [
+        "No code changes to assess against Angular 22 conventions or project patterns",
+        "Execution rules #2–#4 (reuse, no duplication, best practices) not demonstrable in diff"
+      ],
+      "evidence": [
+        "Empty diff — no TypeScript/component/service changes"
+      ]
+    },
+    {
+      "id": "security",
+      "score": 100,
+      "gaps": [],
+      "evidence": [
+        "Empty diff adds no new auth, injection, or secrets-exposure surface"
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 0,
+      "gaps": [
+        "No documentation, comments, or observability changes in diff",
+        "Execution rule #1 (analyze current implementation) not evidenced in changeset"
+      ],
+      "evidence": [
+        "Empty diff — no docs/ or README changes"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Blocker",
+      "title": "Empty git diff — no deliverable to review",
+      "detail": "The scoped diff origin/main...main contains zero commits, zero changed files, and zero hunks. main is identical to origin/main (HEAD 21f9963).",
+      "path": "(diff scope)"
+    },
+    {
+      "severity": "Blocker",
+      "title": "No testable acceptance criteria on ticket",
+      "detail": "KAN-83 lists no AC; description is an epic charter with 10 process rules but no measurable feature outcome, file targets, or completion definition.",
+      "path": "(Jira KAN-83)"
+    },
+    {
+      "severity": "Major",
+      "title": "Standard execution rules not satisfied by changeset",
+      "detail": "Rules requiring pre-change analysis (#1), feature delivery (#2–#4), responsive/SSR validation (#5–#7), interaction testing (#8), regression testing (#9), and build verification (#10) cannot be verified against an empty diff.",
+      "path": "(Jira description)"
+    }
+  ],
+  "checklist": [
+    "Define measurable acceptance criteria on KAN-83 or review a child task with concrete scope",
+    "Submit a non-empty feature-branch diff containing the intended changes",
+    "Verify npm run build completes without errors (execution rule #10)",
+    "Run npm test and include new/updated specs for changed behavior",
+    "Document pre-change analysis if modifying existing modules (execution rule #1)"
+  ],
+  "rubric": [
+    {"id": "requirementsCoverage", "weight": 25, "label": "AC mapped to evidence in the diff"},
+    {"id": "correctness", "weight": 20, "label": "Logic, nulls, error handling, edge cases"},
+    {"id": "regressionRisk", "weight": 15, "label": "Blast radius and shared module risk"},
+    {"id": "tests", "weight": 15, "label": "New/updated tests adequacy"},
+    {"id": "codeQuality", "weight": 10, "label": "Conventions vs repo knowledge"},
+    {"id": "security", "weight": 10, "label": "Auth, injection, secrets, data safety"},
+    {"id": "docsObservability", "weight": 5, "label": "Logs, docs, comments where needed"}
+  ],
+  "ticket": {"key": "KAN-83"},
+  "branch": "main",
+  "base": "origin/main"
+}
