@@ -9,7 +9,7 @@
   --color-bg-muted: #f1f5f9;
   --color-border: #e2e8f0;
   --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-text-muted: #475569;
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-primary-contrast: #ffffff;
@@ -36,7 +36,7 @@
   --color-bg-muted: #1e293b;
   --color-border: #334155;
   --color-text: #f8fafc;
-  --color-text-muted: #94a3b8;
+  --color-text-muted: #cbd5e1;
   --color-primary: #60a5fa;
   --color-primary-hover: #93c5fd;
   --color-primary-contrast: #0f172a;
@@ -81,4 +81,46 @@ body {
   body {
     transition: none;
   }
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-bg-muted);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
 }

@@ -19,7 +19,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       <div class="form-grid">
         <div class="form-field">
           <label for="firstName">First name</label>
-          <input id="firstName" type="text" formControlName="firstName" autocomplete="given-name" />
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            autocomplete="given-name"
+            [attr.aria-invalid]="showError('firstName')"
+          />
           @if (showError('firstName')) {
             <span class="field-error" role="alert">{{ getError('firstName') }}</span>
           }
@@ -27,7 +33,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         <div class="form-field">
           <label for="lastName">Last name</label>
-          <input id="lastName" type="text" formControlName="lastName" autocomplete="family-name" />
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            autocomplete="family-name"
+            [attr.aria-invalid]="showError('lastName')"
+          />
           @if (showError('lastName')) {
             <span class="field-error" role="alert">{{ getError('lastName') }}</span>
           }
@@ -35,7 +47,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         <div class="form-field form-field-full">
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" autocomplete="email" />
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            [attr.aria-invalid]="showError('email')"
+          />
           @if (showError('email')) {
             <span class="field-error" role="alert">{{ getError('email') }}</span>
           }
@@ -43,7 +61,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         <div class="form-field">
           <label for="phone">Phone</label>
-          <input id="phone" type="tel" formControlName="phone" autocomplete="tel" />
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            autocomplete="tel"
+            [attr.aria-invalid]="showError('phone')"
+          />
           @if (showError('phone')) {
             <span class="field-error" role="alert">{{ getError('phone') }}</span>
           }
@@ -51,7 +75,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         <div class="form-field">
           <label for="role">Role</label>
-          <select id="role" formControlName="role">
+          <select id="role" formControlName="role" [attr.aria-invalid]="showError('role')">
             @for (role of roles; track role.value) {
               <option [value]="role.value">{{ role.label }}</option>
             }
@@ -63,7 +87,12 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         <div class="form-field">
           <label for="department">Department</label>
-          <input id="department" type="text" formControlName="department" />
+          <input
+            id="department"
+            type="text"
+            formControlName="department"
+            [attr.aria-invalid]="showError('department')"
+          />
           @if (showError('department')) {
             <span class="field-error" role="alert">{{ getError('department') }}</span>
           }

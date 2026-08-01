@@ -1,0 +1,417 @@
+import { DatePipe } from '@angular/common';
+import { Component, inject, input, output, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import {
+  USER_FIELD_LIMITS,
+  User,
+  UserRole,
+} from '../../../../core/models/user.model';
+import { ProfileService } from '../../../../core/services/profile.service';
+import { UserService } from '../../../../core/services/user.service';
+
+@Component({
+  selector: 'app-profile-form',
+  imports: [ReactiveFormsModule, DatePipe],
+  template: `
+    <form
+      class="profile-form"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      novalidate
+      aria-labelledby="profile-heading"
+    >
+      <div class="profile-readonly-grid">
+        <div class="profile-readonly">
+          <span class="profile-readonly-label">Email</span>
+          <span class="profile-readonly-value">{{ user().email }}</span>
+          <span class="profile-readonly-hint">
+            Contact your administrator to change your email.
+          </span>
+        </div>
+        <div class="profile-readonly">
+          <span class="profile-readonly-label">Role</span>
+          <span class="profile-readonly-value">{{ formatRole(user().role) }}</span>
+        </div>
+        <div class="profile-readonly">
+          <span class="profile-readonly-label">Department</span>
+          <span class="profile-readonly-value">{{ user().department }}</span>
+        </div>
+        <div class="profile-readonly">
+          <span class="profile-readonly-label">Member since</span>
+          <span class="profile-readonly-value">
+            <time [attr.datetime]="user().createdAt">
+              {{ user().createdAt | date: 'longDate' }}
+            </time>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="profile-firstName">First name</label>
+          <input
+            id="profile-firstName"
+            type="text"
+            formControlName="firstName"
+            autocomplete="given-name"
+            [attr.aria-invalid]="showError('firstName')"
+            [attr.aria-describedby]="showError('firstName') ? 'profile-firstName-error' : null"
+          />
+          @if (showError('firstName')) {
+            <span id="profile-firstName-error" class="field-error" role="alert">
+              {{ getError('firstName') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="profile-lastName">Last name</label>
+          <input
+            id="profile-lastName"
+            type="text"
+            formControlName="lastName"
+            autocomplete="family-name"
+            [attr.aria-invalid]="showError('lastName')"
+            [attr.aria-describedby]="showError('lastName') ? 'profile-lastName-error' : null"
+          />
+          @if (showError('lastName')) {
+            <span id="profile-lastName-error" class="field-error" role="alert">
+              {{ getError('lastName') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="profile-phone">Phone</label>
+          <input
+            id="profile-phone"
+            type="tel"
+            formControlName="phone"
+            autocomplete="tel"
+            [attr.aria-invalid]="showError('phone')"
+            [attr.aria-describedby]="showError('phone') ? 'profile-phone-error' : null"
+          />
+          @if (showError('phone')) {
+            <span id="profile-phone-error" class="field-error" role="alert">
+              {{ getError('phone') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-field">
+          <label for="profile-company">
+            Company <span class="optional">(optional)</span>
+          </label>
+          <input
+            id="profile-company"
+            type="text"
+            formControlName="company"
+            [attr.aria-invalid]="showError('company')"
+            [attr.aria-describedby]="showError('company') ? 'profile-company-error' : null"
+          />
+          @if (showError('company')) {
+            <span id="profile-company-error" class="field-error" role="alert">
+              {{ getError('company') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-field form-field-full">
+          <label for="profile-address">
+            Address <span class="optional">(optional)</span>
+          </label>
+          <input
+            id="profile-address"
+            type="text"
+            formControlName="address"
+            [attr.aria-invalid]="showError('address')"
+            [attr.aria-describedby]="showError('address') ? 'profile-address-error' : null"
+          />
+          @if (showError('address')) {
+            <span id="profile-address-error" class="field-error" role="alert">
+              {{ getError('address') }}
+            </span>
+          }
+        </div>
+
+        <div class="form-field form-field-full">
+          <label for="profile-bio">Bio <span class="optional">(optional)</span></label>
+          <textarea
+            id="profile-bio"
+            rows="3"
+            formControlName="bio"
+            [attr.aria-invalid]="showError('bio')"
+            [attr.aria-describedby]="showError('bio') ? 'profile-bio-error' : null"
+          ></textarea>
+          @if (showError('bio')) {
+            <span id="profile-bio-error" class="field-error" role="alert">
+              {{ getError('bio') }}
+            </span>
+          }
+        </div>
+      </div>
+
+      @if (serverError()) {
+        <p class="form-error" role="alert">{{ serverError() }}</p>
+      }
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="isSaving()"
+          (click)="cancelled.emit()"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+          {{ isSaving() ? 'Saving…' : 'Save changes' }}
+        </button>
+      </div>
+    </form>
+  `,
+  styles: [
+    `
+      .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .profile-readonly-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (min-width: 640px) {
+        .profile-readonly-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .profile-readonly {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.75rem;
+        border-radius: var(--radius-md);
+        background: var(--color-bg-muted);
+        border: 1px solid var(--color-border);
+      }
+
+      .profile-readonly-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .profile-readonly-value {
+        font-size: 0.9375rem;
+        color: var(--color-text);
+      }
+
+      .profile-readonly-hint {
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (min-width: 640px) {
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .form-field-full {
+        grid-column: 1 / -1;
+      }
+
+      .form-field label {
+        display: block;
+        margin-bottom: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .optional {
+        font-weight: 400;
+        color: var(--color-text-muted);
+      }
+
+      .form-field input,
+      .form-field textarea {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-elevated);
+        color: var(--color-text);
+        font-size: 0.9375rem;
+        font-family: inherit;
+      }
+
+      .form-field textarea {
+        resize: vertical;
+        min-height: 5rem;
+      }
+
+      .form-field input:focus-visible,
+      .form-field textarea:focus-visible {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
+      }
+
+      .form-field input[aria-invalid='true'],
+      .form-field textarea[aria-invalid='true'] {
+        border-color: var(--color-danger);
+      }
+
+      .field-error,
+      .form-error {
+        margin: 0.375rem 0 0;
+        font-size: 0.8125rem;
+        color: var(--color-danger);
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+      }
+    `,
+  ],
+})
+export class ProfileFormComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly profileService = inject(ProfileService);
+  private readonly userService = inject(UserService);
+
+  readonly user = input.required<User>();
+
+  readonly saved = output<User>();
+  readonly cancelled = output<void>();
+
+  readonly serverError = signal<string | null>(null);
+  readonly isSaving = signal(false);
+
+  private submitted = false;
+
+  readonly form = this.fb.nonNullable.group({
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    phone: ['', Validators.required],
+    address: ['', Validators.maxLength(USER_FIELD_LIMITS.address)],
+    bio: ['', Validators.maxLength(USER_FIELD_LIMITS.bio)],
+    company: ['', Validators.maxLength(USER_FIELD_LIMITS.company)],
+  });
+
+  patchFromUser(user: User): void {
+    this.form.patchValue({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      address: user.address ?? '',
+      bio: user.bio ?? '',
+      company: user.company ?? '',
+    });
+    this.submitted = false;
+    this.serverError.set(null);
+  }
+
+  onSubmit(): void {
+    this.submitted = true;
+    this.serverError.set(null);
+    this.form.markAllAsTouched();
+
+    if (this.form.invalid) {
+      return;
+    }
+
+    this.isSaving.set(true);
+
+    const value = this.form.getRawValue();
+    const phone = value.phone.trim();
+
+    if (!this.userService.isValidPhone(phone)) {
+      this.form.controls.phone.setErrors({ phone: true });
+      this.isSaving.set(false);
+      return;
+    }
+
+    const result = this.profileService.updateProfileForCurrentUser({
+      firstName: value.firstName.trim(),
+      lastName: value.lastName.trim(),
+      phone,
+      address: value.address.trim() || undefined,
+      bio: value.bio.trim() || undefined,
+      company: value.company.trim() || undefined,
+    });
+
+    if (result.success) {
+      this.isSaving.set(false);
+      this.saved.emit(result.user);
+      return;
+    }
+
+    this.isSaving.set(false);
+    this.serverError.set(result.error);
+  }
+
+  showError(field: keyof typeof this.form.controls): boolean {
+    const control = this.form.controls[field];
+    return (control.touched || this.submitted) && control.invalid;
+  }
+
+  getError(field: keyof typeof this.form.controls): string {
+    const control = this.form.controls[field];
+
+    if (control.hasError('required')) {
+      return `${this.fieldLabel(field)} is required.`;
+    }
+
+    if (field === 'phone' && control.hasError('phone')) {
+      return 'Enter a valid phone number.';
+    }
+
+    if (control.hasError('maxlength')) {
+      const max = control.getError('maxlength')?.requiredLength;
+      return `${this.fieldLabel(field)} must be ${max} characters or fewer.`;
+    }
+
+    return '';
+  }
+
+  formatRole(role: UserRole): string {
+    switch (role) {
+      case 'admin':
+        return 'Administrator';
+      case 'manager':
+        return 'Manager';
+      case 'user':
+        return 'User';
+      case 'viewer':
+        return 'Viewer';
+    }
+  }
+
+  private fieldLabel(field: keyof typeof this.form.controls): string {
+    const labels: Record<string, string> = {
+      firstName: 'First name',
+      lastName: 'Last name',
+      phone: 'Phone',
+      address: 'Address',
+      bio: 'Bio',
+      company: 'Company',
+    };
+    return labels[field] ?? field;
+  }
+}

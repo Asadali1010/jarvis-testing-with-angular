@@ -1,63 +1,98 @@
 <section class="profile-page" aria-labelledby="profile-heading">
   <header class="profile-header">
-    <h2 id="profile-heading">Your profile</h2>
-    <p>Review your account details and workspace identity.</p>
+    @if (mode() === 'view') {
+      <h2 id="profile-heading">Your profile</h2>
+      <p>Review your account details and workspace identity.</p>
+    } @else {
+      <h2 id="profile-heading">Edit profile</h2>
+      <p>Update your contact information and bio.</p>
+    }
   </header>
+
+  @if (saveMessage(); as msg) {
+    <div
+      class="profile-banner"
+      [class.profile-banner--success]="msg.type === 'success'"
+      [class.profile-banner--error]="msg.type === 'error'"
+      [attr.role]="msg.type === 'error' ? 'alert' : 'status'"
+      aria-live="polite"
+    >
+      <p>{{ msg.text }}</p>
+    </div>
+  }
 
   @if (profile(); as user) {
     <div class="profile-card">
-      <div class="profile-identity">
-        <div class="profile-avatar" aria-hidden="true">
-          @if (user.avatar) {
-            <img [src]="user.avatar" [alt]="displayName() + ' avatar'" />
-          } @else {
-            <span class="profile-avatar-initials">{{ avatarInitials() }}</span>
-          }
+      <div class="profile-card-header">
+        <div class="profile-identity">
+          <div class="profile-avatar" aria-hidden="true">
+            @if (user.avatar) {
+              <img [src]="user.avatar" [alt]="displayName() + ' avatar'" />
+            } @else {
+              <span class="profile-avatar-initials">{{ avatarInitials() }}</span>
+            }
+          </div>
+          <div class="profile-identity-text">
+            <h3 class="profile-name">{{ displayName() }}</h3>
+            <p class="profile-role">{{ roleLabel() }}</p>
+          </div>
         </div>
-        <div class="profile-identity-text">
-          <h3 class="profile-name">{{ displayName() }}</h3>
-          <p class="profile-role">{{ roleLabel() }}</p>
-        </div>
+
+        @if (mode() === 'view') {
+          <div class="profile-actions">
+            <button type="button" class="btn btn-primary" (click)="enterEditMode()">
+              Edit profile
+            </button>
+          </div>
+        }
       </div>
 
-      <dl class="profile-details">
-        <div>
-          <dt>Email</dt>
-          <dd>{{ user.email }}</dd>
-        </div>
-        <div>
-          <dt>Phone</dt>
-          <dd>{{ user.phone }}</dd>
-        </div>
-        <div>
-          <dt>Address</dt>
-          <dd>{{ user.address ?? 'Not provided' }}</dd>
-        </div>
-        <div class="profile-bio">
-          <dt>Bio</dt>
-          <dd>{{ user.bio ?? 'No bio added yet.' }}</dd>
-        </div>
-        <div>
-          <dt>Company</dt>
-          <dd>{{ user.company ?? '—' }}</dd>
-        </div>
-        <div>
-          <dt>Department</dt>
-          <dd>{{ user.department }}</dd>
-        </div>
-        <div>
-          <dt>Role</dt>
-          <dd>{{ roleLabel() }}</dd>
-        </div>
-        <div>
-          <dt>Member since</dt>
-          <dd>
-            <time [attr.datetime]="user.createdAt">
-              {{ user.createdAt | date: 'longDate' }}
-            </time>
-          </dd>
-        </div>
-      </dl>
+      @if (mode() === 'view') {
+        <dl class="profile-details">
+          <div>
+            <dt>Email</dt>
+            <dd>{{ user.email }}</dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ user.phone }}</dd>
+          </div>
+          <div>
+            <dt>Address</dt>
+            <dd>{{ user.address ?? 'Not provided' }}</dd>
+          </div>
+          <div class="profile-bio">
+            <dt>Bio</dt>
+            <dd>{{ user.bio ?? 'No bio added yet.' }}</dd>
+          </div>
+          <div>
+            <dt>Company</dt>
+            <dd>{{ user.company ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Department</dt>
+            <dd>{{ user.department }}</dd>
+          </div>
+          <div>
+            <dt>Role</dt>
+            <dd>{{ roleLabel() }}</dd>
+          </div>
+          <div>
+            <dt>Member since</dt>
+            <dd>
+              <time [attr.datetime]="user.createdAt">
+                {{ user.createdAt | date: 'longDate' }}
+              </time>
+            </dd>
+          </div>
+        </dl>
+      } @else {
+        <app-profile-form
+          [user]="user"
+          (saved)="onProfileSaved($event)"
+          (cancelled)="cancelEdit()"
+        />
+      }
     </div>
   } @else {
     <div class="profile-empty" role="status">
