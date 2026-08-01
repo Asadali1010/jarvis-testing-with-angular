@@ -1,6 +1,7 @@
 import { PLATFORM_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { AUTH_CREDENTIALS } from '../../core/constants/auth.constants';
 import {
   DEFAULT_APP_SETTINGS,
   SETTINGS_STORAGE_KEY,
@@ -112,7 +113,7 @@ describe('SettingsComponent', () => {
   });
 
   it('validates mock password change', () => {
-    fixture.componentInstance.passwordCurrent.set('Current123');
+    fixture.componentInstance.passwordCurrent.set(AUTH_CREDENTIALS.password);
     fixture.componentInstance.passwordNew.set('short');
     fixture.componentInstance.passwordConfirm.set('short');
     fixture.componentInstance.onChangePassword();

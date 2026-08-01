@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 
+import { AUTH_CREDENTIALS } from '../constants/auth.constants';
 import {
   AppSettings,
   AppearanceSettings,
@@ -91,7 +92,14 @@ export class SettingsService {
       };
     }
 
-    if (trimmedCurrent === trimmedNew) {
+    if (trimmedCurrent !== AUTH_CREDENTIALS.password) {
+      return {
+        success: false,
+        error: 'Current password is incorrect.',
+      };
+    }
+
+    if (trimmedNew === AUTH_CREDENTIALS.password) {
       return {
         success: false,
         error: 'New password must differ from the current password.',

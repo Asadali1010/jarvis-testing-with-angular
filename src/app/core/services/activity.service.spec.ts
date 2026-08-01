@@ -1,17 +1,43 @@
+import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { ActivityService } from './activity.service';
 
+const ACTIVITIES_STORAGE_KEY = 'app.activities';
+
 describe('ActivityService', () => {
   let service: ActivityService;
+  let storage: Record<string, string>;
 
   beforeEach(() => {
+    storage = {};
+
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => storage[key] ?? null,
+      setItem: (key: string, value: string) => {
+        storage[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete storage[key];
+      },
+      clear: () => {
+        storage = {};
+      },
+    });
+
     TestBed.configureTestingModule({
-      providers: [ActivityService],
+      providers: [
+        ActivityService,
+        { provide: PLATFORM_ID, useValue: 'browser' },
+      ],
     });
 
     service = TestBed.inject(ActivityService);
     service.clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('starts with an empty activity timeline', () => {
@@ -74,5 +100,54 @@ describe('ActivityService', () => {
     service.clear();
 
     expect(service.activities()).toEqual([]);
+  });
+
+  it('persists activities to localStorage under app.activities', () => {
+    service.recordLogin('Alex Johnson', 'user-1');
+
+    const stored = JSON.parse(storage[ACTIVITIES_STORAGE_KEY] ?? '[]');
+
+    expect(stored).toHaveLength(1);
+    expect(stored[0]?.userName).toBe('Alex Johnson');
+  });
+
+  it('loads persisted activities after service re-instantiation', () => {
+    service.recordLogin('Alex Johnson', 'user-1');
+    service.recordUserCreate('Maria Chen', 'user-2');
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ActivityService,
+        { provide: PLATFORM_ID, useValue: 'browser' },
+      ],
+    });
+
+    const reloaded = TestBed.inject(ActivityService);
+
+    expect(reloaded.activities()).toHaveLength(2);
+    expect(reloaded.activities()[0]?.type).toBe('user_create');
+    expect(reloaded.activities()[1]?.type).toBe('login');
+  });
+
+  it('clear removes persisted activities from localStorage', () => {
+    service.recordLogin('Alex Johnson');
+    expect(storage[ACTIVITIES_STORAGE_KEY]).toBeDefined();
+
+    service.clear();
+
+    expect(service.activities()).toEqual([]);
+    expect(storage[ACTIVITIES_STORAGE_KEY]).toBeUndefined();
+  });
+
+  it('caps persisted activities at MAX_ACTIVITIES', () => {
+    for (let index = 0; index < 105; index += 1) {
+      service.recordLogin(`User ${index}`);
+    }
+
+    const stored = JSON.parse(storage[ACTIVITIES_STORAGE_KEY] ?? '[]');
+
+    expect(stored).toHaveLength(100);
+    expect(service.activities()).toHaveLength(100);
   });
 });

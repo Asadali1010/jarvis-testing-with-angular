@@ -1,18 +1,34 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Injectable,
+  PLATFORM_ID,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 
 import {
   ActivityEvent,
   RecordActivityInput,
 } from '../models/activity.model';
 
+const ACTIVITIES_STORAGE_KEY = 'app.activities';
 const MAX_ACTIVITIES = 100;
 
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
-  private readonly events = signal<ActivityEvent[]>([]);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly events = signal<ActivityEvent[]>(this.loadActivities());
 
   readonly activities = computed(() => this.events());
   readonly isLoading = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.persistActivities(this.events());
+    });
+  }
 
   record(input: RecordActivityInput): ActivityEvent {
     const event: ActivityEvent = {
@@ -86,6 +102,40 @@ export class ActivityService {
 
   clear(): void {
     this.events.set([]);
+  }
+
+  private loadActivities(): ActivityEvent[] {
+    if (!isPlatformBrowser(this.platformId)) {
+      return [];
+    }
+
+    const stored = localStorage.getItem(ACTIVITIES_STORAGE_KEY);
+    if (!stored) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(stored) as ActivityEvent[];
+      return Array.isArray(parsed) ? parsed.slice(0, MAX_ACTIVITIES) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private persistActivities(events: ActivityEvent[]): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (events.length === 0) {
+      localStorage.removeItem(ACTIVITIES_STORAGE_KEY);
+      return;
+    }
+
+    localStorage.setItem(
+      ACTIVITIES_STORAGE_KEY,
+      JSON.stringify(events.slice(0, MAX_ACTIVITIES)),
+    );
   }
 
   private createId(): string {

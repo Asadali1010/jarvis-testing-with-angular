@@ -1,6 +1,7 @@
 import { PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
+import { AUTH_CREDENTIALS } from '../constants/auth.constants';
 import {
   DEFAULT_APP_SETTINGS,
   SETTINGS_STORAGE_KEY,
@@ -128,33 +129,50 @@ describe('SettingsService', () => {
   it('clears cached application data keys', () => {
     storage['app.auth.token'] = 'token';
     storage['app.theme'] = 'dark';
+    storage['app.activities'] = '[]';
     storage[SETTINGS_STORAGE_KEY] = '{}';
 
     service.clearCachedData();
 
     expect(storage['app.auth.token']).toBeUndefined();
     expect(storage['app.theme']).toBeUndefined();
+    expect(storage['app.activities']).toBeUndefined();
     expect(storage[SETTINGS_STORAGE_KEY]).toBeUndefined();
   });
 
-  it('validates mock password changes', () => {
+  it('validates password changes against auth credentials', () => {
     expect(service.changePassword('', 'NewPassword1')).toEqual({
       success: false,
       error: 'Current password is required.',
     });
-    expect(service.changePassword('Current123', '')).toEqual({
+    expect(
+      service.changePassword(AUTH_CREDENTIALS.password, ''),
+    ).toEqual({
       success: false,
       error: 'New password is required.',
     });
-    expect(service.changePassword('Current123', 'short')).toEqual({
+    expect(
+      service.changePassword(AUTH_CREDENTIALS.password, 'short'),
+    ).toEqual({
       success: false,
       error: 'New password must be at least 8 characters.',
     });
-    expect(service.changePassword('SamePassword', 'SamePassword')).toEqual({
+    expect(service.changePassword('WrongPassword1', 'NewPassword1')).toEqual({
+      success: false,
+      error: 'Current password is incorrect.',
+    });
+    expect(
+      service.changePassword(
+        AUTH_CREDENTIALS.password,
+        AUTH_CREDENTIALS.password,
+      ),
+    ).toEqual({
       success: false,
       error: 'New password must differ from the current password.',
     });
-    expect(service.changePassword('Current123', 'NewPassword1')).toEqual({
+    expect(
+      service.changePassword(AUTH_CREDENTIALS.password, 'NewPassword1'),
+    ).toEqual({
       success: true,
     });
   });

@@ -10,9 +10,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 
-import { SystemStatus, User, UserStats } from '../../core/models/user.model';
+import { SystemStatus, UserStats } from '../../core/models/user.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ProfileService } from '../../core/services/profile.service';
 import { UserService } from '../../core/services/user.service';
 import { StatTrendDirection } from './components/stat-card/stat-card.component';
 import { ActivityTimelineComponent } from './components/activity-timeline/activity-timeline.component';
@@ -40,6 +41,7 @@ interface StatTrend {
 export class DashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
+  private readonly profileService = inject(ProfileService);
   private readonly activityService = inject(ActivityService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -50,7 +52,7 @@ export class DashboardComponent implements OnInit {
 
   readonly now = signal(new Date());
 
-  readonly profileUser = computed(() => this.resolveProfileUser());
+  readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
 
   readonly statTrends = computed(() => this.buildStatTrends(this.stats()));
 
@@ -157,33 +159,4 @@ export class DashboardComponent implements OnInit {
     };
   }
 
-  private resolveProfileUser(): User | null {
-    const auth = this.currentUser();
-    if (!auth) {
-      return null;
-    }
-
-    const matched = this.userService
-      .users()
-      .find((user) => user.email.toLowerCase() === auth.email.toLowerCase());
-
-    if (matched) {
-      return matched;
-    }
-
-    return {
-      id: 'auth-user',
-      firstName: 'Admin',
-      lastName: 'User',
-      email: auth.email,
-      phone: '+1 (555) 000-0000',
-      role: 'admin',
-      department: 'Administration',
-      status: 'active',
-      bio: 'System administrator for Jarvis Enterprise.',
-      company: 'Jarvis Corp',
-      createdAt: '2025-01-01T00:00:00.000Z',
-      updatedAt: new Date().toISOString(),
-    };
-  }
 }
