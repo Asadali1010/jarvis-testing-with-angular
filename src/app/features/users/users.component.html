@@ -304,6 +304,7 @@
     <div
       class="modal-panel"
       role="dialog"
+      aria-modal="true"
       [attr.aria-labelledby]="dialogMode() === 'add' ? 'add-user-title' : 'edit-user-title'"
       [appFocusTrap]="true"
       (escape)="closeDialog()"
@@ -328,6 +329,7 @@
     <div
       class="modal-panel"
       role="dialog"
+      aria-modal="true"
       aria-labelledby="view-user-title"
       [appFocusTrap]="true"
       (escape)="closeDialog()"

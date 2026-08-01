@@ -63,6 +63,7 @@
       <button
         type="button"
         class="user-menu-trigger"
+        [attr.aria-label]="'Account menu for ' + (currentUser()?.email ?? 'User')"
         [attr.aria-expanded]="userMenuOpen()"
         aria-haspopup="menu"
         aria-controls="user-menu-panel"

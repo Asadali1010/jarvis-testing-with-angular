@@ -15,6 +15,7 @@ import { FocusTrapDirective } from '../../../../core/directives/focus-trap.direc
         <div
           class="dialog-panel"
           role="alertdialog"
+          aria-modal="true"
           [attr.aria-labelledby]="dialogId + '-title'"
           [attr.aria-describedby]="dialogId + '-message'"
           [appFocusTrap]="open()"

@@ -21,7 +21,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         <div class="activity-state activity-empty" role="status">
           <p>No recent activity yet.</p>
           <p class="activity-empty-hint">
-            User actions and system events will appear here.
+            Sign-ins, user updates, and settings changes are recorded in this feed.
           </p>
         </div>
       } @else {

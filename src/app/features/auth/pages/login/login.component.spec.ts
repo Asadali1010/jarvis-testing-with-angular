@@ -48,9 +48,10 @@ describe('LoginComponent', () => {
           },
           {
             path: 'dashboard',
-            loadComponent: async () =>
-              (await import('../../../shell/pages/dashboard/dashboard.component'))
-                .DashboardComponent,
+            loadComponent: () =>
+              import('../../../dashboard/dashboard.component').then(
+                (m) => m.DashboardComponent,
+              ),
           },
         ]),
       ],

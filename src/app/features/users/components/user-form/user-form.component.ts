@@ -19,53 +19,92 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       <div class="form-grid">
         <div class="form-field">
           <label for="firstName">First name</label>
-          <input id="firstName" type="text" formControlName="firstName" autocomplete="given-name" />
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            autocomplete="given-name"
+            [attr.aria-invalid]="showError('firstName')"
+            [attr.aria-describedby]="showError('firstName') ? 'firstName-error' : null"
+          />
           @if (showError('firstName')) {
-            <span class="field-error" role="alert">{{ getError('firstName') }}</span>
+            <span id="firstName-error" class="field-error" role="alert">{{ getError('firstName') }}</span>
           }
         </div>
 
         <div class="form-field">
           <label for="lastName">Last name</label>
-          <input id="lastName" type="text" formControlName="lastName" autocomplete="family-name" />
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            autocomplete="family-name"
+            [attr.aria-invalid]="showError('lastName')"
+            [attr.aria-describedby]="showError('lastName') ? 'lastName-error' : null"
+          />
           @if (showError('lastName')) {
-            <span class="field-error" role="alert">{{ getError('lastName') }}</span>
+            <span id="lastName-error" class="field-error" role="alert">{{ getError('lastName') }}</span>
           }
         </div>
 
         <div class="form-field form-field-full">
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" autocomplete="email" />
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            [attr.aria-invalid]="showError('email')"
+            [attr.aria-describedby]="showError('email') ? 'email-error' : null"
+          />
           @if (showError('email')) {
-            <span class="field-error" role="alert">{{ getError('email') }}</span>
+            <span id="email-error" class="field-error" role="alert">{{ getError('email') }}</span>
           }
         </div>
 
         <div class="form-field">
           <label for="phone">Phone</label>
-          <input id="phone" type="tel" formControlName="phone" autocomplete="tel" />
+          <input
+            id="phone"
+            type="tel"
+            formControlName="phone"
+            autocomplete="tel"
+            [attr.aria-invalid]="showError('phone')"
+            [attr.aria-describedby]="showError('phone') ? 'phone-error' : null"
+          />
           @if (showError('phone')) {
-            <span class="field-error" role="alert">{{ getError('phone') }}</span>
+            <span id="phone-error" class="field-error" role="alert">{{ getError('phone') }}</span>
           }
         </div>
 
         <div class="form-field">
           <label for="role">Role</label>
-          <select id="role" formControlName="role">
+          <select
+            id="role"
+            formControlName="role"
+            [attr.aria-invalid]="showError('role')"
+            [attr.aria-describedby]="showError('role') ? 'role-error' : null"
+          >
             @for (role of roles; track role.value) {
               <option [value]="role.value">{{ role.label }}</option>
             }
           </select>
           @if (showError('role')) {
-            <span class="field-error" role="alert">{{ getError('role') }}</span>
+            <span id="role-error" class="field-error" role="alert">{{ getError('role') }}</span>
           }
         </div>
 
         <div class="form-field">
           <label for="department">Department</label>
-          <input id="department" type="text" formControlName="department" />
+          <input
+            id="department"
+            type="text"
+            formControlName="department"
+            [attr.aria-invalid]="showError('department')"
+            [attr.aria-describedby]="showError('department') ? 'department-error' : null"
+          />
           @if (showError('department')) {
-            <span class="field-error" role="alert">{{ getError('department') }}</span>
+            <span id="department-error" class="field-error" role="alert">{{ getError('department') }}</span>
           }
         </div>
 
