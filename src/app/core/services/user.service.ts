@@ -14,12 +14,15 @@ import {
   SortDirection,
   SystemStatus,
   UpdateUserInput,
+  USER_FIELD_LIMITS,
   User,
   UserFilters,
   UserMutationResult,
   UserQueryParams,
+  UserRole,
   UserSortField,
   UserStats,
+  UserStatus,
 } from '../models/user.model';
 import { ActivityService } from './activity.service';
 
@@ -51,6 +54,8 @@ const SEED_USERS: User[] = [
     role: 'manager',
     department: 'Operations',
     status: 'active',
+    address: '450 Operations Blvd, Floor 3',
+    bio: 'Operations manager overseeing daily workflows and team coordination.',
     company: 'Jarvis Corp',
     createdAt: '2026-01-15T11:20:00.000Z',
     updatedAt: '2026-06-20T08:45:00.000Z',
@@ -64,6 +69,8 @@ const SEED_USERS: User[] = [
     role: 'user',
     department: 'Sales',
     status: 'inactive',
+    address: '88 Market Street, Unit 12',
+    bio: 'Sales representative focused on enterprise accounts.',
     company: 'Jarvis Corp',
     createdAt: '2026-03-05T16:10:00.000Z',
     updatedAt: '2026-05-18T10:00:00.000Z',
@@ -77,6 +84,8 @@ const SEED_USERS: User[] = [
     role: 'viewer',
     department: 'Marketing',
     status: 'active',
+    address: '210 Creative Lane',
+    bio: 'Marketing analyst tracking campaign performance and audience insights.',
     company: 'Jarvis Corp',
     createdAt: '2026-07-10T13:00:00.000Z',
     updatedAt: '2026-07-25T09:15:00.000Z',
@@ -90,6 +99,8 @@ const SEED_USERS: User[] = [
     role: 'user',
     department: 'Support',
     status: 'active',
+    address: '15 Help Desk Row',
+    bio: 'Customer support specialist helping users resolve issues quickly.',
     company: 'Jarvis Corp',
     createdAt: '2026-07-20T10:30:00.000Z',
     updatedAt: '2026-07-28T17:00:00.000Z',
@@ -138,7 +149,10 @@ export class UserService {
     return this.usersState().find((user) => user.id === id);
   }
 
-  createUser(input: CreateUserInput): UserMutationResult {
+  createUser(
+    input: CreateUserInput,
+    options?: { skipActivity?: boolean },
+  ): UserMutationResult {
     const validationError = this.validateUserInput(input);
     if (validationError) {
       this.error.set(validationError);
@@ -173,13 +187,19 @@ export class UserService {
     this.persistUsers(this.usersState());
     this.error.set(null);
 
-    const fullName = `${user.firstName} ${user.lastName}`;
-    this.activityService.recordUserCreate(fullName, user.id);
+    if (!options?.skipActivity) {
+      const fullName = `${user.firstName} ${user.lastName}`;
+      this.activityService.recordUserCreate(fullName, user.id);
+    }
 
     return { success: true, user };
   }
 
-  updateUser(id: string, input: UpdateUserInput): UserMutationResult {
+  updateUser(
+    id: string,
+    input: UpdateUserInput,
+    options?: { skipActivity?: boolean },
+  ): UserMutationResult {
     const existing = this.getUserById(id);
     if (!existing) {
       const message = 'User not found.';
@@ -196,9 +216,9 @@ export class UserService {
       department: input.department ?? existing.department,
       status: input.status ?? existing.status,
       avatar: input.avatar ?? existing.avatar,
-      address: input.address ?? existing.address,
-      bio: input.bio ?? existing.bio,
-      company: input.company ?? existing.company,
+      address: 'address' in input ? input.address : existing.address,
+      bio: 'bio' in input ? input.bio : existing.bio,
+      company: 'company' in input ? input.company : existing.company,
     };
 
     const validationError = this.validateUserInput(merged);
@@ -237,8 +257,10 @@ export class UserService {
     this.persistUsers(this.usersState());
     this.error.set(null);
 
-    const fullName = `${updated.firstName} ${updated.lastName}`;
-    this.activityService.recordUserUpdate(fullName, updated.id);
+    if (!options?.skipActivity) {
+      const fullName = `${updated.firstName} ${updated.lastName}`;
+      this.activityService.recordUserUpdate(fullName, updated.id);
+    }
 
     return { success: true, user: updated };
   }
@@ -422,12 +444,24 @@ export class UserService {
       return 'First name is required.';
     }
 
+    if (input.firstName.trim().length > USER_FIELD_LIMITS.firstName) {
+      return `First name must be ${USER_FIELD_LIMITS.firstName} characters or fewer.`;
+    }
+
     if (!input.lastName?.trim()) {
       return 'Last name is required.';
     }
 
+    if (input.lastName.trim().length > USER_FIELD_LIMITS.lastName) {
+      return `Last name must be ${USER_FIELD_LIMITS.lastName} characters or fewer.`;
+    }
+
     if (!input.email?.trim()) {
       return 'Email is required.';
+    }
+
+    if (input.email.trim().length > USER_FIELD_LIMITS.email) {
+      return `Email must be ${USER_FIELD_LIMITS.email} characters or fewer.`;
     }
 
     if (!this.isValidEmail(input.email)) {
@@ -436,6 +470,10 @@ export class UserService {
 
     if (!input.phone?.trim()) {
       return 'Phone is required.';
+    }
+
+    if (input.phone.trim().length > USER_FIELD_LIMITS.phone) {
+      return `Phone must be ${USER_FIELD_LIMITS.phone} characters or fewer.`;
     }
 
     if (!this.isValidPhone(input.phone)) {
@@ -448,6 +486,22 @@ export class UserService {
 
     if (!input.department?.trim()) {
       return 'Department is required.';
+    }
+
+    if (input.department.trim().length > USER_FIELD_LIMITS.department) {
+      return `Department must be ${USER_FIELD_LIMITS.department} characters or fewer.`;
+    }
+
+    if (input.address && input.address.trim().length > USER_FIELD_LIMITS.address) {
+      return `Address must be ${USER_FIELD_LIMITS.address} characters or fewer.`;
+    }
+
+    if (input.bio && input.bio.trim().length > USER_FIELD_LIMITS.bio) {
+      return `Bio must be ${USER_FIELD_LIMITS.bio} characters or fewer.`;
+    }
+
+    if (input.company && input.company.trim().length > USER_FIELD_LIMITS.company) {
+      return `Company must be ${USER_FIELD_LIMITS.company} characters or fewer.`;
     }
 
     return null;
@@ -494,13 +548,137 @@ export class UserService {
     }
 
     try {
-      const parsed = JSON.parse(stored) as User[];
-      return Array.isArray(parsed) && parsed.length > 0
-        ? parsed
-        : structuredClone(SEED_USERS);
+      const parsed = JSON.parse(stored) as unknown;
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        return structuredClone(SEED_USERS);
+      }
+
+      return this.normalizeStoredUsers(parsed);
     } catch {
       return structuredClone(SEED_USERS);
     }
+  }
+
+  private normalizeStoredUsers(raw: unknown[]): User[] {
+    const seedById = new Map(SEED_USERS.map((user) => [user.id, user]));
+    const seedByEmail = new Map(
+      SEED_USERS.map((user) => [user.email.toLowerCase(), user]),
+    );
+    const normalized: User[] = [];
+
+    for (const item of raw) {
+      const user = this.normalizeUserRecord(item, seedById, seedByEmail);
+      if (user) {
+        normalized.push(user);
+      }
+    }
+
+    for (const seed of SEED_USERS) {
+      if (!normalized.some((user) => user.id === seed.id)) {
+        normalized.push(structuredClone(seed));
+      }
+    }
+
+    return normalized.map((user) => this.enrichUserFromSeed(user, seedById));
+  }
+
+  private normalizeUserRecord(
+    raw: unknown,
+    seedById: Map<string, User>,
+    seedByEmail: Map<string, User>,
+  ): User | null {
+    if (!raw || typeof raw !== 'object') {
+      return null;
+    }
+
+    const record = raw as Partial<User>;
+    const seed =
+      (record.id ? seedById.get(record.id) : undefined) ??
+      (typeof record.email === 'string'
+        ? seedByEmail.get(record.email.toLowerCase())
+        : undefined);
+
+    const now = new Date().toISOString();
+    const fallbackId = seed?.id ?? this.createId();
+
+    const firstName = this.normalizeString(record.firstName, seed?.firstName ?? 'Unknown');
+    const lastName = this.normalizeString(record.lastName, seed?.lastName ?? 'User');
+    const email = this.normalizeString(
+      record.email,
+      seed?.email ?? `unknown-${fallbackId}@example.com`,
+    ).toLowerCase();
+    const phone = this.normalizeString(record.phone, seed?.phone ?? '+1 (555) 000-0000');
+    const role = this.normalizeRole(record.role, seed?.role ?? 'user');
+    const department = this.normalizeString(
+      record.department,
+      seed?.department ?? 'General',
+    );
+    const status = this.normalizeStatus(record.status, seed?.status ?? 'active');
+
+    return {
+      id: typeof record.id === 'string' && record.id.trim() ? record.id : fallbackId,
+      firstName: this.truncate(firstName, USER_FIELD_LIMITS.firstName),
+      lastName: this.truncate(lastName, USER_FIELD_LIMITS.lastName),
+      email: this.truncate(email, USER_FIELD_LIMITS.email),
+      phone: this.truncate(phone, USER_FIELD_LIMITS.phone),
+      role,
+      department: this.truncate(department, USER_FIELD_LIMITS.department),
+      status,
+      avatar: typeof record.avatar === 'string' ? record.avatar : seed?.avatar,
+      address: this.normalizeOptionalString(record.address, seed?.address),
+      bio: this.normalizeOptionalString(record.bio, seed?.bio),
+      company: this.normalizeOptionalString(record.company, seed?.company),
+      createdAt:
+        typeof record.createdAt === 'string' && record.createdAt
+          ? record.createdAt
+          : (seed?.createdAt ?? now),
+      updatedAt:
+        typeof record.updatedAt === 'string' && record.updatedAt
+          ? record.updatedAt
+          : (seed?.updatedAt ?? now),
+    };
+  }
+
+  private enrichUserFromSeed(user: User, seedById: Map<string, User>): User {
+    const seed = seedById.get(user.id);
+    if (!seed) {
+      return user;
+    }
+
+    return {
+      ...user,
+      address: user.address ?? seed.address,
+      bio: user.bio ?? seed.bio,
+      company: user.company ?? seed.company,
+    };
+  }
+
+  private normalizeString(value: unknown, fallback: string): string {
+    return typeof value === 'string' && value.trim() ? value.trim() : fallback;
+  }
+
+  private normalizeOptionalString(
+    value: unknown,
+    fallback?: string,
+  ): string | undefined {
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+
+    return fallback?.trim() || undefined;
+  }
+
+  private normalizeRole(value: unknown, fallback: UserRole): UserRole {
+    const roles: UserRole[] = ['admin', 'manager', 'user', 'viewer'];
+    return roles.includes(value as UserRole) ? (value as UserRole) : fallback;
+  }
+
+  private normalizeStatus(value: unknown, fallback: UserStatus): UserStatus {
+    return value === 'active' || value === 'inactive' ? value : fallback;
+  }
+
+  private truncate(value: string, maxLength: number): string {
+    return value.length > maxLength ? value.slice(0, maxLength) : value;
   }
 
   private persistUsers(users: User[]): void {

@@ -213,4 +213,59 @@ describe('UserService', () => {
     expect(service.isValidPhone('+1 (555) 123-4567')).toBe(true);
     expect(service.isValidPhone('123')).toBe(false);
   });
+
+  it('rejects input that exceeds USER_FIELD_LIMITS', () => {
+    expect(
+      service.createUser({
+        ...validUser,
+        firstName: 'x'.repeat(51),
+      }),
+    ).toEqual({
+      success: false,
+      error: 'First name must be 50 characters or fewer.',
+    });
+
+    expect(
+      service.createUser({
+        ...validUser,
+        bio: 'x'.repeat(501),
+      }),
+    ).toEqual({
+      success: false,
+      error: 'Bio must be 500 characters or fewer.',
+    });
+  });
+
+  it('normalizes corrupt localStorage records and enriches seed users', async () => {
+    storage['app.users'] = JSON.stringify([
+      {
+        id: 'user-2',
+        firstName: 'Maria',
+        lastName: 'Chen',
+        email: 'maria.chen@example.com',
+        phone: '+1 (555) 234-5678',
+        role: 'manager',
+        department: 'Operations',
+        status: 'active',
+        company: 'Jarvis Corp',
+        createdAt: '2026-01-15T11:20:00.000Z',
+        updatedAt: '2026-06-20T08:45:00.000Z',
+      },
+      { invalid: true },
+    ]);
+
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      providers: [UserService, ActivityService, { provide: PLATFORM_ID, useValue: 'browser' }],
+    }).compileComponents();
+
+    const reloaded = TestBed.inject(UserService);
+    const maria = reloaded.getUserById('user-2');
+
+    expect(maria?.address).toBe('450 Operations Blvd, Floor 3');
+    expect(maria?.bio).toBe(
+      'Operations manager overseeing daily workflows and team coordination.',
+    );
+    expect(reloaded.users().some((user) => user.id === 'user-1')).toBe(true);
+  });
 });

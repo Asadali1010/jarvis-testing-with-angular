@@ -92,3 +92,29 @@ export type UserMutationResult =
 export type BulkMutationResult =
   | { success: true; affected: number }
   | { success: false; error: string };
+
+/** Maximum lengths for user profile and directory fields. */
+export const USER_FIELD_LIMITS = {
+  firstName: 50,
+  lastName: 50,
+  email: 254,
+  phone: 20,
+  department: 100,
+  address: 200,
+  bio: 500,
+  company: 100,
+} as const;
+
+/** Fields a user may update on their own profile. */
+export interface UpdateProfileInput {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  address?: string;
+  bio?: string;
+  company?: string;
+}
+
+export type ProfileMutationResult =
+  | { success: true; user: User }
+  | { success: false; error: string };
