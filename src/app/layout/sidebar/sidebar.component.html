@@ -6,7 +6,13 @@
   aria-label="Main navigation"
 >
   <div class="sidebar-header">
-    <span class="sidebar-brand">Jarvis</span>
+    <div class="sidebar-brand-container">
+      @if (profileUser()?.avatarUrl) {
+        <img [src]="profileUser()!.avatarUrl" alt="" class="sidebar-avatar">
+      } @else {
+        <span class="sidebar-brand">Jarvis</span>
+      }
+    </div>
     @if (showCollapseToggle()) {
       <button
         type="button"

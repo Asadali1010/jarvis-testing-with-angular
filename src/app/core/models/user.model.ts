@@ -113,6 +113,7 @@ export interface UpdateProfileInput {
   address?: string;
   bio?: string;
   company?: string;
+  avatar?: string;
 }
 
 export type ProfileMutationResult =
