@@ -9,6 +9,8 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { AuthService } from '../../core/services/auth.service';
+import { ProfileService } from '../../core/services/profile.service';
 import { SidebarBehavior } from '../../core/models/settings.model';
 import { SettingsService } from '../../core/services/settings.service';
 
@@ -34,12 +36,15 @@ const NAV_ITEMS: NavItem[] = [
 export class SidebarComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly settingsService = inject(SettingsService);
+  private readonly authService = inject(AuthService);
+  private readonly profileService = inject(ProfileService);
 
   readonly mobileOpen = input(false);
   readonly navigate = output<void>();
 
   readonly navItems = NAV_ITEMS;
   readonly appearance = this.settingsService.appearance;
+  readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
 
   readonly sidebarBehavior = computed(
     () => this.settingsService.appearance().sidebarBehavior,

@@ -21,6 +21,38 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       novalidate
       aria-labelledby="profile-heading"
     >
+      <div class="profile-avatar-section">
+        <div class="avatar-container">
+          @if (previewUrl()) {
+            <img [src]="previewUrl()" alt="Profile preview" class="avatar-preview" />
+          } @else {
+            <div class="avatar-placeholder">
+              {{ user().firstName[0] }}{{ user().lastName[0] }}
+            </div>
+          }
+        </div>
+        
+        <div class="avatar-actions">
+          <label class="btn-secondary">
+            Change Image
+            <input
+              type="file"
+              class="sr-only"
+              accept=".jpg,.jpeg,.png,.webp"
+              (change)="onFileSelected($event)"
+            />
+          </label>
+          @if (previewUrl()) {
+            <button type="button" class="btn-text btn-danger" (click)="removeImage()">
+              Remove Image
+            </button>
+          }
+        </div>
+        @if (avatarError()) {
+          <span class="field-error" role="alert">{{ avatarError() }}</span>
+        }
+      </div>
+
       <div class="profile-readonly-grid">
         <div class="profile-readonly">
           <span class="profile-readonly-label">Email</span>
@@ -302,6 +334,8 @@ export class ProfileFormComponent {
 
   readonly serverError = signal<string | null>(null);
   readonly isSaving = signal(false);
+  readonly previewUrl = signal<string | null>(null);
+  readonly avatarError = signal<string | null>(null);
 
   readonly formatUserRole = formatUserRole;
 
@@ -325,8 +359,38 @@ export class ProfileFormComponent {
       bio: user.bio ?? '',
       company: user.company ?? '',
     });
+    this.previewUrl.set(user.avatar || null);
     this.submitted = false;
     this.serverError.set(null);
+  }
+
+  onFileSelected(event: Event): void {
+    this.avatarError.set(null);
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.avatarError.set('Unsupported file format. Please use JPG, JPEG, PNG, or WEBP.');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      this.avatarError.set('Image size must be 2MB or less.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.previewUrl.set(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeImage(): void {
+    this.previewUrl.set(null);
   }
 
   onSubmit(): void {
@@ -356,6 +420,7 @@ export class ProfileFormComponent {
       address: value.address.trim() || undefined,
       bio: value.bio.trim() || undefined,
       company: value.company.trim() || undefined,
+      avatar: this.previewUrl() || undefined,
     });
 
     if (result.success) {
