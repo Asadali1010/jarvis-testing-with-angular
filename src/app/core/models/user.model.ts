@@ -110,6 +110,7 @@ export interface UpdateProfileInput {
   firstName: string;
   lastName: string;
   phone: string;
+  avatar?: string;
   address?: string;
   bio?: string;
   company?: string;
