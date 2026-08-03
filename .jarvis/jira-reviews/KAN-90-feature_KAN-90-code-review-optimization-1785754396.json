@@ -1,0 +1,155 @@
+{
+  "overallScore": 89.0,
+  "verdict": "approve",
+  "summary": "KAN-90 delivers a focused code-review pass: duplicated user-display and system-status formatting is centralized in src/app/core/utils/user-display.util.ts, unused component methods are removed, the dashboard clock tick is reduced from 1s to 60s, artificial users loading is removed, ActivityService.clear() now clears localStorage, focus-trap visibility filtering is improved, and tests are updated with flushEffects, matchMedia setup, and new util coverage. Remaining gaps are minor (clock granularity trade-off, duplicated avatar-fallback computeds with inconsistent fallbacks).",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 92,
+      "gaps": [
+        "avatarFallback / heroAvatarFallback email-initial logic is duplicated in header.component.ts and dashboard.component.ts rather than moved into user-display.util.ts (ticket deliverable: 'Verify reusable components')."
+      ],
+      "evidence": [
+        "New src/app/core/utils/user-display.util.ts consolidates formatUserRole, formatUserDisplayName, getUserInitials, formatSystemStatus, USER_ROLE_OPTIONS.",
+        "Removed local formatRole/getInitials/formatSystemStatus from profile, users, user-detail, dashboard components per diff.",
+        "users.component.ts ngOnInit: removed queueMicrotask artificial isLoading toggle (diff hunk users.component.ts)."
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 88,
+      "gaps": [
+        "getUserInitials does not trim/fallback on blank firstName/lastName unlike formatUserDisplayName (user-display.util.ts:32-39)."
+      ],
+      "evidence": [
+        "activity.service.ts clear(): localStorage.removeItem(ACTIVITIES_STORAGE_KEY) fixes stale persistence after clear().",
+        "focus-trap.directive.ts getFocusableElements(): filters disabled/tabindex=-1 and display:none/visibility:hidden.",
+        "Header user-email span now renders display name via formatUserDisplayName (header.component.html diff)."
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 82,
+      "gaps": [
+        "Dashboard hero datetime (now() | date:'mediumTime') updates at 60s interval instead of 1s \u2014 clock may lag up to 59s (dashboard.component.html:9-10, dashboard.component.ts:113 interval(60_000))."
+      ],
+      "evidence": [
+        "interval changed from 1000 to 60_000 in dashboard.component.ts ngOnInit.",
+        "users.component.spec.ts replaces artificial-delay test with immediate-render assertion.",
+        "Focus-trap visibility heuristic changed from offsetParent to getComputedStyle \u2014 may differ for opacity:0 or off-screen elements."
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 90,
+      "gaps": [
+        "Local ng test blocked by Node v20.19.2 vs Angular CLI minimum v22.22.3; suite not executed in this review environment."
+      ],
+      "evidence": [
+        "New user-display.util.spec.ts (81 lines) covers all exported helpers.",
+        "TestBed.flushEffects() added across activity, theme, settings, app specs for effect persistence.",
+        "profile.service.spec.ts createService() + resetTestingModule improves isolation.",
+        "angular.json + src/test-setup.ts adds matchMedia polyfill for Vitest."
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 88,
+      "gaps": [
+        "Inconsistent avatar fallbacks: heroAvatarFallback uses '?' (dashboard.component.ts:70) vs avatarFallback uses 'U' (header.component.ts:55)."
+      ],
+      "evidence": [
+        "USER_ROLE_OPTIONS single source reused in user-form and users filter options.",
+        "Type-safe Element[] casts in multiple spec files.",
+        "Removed void user / unused UserRole imports across touched files."
+      ]
+    },
+    {
+      "id": "security",
+      "score": 95,
+      "gaps": [],
+      "evidence": [
+        "No auth, injection, or secret-handling changes in diff.",
+        "ActivityService.clear() properly guards with isPlatformBrowser before localStorage access."
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 85,
+      "gaps": [
+        "No inline documentation for new user-display.util.ts public API (not required by ticket description)."
+      ],
+      "evidence": [
+        "Ticket deliverables are code-quality focused; no docs/logging requirements in description."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Minor",
+      "title": "Dashboard clock display granularity reduced to 60s",
+      "detail": "Template binds now() to mediumTime but ngOnInit interval is 60_000ms; users see stale time up to ~59s.",
+      "path": "src/app/features/dashboard/dashboard.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "Duplicated avatar fallback computeds with inconsistent defaults",
+      "detail": "heroAvatarFallback returns '?' while avatarFallback returns 'U' for missing email.",
+      "path": "src/app/layout/header/header.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "getUserInitials lacks blank-name guard",
+      "detail": "formatUserDisplayName falls back on blank trimmed names; getUserInitials always concatenates charAt(0) values.",
+      "path": "src/app/core/utils/user-display.util.ts"
+    }
+  ],
+  "checklist": [
+    "All eight ticket deliverables addressed in diff (dedup, simplify, render/perf, readability, naming, reusable utils, architecture).",
+    "Run npm test on Node >=22.22.3 to confirm full suite passes in CI.",
+    "Optional: extract email-avatar fallback helper to user-display.util.ts for full DRY.",
+    "Optional: split dashboard now() tick \u2014 60s for greeting, 1s for displayed clock if second-level accuracy is required."
+  ],
+  "rubric": [
+    {
+      "id": "requirementsCoverage",
+      "weight": 25,
+      "label": "AC mapped to evidence in the diff"
+    },
+    {
+      "id": "correctness",
+      "weight": 20,
+      "label": "Logic, nulls, error handling, edge cases"
+    },
+    {
+      "id": "regressionRisk",
+      "weight": 15,
+      "label": "Blast radius and shared module risk"
+    },
+    {
+      "id": "tests",
+      "weight": 15,
+      "label": "New/updated tests adequacy"
+    },
+    {
+      "id": "codeQuality",
+      "weight": 10,
+      "label": "Conventions vs repo knowledge"
+    },
+    {
+      "id": "security",
+      "weight": 10,
+      "label": "Auth, injection, secrets, data safety"
+    },
+    {
+      "id": "docsObservability",
+      "weight": 5,
+      "label": "Logs, docs, comments where needed"
+    }
+  ],
+  "ticket": {
+    "key": "KAN-90"
+  },
+  "branch": "feature/KAN-90-code-review-optimization",
+  "base": "origin/main"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "review",
+    "key": "KAN-90",
+    "summary": "Code Review & Optimization",
+    "title": "KAN-90: Code Review & Optimization",
+    "branch": "feature/KAN-90-code-review-optimization",
+    "overallScore": 89.0,
+    "verdict": "approve",
+    "reportPath": "/app/.jarvis/users/13a8d49b-5fea-48a6-bbc8-3c3ed0aeae07/repos/Asadali1010__jarvis-testing-with-angular/.jarvis/jira-reviews/KAN-90-feature_KAN-90-code-review-optimization-1785754354.json",
+    "ok": true,
+    "ts": 1785754354
+  },
+  {
+    "kind": "review",
+    "key": "KAN-90",
+    "summary": "Code Review & Optimization",
+    "title": "KAN-90: Code Review & Optimization",
+    "branch": "feature/KAN-90-code-review-optimization",
+    "overallScore": 89.0,
+    "verdict": "approve",
+    "reportPath": "/app/.jarvis/users/13a8d49b-5fea-48a6-bbc8-3c3ed0aeae07/repos/Asadali1010__jarvis-testing-with-angular/.jarvis/jira-reviews/KAN-90-feature_KAN-90-code-review-optimization-1785754396.json",
+    "ok": true,
+    "ts": 1785754396
+  }
+]
