@@ -1,7 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, input, output } from '@angular/core';
 
-import { User, UserRole } from '../../../../core/models/user.model';
+import { User } from '../../../../core/models/user.model';
+import {
+  formatUserRole,
+  getUserInitials,
+} from '../../../../core/utils/user-display.util';
 
 @Component({
   selector: 'app-user-detail',
@@ -219,29 +223,7 @@ export class UserDetailComponent {
     return u ? `${u.firstName} ${u.lastName}` : '';
   });
 
-  readonly initials = computed(() => {
-    const u = this.user();
-    if (!u) {
-      return '';
-    }
-    return `${u.firstName.charAt(0)}${u.lastName.charAt(0)}`.toUpperCase();
-  });
+  readonly initials = computed(() => getUserInitials(this.user()));
 
-  readonly roleLabel = computed(() => this.formatRole(this.user()?.role));
-
-  private formatRole(role?: UserRole): string {
-    if (!role) {
-      return '—';
-    }
-    switch (role) {
-      case 'admin':
-        return 'Administrator';
-      case 'manager':
-        return 'Manager';
-      case 'user':
-        return 'User';
-      case 'viewer':
-        return 'Viewer';
-    }
-  }
+  readonly roleLabel = computed(() => formatUserRole(this.user()?.role));
 }

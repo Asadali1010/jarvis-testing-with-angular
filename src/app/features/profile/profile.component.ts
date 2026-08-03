@@ -1,7 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 
-import { User, UserRole } from '../../core/models/user.model';
+import { User } from '../../core/models/user.model';
+import {
+  formatUserRole,
+  getUserInitials,
+} from '../../core/utils/user-display.util';
 import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { ProfileFormComponent } from './components/profile-form/profile-form.component';
@@ -32,15 +36,11 @@ export class ProfileComponent {
     return user ? `${user.firstName} ${user.lastName}` : 'User';
   });
 
-  readonly avatarInitials = computed(() => {
-    const user = this.profile();
-    if (!user) {
-      return 'U';
-    }
-    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
-  });
+  readonly avatarInitials = computed(() =>
+    getUserInitials(this.profile(), 'U'),
+  );
 
-  readonly roleLabel = computed(() => this.formatRole(this.profile()?.role));
+  readonly roleLabel = computed(() => formatUserRole(this.profile()?.role));
 
   enterEditMode(): void {
     const user = this.profile();
@@ -69,20 +69,4 @@ export class ProfileComponent {
     this.mode.set('view');
   }
 
-  formatRole(role?: UserRole): string {
-    if (!role) {
-      return '—';
-    }
-
-    switch (role) {
-      case 'admin':
-        return 'Administrator';
-      case 'manager':
-        return 'Manager';
-      case 'user':
-        return 'User';
-      case 'viewer':
-        return 'Viewer';
-    }
-  }
 }

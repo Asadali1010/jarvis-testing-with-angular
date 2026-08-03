@@ -10,11 +10,15 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 
-import { SystemStatus, UserStats } from '../../core/models/user.model';
+import { UserStats } from '../../core/models/user.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { UserService } from '../../core/services/user.service';
+import {
+  formatSystemStatus,
+  systemStatusLabel,
+} from '../../core/utils/user-display.util';
 import { StatTrendDirection } from './components/stat-card/stat-card.component';
 import { ActivityTimelineComponent } from './components/activity-timeline/activity-timeline.component';
 import { DashboardWidgetComponent } from './components/dashboard-widget/dashboard-widget.component';
@@ -52,6 +56,9 @@ export class DashboardComponent implements OnInit {
 
   readonly now = signal(new Date());
 
+  readonly formatSystemStatus = formatSystemStatus;
+  readonly systemStatusLabel = systemStatusLabel;
+
   readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
 
   readonly statTrends = computed(() => this.buildStatTrends(this.stats()));
@@ -83,7 +90,7 @@ export class DashboardComponent implements OnInit {
     const currentStats = this.stats();
     const activeLabel =
       currentStats.active === 1 ? 'active user' : 'active users';
-    return `${currentStats.total} team members · ${currentStats.active} ${activeLabel} · ${this.formatSystemStatus(currentStats.systemStatus)}`;
+    return `${currentStats.total} team members · ${currentStats.active} ${activeLabel} · ${formatSystemStatus(currentStats.systemStatus)}`;
   });
 
   readonly userOverview = computed(() => {
@@ -95,31 +102,9 @@ export class DashboardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    interval(1000)
+    interval(60_000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.now.set(new Date()));
-  }
-
-  formatSystemStatus(status: SystemStatus): string {
-    switch (status) {
-      case 'operational':
-        return 'All systems operational';
-      case 'degraded':
-        return 'Performance degraded';
-      case 'maintenance':
-        return 'Maintenance mode';
-    }
-  }
-
-  systemStatusLabel(status: SystemStatus): string {
-    switch (status) {
-      case 'operational':
-        return 'Operational';
-      case 'degraded':
-        return 'Degraded';
-      case 'maintenance':
-        return 'Maintenance';
-    }
   }
 
   private buildStatTrends(stats: UserStats): Record<
@@ -153,7 +138,7 @@ export class DashboardComponent implements OnInit {
         direction: stats.newUsers > 0 ? 'up' : 'neutral',
       },
       systemStatus: {
-        label: this.formatSystemStatus(stats.systemStatus),
+        label: formatSystemStatus(stats.systemStatus),
         direction: 'neutral',
       },
     };

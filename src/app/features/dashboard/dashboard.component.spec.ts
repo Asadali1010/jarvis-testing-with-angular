@@ -101,6 +101,11 @@ describe('DashboardComponent', () => {
       'New Users',
       'System Status',
     ]);
+
+    const systemStatusCard = cards[4];
+    expect(
+      systemStatusCard.querySelector('.stat-card-value')?.textContent?.trim(),
+    ).toBe('Operational');
   });
 
   it('renders quick action shortcuts', () => {

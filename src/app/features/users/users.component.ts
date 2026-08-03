@@ -22,6 +22,11 @@ import {
   UserStatus,
 } from '../../core/models/user.model';
 import { UserService } from '../../core/services/user.service';
+import {
+  USER_ROLE_OPTIONS,
+  formatUserRole,
+  getUserInitials,
+} from '../../core/utils/user-display.util';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
 import { UserFormComponent } from './components/user-form/user-form.component';
@@ -91,11 +96,11 @@ export class UsersComponent implements OnInit {
 
   readonly roleOptions: { value: UserRole | 'all'; label: string }[] = [
     { value: 'all', label: 'All roles' },
-    { value: 'admin', label: 'Administrator' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'user', label: 'User' },
-    { value: 'viewer', label: 'Viewer' },
+    ...USER_ROLE_OPTIONS,
   ];
+
+  readonly formatUserRole = formatUserRole;
+  readonly getUserInitials = getUserInitials;
 
   readonly pageSizeOptions = [5, 10, 25, 50];
 
@@ -134,11 +139,6 @@ export class UsersComponent implements OnInit {
   readonly selectedCount = computed(() => this.selectedIds().size);
 
   ngOnInit(): void {
-    this.userService.isLoading.set(true);
-    queueMicrotask(() => {
-      this.userService.isLoading.set(false);
-    });
-
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
@@ -262,10 +262,9 @@ export class UsersComponent implements OnInit {
     this.formError.set(null);
   }
 
-  onUserSaved(user: User): void {
+  onUserSaved(): void {
     this.closeDialog();
     this.clearSelection();
-    void user;
   }
 
   onEditFromDetail(user: User): void {
@@ -318,23 +317,6 @@ export class UsersComponent implements OnInit {
       return;
     }
     this.clearSelection();
-  }
-
-  getInitials(user: User): string {
-    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
-  }
-
-  formatRole(role: UserRole): string {
-    switch (role) {
-      case 'admin':
-        return 'Administrator';
-      case 'manager':
-        return 'Manager';
-      case 'user':
-        return 'User';
-      case 'viewer':
-        return 'Viewer';
-    }
   }
 
   dismissError(): void {

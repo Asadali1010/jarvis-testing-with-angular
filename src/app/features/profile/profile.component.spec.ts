@@ -109,6 +109,9 @@ describe('ProfileComponent', () => {
 
   it('displays profile avatar and name for the authenticated user', () => {
     expect(fixture.nativeElement.querySelector('.profile-avatar')).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('.profile-avatar-initials')?.textContent?.trim(),
+    ).toBe('AU');
     expect(fixture.nativeElement.querySelector('.profile-name')?.textContent?.trim()).toBe(
       'Admin User',
     );

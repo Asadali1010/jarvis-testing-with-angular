@@ -177,7 +177,7 @@
                   @if (user.avatar) {
                     <img [src]="user.avatar" [alt]="" />
                   } @else {
-                    <span>{{ getInitials(user) }}</span>
+                    <span>{{ getUserInitials(user) }}</span>
                   }
                 </div>
               </td>
@@ -185,7 +185,7 @@
               <td>{{ user.lastName }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.phone }}</td>
-              <td>{{ formatRole(user.role) }}</td>
+              <td>{{ formatUserRole(user.role) }}</td>
               <td>{{ user.department }}</td>
               <td>
                 <span

@@ -8,6 +8,7 @@ import {
   UserStatus,
 } from '../../../../core/models/user.model';
 import { UserService } from '../../../../core/services/user.service';
+import { USER_ROLE_OPTIONS } from '../../../../core/utils/user-display.util';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -236,12 +237,7 @@ export class UserFormComponent {
 
   readonly serverError = signal<string | null>(null);
 
-  readonly roles: { value: UserRole; label: string }[] = [
-    { value: 'admin', label: 'Administrator' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'user', label: 'User' },
-    { value: 'viewer', label: 'Viewer' },
-  ];
+  readonly roles = USER_ROLE_OPTIONS;
 
   readonly statuses: { value: UserStatus; label: string }[] = [
     { value: 'active', label: 'Active' },

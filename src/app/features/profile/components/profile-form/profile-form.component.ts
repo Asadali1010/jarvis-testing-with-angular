@@ -5,10 +5,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   USER_FIELD_LIMITS,
   User,
-  UserRole,
 } from '../../../../core/models/user.model';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { UserService } from '../../../../core/services/user.service';
+import { formatUserRole } from '../../../../core/utils/user-display.util';
 
 @Component({
   selector: 'app-profile-form',
@@ -31,7 +31,7 @@ import { UserService } from '../../../../core/services/user.service';
         </div>
         <div class="profile-readonly">
           <span class="profile-readonly-label">Role</span>
-          <span class="profile-readonly-value">{{ formatRole(user().role) }}</span>
+          <span class="profile-readonly-value">{{ formatUserRole(user().role) }}</span>
         </div>
         <div class="profile-readonly">
           <span class="profile-readonly-label">Department</span>
@@ -303,6 +303,8 @@ export class ProfileFormComponent {
   readonly serverError = signal<string | null>(null);
   readonly isSaving = signal(false);
 
+  readonly formatUserRole = formatUserRole;
+
   private submitted = false;
 
   readonly form = this.fb.nonNullable.group({
@@ -388,19 +390,6 @@ export class ProfileFormComponent {
     }
 
     return '';
-  }
-
-  formatRole(role: UserRole): string {
-    switch (role) {
-      case 'admin':
-        return 'Administrator';
-      case 'manager':
-        return 'Manager';
-      case 'user':
-        return 'User';
-      case 'viewer':
-        return 'Viewer';
-    }
   }
 
   private fieldLabel(field: keyof typeof this.form.controls): string {

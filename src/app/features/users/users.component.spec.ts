@@ -207,7 +207,12 @@ describe('UsersComponent', () => {
     expect(noResults.textContent).toContain('No users match your search');
   });
 
-  it('shows loading state initially then clears', async () => {
+  it('renders the user table immediately without an artificial loading delay', () => {
+    expect(fixture.nativeElement.querySelector('.users-table')).toBeTruthy();
+    expect(userService.isLoading()).toBe(false);
+  });
+
+  it('shows loading state when UserService is loading then clears', () => {
     userService.isLoading.set(true);
     fixture.detectChanges();
 
