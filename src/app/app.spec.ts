@@ -47,6 +47,7 @@ describe('App', () => {
     const themeService = TestBed.inject(ThemeService);
 
     themeService.setTheme('dark');
+    TestBed.flushEffects();
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('dark');
     expect(
       JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) ?? '{}').appearance
@@ -54,6 +55,7 @@ describe('App', () => {
     ).toBe('dark');
 
     themeService.toggleTheme();
+    TestBed.flushEffects();
     expect(localStorage.getItem(THEME_STORAGE_KEY)).toBe('light');
   });
 });

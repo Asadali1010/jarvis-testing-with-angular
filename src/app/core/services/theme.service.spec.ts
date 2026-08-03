@@ -77,6 +77,7 @@ describe('ThemeService', () => {
     const themeService = configureThemeService('browser');
 
     themeService.setTheme('light');
+    TestBed.flushEffects();
 
     expect(themeService.theme()).toBe('light');
     expect(themeService.isLight()).toBe(true);
@@ -88,6 +89,7 @@ describe('ThemeService', () => {
     const themeService = configureThemeService('browser');
 
     themeService.setTheme('dark');
+    TestBed.flushEffects();
 
     expect(themeService.theme()).toBe('dark');
     expect(themeService.isDark()).toBe(true);

@@ -33,7 +33,7 @@ describe('FocusTrapDirective', () => {
 
     fixture = TestBed.createComponent(FocusTrapHostComponent);
     host = fixture.componentInstance;
-    container = fixture.nativeElement.querySelector('[appFocusTrap]');
+    container = fixture.nativeElement.querySelector('div');
     fixture.detectChanges();
   });
 

@@ -35,8 +35,24 @@ class InMemoryAuthStorage implements AuthStorage {
 describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let authStorage: InMemoryAuthStorage;
+  let storage: Record<string, string>;
 
   beforeEach(async () => {
+    storage = {};
+
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => storage[key] ?? null,
+      setItem: (key: string, value: string) => {
+        storage[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete storage[key];
+      },
+      clear: () => {
+        storage = {};
+      },
+    });
+
     authStorage = new InMemoryAuthStorage();
 
     await TestBed.configureTestingModule({
@@ -52,6 +68,7 @@ describe('DashboardComponent', () => {
     }).compileComponents();
 
     authStorage = TestBed.inject(AUTH_STORAGE) as InMemoryAuthStorage;
+    TestBed.inject(ActivityService).clear();
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
 
     fixture = TestBed.createComponent(DashboardComponent);
@@ -83,6 +100,8 @@ describe('DashboardComponent', () => {
   it('shows logged-in user information', () => {
     const userBlock = fixture.nativeElement.querySelector('.hero-user');
     expect(userBlock).toBeTruthy();
+    expect(getText('.hero-user-name')).toBe('Admin User');
+    expect(getText('.hero-user-avatar')).toBe('AU');
     expect(getText('.hero-user-email')).toBe(AUTH_CREDENTIALS.email);
   });
 
@@ -90,7 +109,7 @@ describe('DashboardComponent', () => {
     const cards = fixture.nativeElement.querySelectorAll('app-stat-card');
     expect(cards.length).toBe(5);
 
-    const titles = Array.from(cards).map((card) =>
+    const titles = (Array.from(cards) as Element[]).map((card) =>
       card.querySelector('.stat-card-title')?.textContent?.trim(),
     );
 
@@ -101,11 +120,18 @@ describe('DashboardComponent', () => {
       'New Users',
       'System Status',
     ]);
+
+    const systemStatusCard = cards[4];
+    expect(
+      systemStatusCard.querySelector('.stat-card-value')?.textContent?.trim(),
+    ).toBe('Operational');
   });
 
   it('renders quick action shortcuts', () => {
-    const links = Array.from(
-      fixture.nativeElement.querySelectorAll('.quick-action-label'),
+    const links = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.quick-action-label'),
+      ) as Element[]
     ).map((element) => element.textContent?.trim());
 
     expect(links).toEqual(['Add User', 'View Users', 'Edit Profile', 'Open Settings']);
@@ -115,7 +141,7 @@ describe('DashboardComponent', () => {
     const widgets = fixture.nativeElement.querySelectorAll('app-dashboard-widget');
     expect(widgets.length).toBe(4);
 
-    const widgetTitles = Array.from(widgets).map((widget) =>
+    const widgetTitles = (Array.from(widgets) as Element[]).map((widget) =>
       widget.querySelector('.dashboard-widget-title')?.textContent?.trim(),
     );
 

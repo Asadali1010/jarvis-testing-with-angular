@@ -10,6 +10,21 @@ describe('UserFormComponent', () => {
   let component: UserFormComponent;
 
   beforeEach(async () => {
+    const storage: Record<string, string> = {};
+
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => storage[key] ?? null,
+      setItem: (key: string, value: string) => {
+        storage[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete storage[key];
+      },
+      clear: () => {
+        Object.keys(storage).forEach((key) => delete storage[key]);
+      },
+    });
+
     await TestBed.configureTestingModule({
       imports: [UserFormComponent],
       providers: [
@@ -26,6 +41,7 @@ describe('UserFormComponent', () => {
 
   afterEach(() => {
     TestBed.inject(ActivityService).clear();
+    vi.unstubAllGlobals();
   });
 
   function getSubmitButton(): HTMLButtonElement {
@@ -38,8 +54,10 @@ describe('UserFormComponent', () => {
     getSubmitButton().click();
     fixture.detectChanges();
 
-    const errors = Array.from(
-      fixture.nativeElement.querySelectorAll('.field-error'),
+    const errors = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.field-error'),
+      ) as Element[]
     ).map((element) => element.textContent?.trim());
 
     expect(errors).toContain('First name is required.');
@@ -92,8 +110,10 @@ describe('UserFormComponent', () => {
     getSubmitButton().click();
     fixture.detectChanges();
 
-    const emailError = Array.from(
-      fixture.nativeElement.querySelectorAll('.field-error'),
+    const emailError = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.field-error'),
+      ) as Element[]
     ).find((element) => element.textContent?.includes('valid email'));
 
     expect(emailError?.textContent?.trim()).toBe('Enter a valid email address.');

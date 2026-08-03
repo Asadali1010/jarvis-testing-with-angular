@@ -10,11 +10,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
 
-import { SystemStatus, UserStats } from '../../core/models/user.model';
+import { UserStats } from '../../core/models/user.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { UserService } from '../../core/services/user.service';
+import {
+  formatSystemStatus,
+  formatUserDisplayName,
+  getUserInitials,
+  systemStatusLabel,
+} from '../../core/utils/user-display.util';
 import { StatTrendDirection } from './components/stat-card/stat-card.component';
 import { ActivityTimelineComponent } from './components/activity-timeline/activity-timeline.component';
 import { DashboardWidgetComponent } from './components/dashboard-widget/dashboard-widget.component';
@@ -52,9 +58,26 @@ export class DashboardComponent implements OnInit {
 
   readonly now = signal(new Date());
 
+  readonly formatSystemStatus = formatSystemStatus;
+  readonly systemStatusLabel = systemStatusLabel;
+  readonly formatUserDisplayName = formatUserDisplayName;
+  readonly getUserInitials = getUserInitials;
+
   readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
 
-  readonly statTrends = computed(() => this.buildStatTrends(this.stats()));
+  readonly heroAvatarFallback = computed(() => {
+    const email = this.currentUser()?.email;
+    return email ? email.charAt(0).toUpperCase() : '?';
+  });
+
+  readonly userOverview = computed(() => {
+    const currentStats = this.stats();
+    const activePercent = this.computeActivePercent(currentStats);
+    const inactivePercent = 100 - activePercent;
+    return { activePercent, inactivePercent, ...currentStats };
+  });
+
+  readonly statTrends = computed(() => this.buildStatTrends(this.userOverview()));
 
   readonly greeting = computed(() => {
     const hour = this.now().getHours();
@@ -83,77 +106,51 @@ export class DashboardComponent implements OnInit {
     const currentStats = this.stats();
     const activeLabel =
       currentStats.active === 1 ? 'active user' : 'active users';
-    return `${currentStats.total} team members · ${currentStats.active} ${activeLabel} · ${this.formatSystemStatus(currentStats.systemStatus)}`;
-  });
-
-  readonly userOverview = computed(() => {
-    const currentStats = this.stats();
-    const total = currentStats.total || 1;
-    const activePercent = Math.round((currentStats.active / total) * 100);
-    const inactivePercent = 100 - activePercent;
-    return { activePercent, inactivePercent, ...currentStats };
+    return `${currentStats.total} team members · ${currentStats.active} ${activeLabel} · ${formatSystemStatus(currentStats.systemStatus)}`;
   });
 
   ngOnInit(): void {
-    interval(1000)
+    interval(60_000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.now.set(new Date()));
   }
 
-  formatSystemStatus(status: SystemStatus): string {
-    switch (status) {
-      case 'operational':
-        return 'All systems operational';
-      case 'degraded':
-        return 'Performance degraded';
-      case 'maintenance':
-        return 'Maintenance mode';
-    }
+  private computeActivePercent(stats: UserStats): number {
+    const total = stats.total || 1;
+    return Math.round((stats.active / total) * 100);
   }
 
-  systemStatusLabel(status: SystemStatus): string {
-    switch (status) {
-      case 'operational':
-        return 'Operational';
-      case 'degraded':
-        return 'Degraded';
-      case 'maintenance':
-        return 'Maintenance';
-    }
-  }
-
-  private buildStatTrends(stats: UserStats): Record<
+  private buildStatTrends(
+    overview: UserStats & { activePercent: number; inactivePercent: number },
+  ): Record<
     'total' | 'active' | 'inactive' | 'newUsers' | 'systemStatus',
     StatTrend
   > {
-    const total = stats.total || 1;
-    const activePercent = Math.round((stats.active / total) * 100);
-
     return {
       total: {
-        label: `${stats.total} registered`,
+        label: `${overview.total} registered`,
         direction: 'neutral',
       },
       active: {
-        label: `${activePercent}% of team`,
-        direction: stats.active > stats.inactive ? 'up' : 'neutral',
+        label: `${overview.activePercent}% of team`,
+        direction: overview.active > overview.inactive ? 'up' : 'neutral',
       },
       inactive: {
         label:
-          stats.inactive === 0
+          overview.inactive === 0
             ? 'All users active'
-            : `${stats.inactive} not active`,
-        direction: stats.inactive > 0 ? 'down' : 'neutral',
+            : `${overview.inactive} not active`,
+        direction: overview.inactive > 0 ? 'down' : 'neutral',
       },
       newUsers: {
         label:
-          stats.newUsers === 0
+          overview.newUsers === 0
             ? 'None in last 30 days'
-            : `${stats.newUsers} in last 30 days`,
-        direction: stats.newUsers > 0 ? 'up' : 'neutral',
+            : `${overview.newUsers} in last 30 days`,
+        direction: overview.newUsers > 0 ? 'up' : 'neutral',
       },
       systemStatus: {
-        label: this.formatSystemStatus(stats.systemStatus),
+        label: formatSystemStatus(overview.systemStatus),
         direction: 'neutral',
       },
     };

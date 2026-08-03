@@ -97,6 +97,12 @@ describe('ProfileComponent', () => {
     fixture.detectChanges();
   }
 
+  async function clickEditProfileAndWait(): Promise<void> {
+    clickEditProfile();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
   function getProfileForm(): ProfileFormComponent {
     return fixture.debugElement.query(By.directive(ProfileFormComponent))
       .componentInstance as ProfileFormComponent;
@@ -109,6 +115,9 @@ describe('ProfileComponent', () => {
 
   it('displays profile avatar and name for the authenticated user', () => {
     expect(fixture.nativeElement.querySelector('.profile-avatar')).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('.profile-avatar-initials')?.textContent?.trim(),
+    ).toBe('AU');
     expect(fixture.nativeElement.querySelector('.profile-name')?.textContent?.trim()).toBe(
       'Admin User',
     );
@@ -157,8 +166,8 @@ describe('ProfileComponent', () => {
     );
   });
 
-  it('pre-fills the edit form with current profile values', () => {
-    clickEditProfile();
+  it('pre-fills the edit form with current profile values', async () => {
+    await clickEditProfileAndWait();
 
     const firstName = fixture.nativeElement.querySelector(
       '#profile-firstName',
@@ -185,8 +194,8 @@ describe('ProfileComponent', () => {
     );
   });
 
-  it('updates the displayed name after a successful save', () => {
-    clickEditProfile();
+  it('updates the displayed name after a successful save', async () => {
+    await clickEditProfileAndWait();
     getProfileForm().form.patchValue({ firstName: 'Updated' });
     submitProfileForm();
 
@@ -195,8 +204,8 @@ describe('ProfileComponent', () => {
     );
   });
 
-  it('shows a field error and stays in edit mode when phone is invalid', () => {
-    clickEditProfile();
+  it('shows a field error and stays in edit mode when phone is invalid', async () => {
+    await clickEditProfileAndWait();
     getProfileForm().form.patchValue({ phone: '123' });
     submitProfileForm();
 
@@ -204,8 +213,8 @@ describe('ProfileComponent', () => {
     expect(fixture.nativeElement.querySelector('app-profile-form')).toBeTruthy();
   });
 
-  it('shows a success banner after a successful save', () => {
-    clickEditProfile();
+  it('shows a success banner after a successful save', async () => {
+    await clickEditProfileAndWait();
     getProfileForm().form.patchValue({ firstName: 'Saved' });
     submitProfileForm();
 

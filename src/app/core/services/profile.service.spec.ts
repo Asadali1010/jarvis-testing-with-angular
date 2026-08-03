@@ -54,6 +54,7 @@ describe('ProfileService', () => {
       },
     });
 
+    TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       providers: [
         ProfileService,
@@ -65,7 +66,6 @@ describe('ProfileService', () => {
       ],
     });
 
-    service = TestBed.inject(ProfileService);
     authStorage = TestBed.inject(AUTH_STORAGE) as InMemoryAuthStorage;
     activityService = TestBed.inject(ActivityService);
     userService = TestBed.inject(UserService);
@@ -76,12 +76,18 @@ describe('ProfileService', () => {
     vi.unstubAllGlobals();
   });
 
+  function createService(): ProfileService {
+    return TestBed.inject(ProfileService);
+  }
+
   it('returns null when no user is authenticated', () => {
+    service = createService();
     expect(service.getProfileForCurrentUser()).toBeNull();
   });
 
   it('returns the seeded admin profile for the authenticated admin email', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     const profile = service.getProfileForCurrentUser();
 
@@ -99,6 +105,7 @@ describe('ProfileService', () => {
 
   it('returns a fallback profile for authenticated emails not in the user directory', () => {
     authStorage.setToken('mock-token', { email: 'unknown@example.com' });
+    service = createService();
 
     const profile = service.getProfileForCurrentUser();
 
@@ -110,6 +117,7 @@ describe('ProfileService', () => {
   });
 
   it('returns an error when updating while unauthenticated', () => {
+    service = createService();
     expect(
       service.updateProfileForCurrentUser({
         firstName: 'Alex',
@@ -124,6 +132,7 @@ describe('ProfileService', () => {
 
   it('updates a matched user profile', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     const result = service.updateProfileForCurrentUser({
       firstName: 'Alex',
@@ -152,6 +161,7 @@ describe('ProfileService', () => {
 
   it('rejects invalid phone numbers', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     expect(
       service.updateProfileForCurrentUser({
@@ -167,6 +177,7 @@ describe('ProfileService', () => {
 
   it('rejects empty first name', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     expect(
       service.updateProfileForCurrentUser({
@@ -182,6 +193,7 @@ describe('ProfileService', () => {
 
   it('rejects oversized bio input', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     expect(
       service.updateProfileForCurrentUser({
@@ -198,6 +210,7 @@ describe('ProfileService', () => {
 
   it('creates a real user when updating a fallback profile', () => {
     authStorage.setToken('mock-token', { email: 'unknown@example.com' });
+    service = createService();
 
     const result = service.updateProfileForCurrentUser({
       firstName: 'New',
@@ -215,6 +228,7 @@ describe('ProfileService', () => {
 
   it('records a profile_change activity on successful update', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     service.updateProfileForCurrentUser({
       firstName: 'Activity',
@@ -228,6 +242,7 @@ describe('ProfileService', () => {
 
   it('clears optional fields when empty strings are submitted', () => {
     authStorage.setToken('mock-token', { email: AUTH_CREDENTIALS.email });
+    service = createService();
 
     const result = service.updateProfileForCurrentUser({
       firstName: 'Admin',

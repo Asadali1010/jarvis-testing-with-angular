@@ -13,15 +13,11 @@
         @if (currentUser(); as user) {
           <div class="hero-user" aria-label="Logged-in user">
             <span class="hero-user-avatar" aria-hidden="true">
-              {{ user.email.charAt(0).toUpperCase() }}
+              {{ getUserInitials(profileUser(), heroAvatarFallback()) }}
             </span>
             <div class="hero-user-details">
               <span class="hero-user-name">
-                @if (profileUser(); as profile) {
-                  {{ profile.firstName }} {{ profile.lastName }}
-                } @else {
-                  {{ user.email }}
-                }
+                {{ formatUserDisplayName(profileUser(), user.email) }}
               </span>
               <span class="hero-user-email">{{ user.email }}</span>
             </div>
