@@ -68,6 +68,7 @@ describe('SettingsService', () => {
 
   it('persists appearance updates to localStorage', () => {
     service.updateAppearance({ theme: 'dark', compactMode: true });
+    TestBed.flushEffects();
 
     expect(service.appearance()).toEqual({
       ...DEFAULT_APP_SETTINGS.appearance,

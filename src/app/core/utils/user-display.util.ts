@@ -7,18 +7,26 @@ export const USER_ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'viewer', label: 'Viewer' },
 ];
 
-const USER_ROLE_LABELS: Record<UserRole, string> = {
-  admin: 'Administrator',
-  manager: 'Manager',
-  user: 'User',
-  viewer: 'Viewer',
-};
+const USER_ROLE_LABELS: Record<UserRole, string> = Object.fromEntries(
+  USER_ROLE_OPTIONS.map(({ value, label }) => [value, label]),
+) as Record<UserRole, string>;
 
 export function formatUserRole(role?: UserRole): string {
   if (!role) {
     return '—';
   }
   return USER_ROLE_LABELS[role];
+}
+
+export function formatUserDisplayName(
+  user: Pick<User, 'firstName' | 'lastName'> | null | undefined,
+  fallback = '',
+): string {
+  if (!user) {
+    return fallback;
+  }
+  const displayName = `${user.firstName} ${user.lastName}`.trim();
+  return displayName || fallback;
 }
 
 export function getUserInitials(

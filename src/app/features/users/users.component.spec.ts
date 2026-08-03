@@ -48,9 +48,11 @@ describe('UsersComponent', () => {
   });
 
   function getTableHeaders(): string[] {
-    return Array.from(
-      fixture.nativeElement.querySelectorAll('.users-table thead th .sort-btn'),
-    ).map((el: Element) => el.textContent?.trim().replace(/[↑↓]/g, '').trim() ?? '');
+    return (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.users-table thead th .sort-btn'),
+      ) as Element[]
+    ).map((el) => el.textContent?.trim().replace(/[↑↓]/g, '').trim() ?? '');
   }
 
   it('renders a responsive data table with required columns', () => {
@@ -91,7 +93,11 @@ describe('UsersComponent', () => {
 
     let rows = fixture.nativeElement.querySelectorAll('.users-table tbody tr');
     expect(rows.length).toBeGreaterThan(0);
-    expect(Array.from(rows).every((row) => row.textContent?.includes('Inactive'))).toBe(true);
+    expect(
+      (Array.from(rows) as Element[]).every((row) =>
+        row.textContent?.includes('Inactive'),
+      ),
+    ).toBe(true);
 
     fixture.componentInstance.onFilterChange('role', 'user');
     fixture.detectChanges();
@@ -102,15 +108,19 @@ describe('UsersComponent', () => {
   });
 
   it('supports column sorting in both directions', () => {
-    const emailSortBtn = Array.from(
-      fixture.nativeElement.querySelectorAll('.sort-btn'),
-    ).find((btn: Element) => btn.textContent?.includes('Email')) as HTMLButtonElement;
+    const emailSortBtn = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.sort-btn'),
+      ) as HTMLButtonElement[]
+    ).find((btn) => btn.textContent?.includes('Email'))!;
 
     emailSortBtn.click();
     fixture.detectChanges();
 
-    let emails = Array.from(
-      fixture.nativeElement.querySelectorAll('.users-table tbody tr td:nth-child(5)'),
+    let emails = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.users-table tbody tr td:nth-child(5)'),
+      ) as Element[]
     ).map((cell) => cell.textContent?.trim());
 
     const ascending = [...emails].sort();
@@ -119,8 +129,10 @@ describe('UsersComponent', () => {
     emailSortBtn.click();
     fixture.detectChanges();
 
-    emails = Array.from(
-      fixture.nativeElement.querySelectorAll('.users-table tbody tr td:nth-child(5)'),
+    emails = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.users-table tbody tr td:nth-child(5)'),
+      ) as Element[]
     ).map((cell) => cell.textContent?.trim());
 
     const descending = [...emails].sort().reverse();
@@ -177,9 +189,11 @@ describe('UsersComponent', () => {
     fixture.componentInstance.closeDialog();
     fixture.detectChanges();
 
-    const editBtn = Array.from(
-      fixture.nativeElement.querySelectorAll('.btn-icon'),
-    ).find((btn: Element) => btn.textContent?.trim() === 'Edit') as HTMLButtonElement;
+    const editBtn = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.btn-icon'),
+      ) as HTMLButtonElement[]
+    ).find((btn) => btn.textContent?.trim() === 'Edit')!;
     editBtn.click();
     fixture.detectChanges();
 
@@ -188,9 +202,11 @@ describe('UsersComponent', () => {
   });
 
   it('shows delete confirmation dialog', () => {
-    const deleteBtn = Array.from(
-      fixture.nativeElement.querySelectorAll('.btn-icon-danger'),
-    )[0] as HTMLButtonElement;
+    const deleteBtn = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.btn-icon-danger'),
+      ) as HTMLButtonElement[]
+    )[0];
     deleteBtn.click();
     fixture.detectChanges();
 

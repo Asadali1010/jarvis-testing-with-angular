@@ -104,6 +104,7 @@ describe('ActivityService', () => {
 
   it('persists activities to localStorage under app.activities', () => {
     service.recordLogin('Alex Johnson', 'user-1');
+    TestBed.flushEffects();
 
     const stored = JSON.parse(storage[ACTIVITIES_STORAGE_KEY] ?? '[]');
 
@@ -114,6 +115,7 @@ describe('ActivityService', () => {
   it('loads persisted activities after service re-instantiation', () => {
     service.recordLogin('Alex Johnson', 'user-1');
     service.recordUserCreate('Maria Chen', 'user-2');
+    TestBed.flushEffects();
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -132,9 +134,11 @@ describe('ActivityService', () => {
 
   it('clear removes persisted activities from localStorage', () => {
     service.recordLogin('Alex Johnson');
+    TestBed.flushEffects();
     expect(storage[ACTIVITIES_STORAGE_KEY]).toBeDefined();
 
     service.clear();
+    TestBed.flushEffects();
 
     expect(service.activities()).toEqual([]);
     expect(storage[ACTIVITIES_STORAGE_KEY]).toBeUndefined();
@@ -144,6 +148,7 @@ describe('ActivityService', () => {
     for (let index = 0; index < 105; index += 1) {
       service.recordLogin(`User ${index}`);
     }
+    TestBed.flushEffects();
 
     const stored = JSON.parse(storage[ACTIVITIES_STORAGE_KEY] ?? '[]');
 

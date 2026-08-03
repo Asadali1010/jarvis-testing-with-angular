@@ -2,6 +2,7 @@ import { UserRole } from '../models/user.model';
 import {
   USER_ROLE_OPTIONS,
   formatSystemStatus,
+  formatUserDisplayName,
   formatUserRole,
   getUserInitials,
   systemStatusLabel,
@@ -19,15 +20,33 @@ describe('user-display.util', () => {
   });
 
   describe('formatUserRole', () => {
-    it('returns a label for each role', () => {
-      expect(formatUserRole('admin')).toBe('Administrator');
-      expect(formatUserRole('manager')).toBe('Manager');
-      expect(formatUserRole('user')).toBe('User');
-      expect(formatUserRole('viewer')).toBe('Viewer');
+    it('returns labels derived from USER_ROLE_OPTIONS', () => {
+      for (const option of USER_ROLE_OPTIONS) {
+        expect(formatUserRole(option.value)).toBe(option.label);
+      }
     });
 
     it('returns an em dash when role is missing', () => {
       expect(formatUserRole(undefined)).toBe('—');
+    });
+  });
+
+  describe('formatUserDisplayName', () => {
+    it('returns first and last name joined', () => {
+      expect(
+        formatUserDisplayName({ firstName: 'Jane', lastName: 'Doe' }),
+      ).toBe('Jane Doe');
+    });
+
+    it('returns the fallback when user is missing', () => {
+      expect(formatUserDisplayName(null)).toBe('');
+      expect(formatUserDisplayName(undefined, 'User')).toBe('User');
+    });
+
+    it('returns the fallback when names are blank', () => {
+      expect(
+        formatUserDisplayName({ firstName: ' ', lastName: '' }, 'Guest'),
+      ).toBe('Guest');
     });
   });
 

@@ -102,6 +102,9 @@ export class ActivityService {
 
   clear(): void {
     this.events.set([]);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(ACTIVITIES_STORAGE_KEY);
+    }
   }
 
   private loadActivities(): ActivityEvent[] {

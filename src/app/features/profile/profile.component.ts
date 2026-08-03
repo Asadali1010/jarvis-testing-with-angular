@@ -3,6 +3,7 @@ import { Component, computed, inject, signal, viewChild } from '@angular/core';
 
 import { User } from '../../core/models/user.model';
 import {
+  formatUserDisplayName,
   formatUserRole,
   getUserInitials,
 } from '../../core/utils/user-display.util';
@@ -31,10 +32,9 @@ export class ProfileComponent {
     null,
   );
 
-  readonly displayName = computed(() => {
-    const user = this.profile();
-    return user ? `${user.firstName} ${user.lastName}` : 'User';
-  });
+  readonly displayName = computed(() =>
+    formatUserDisplayName(this.profile(), 'User'),
+  );
 
   readonly avatarInitials = computed(() =>
     getUserInitials(this.profile(), 'U'),

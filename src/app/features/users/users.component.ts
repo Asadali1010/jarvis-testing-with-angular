@@ -262,7 +262,7 @@ export class UsersComponent implements OnInit {
     this.formError.set(null);
   }
 
-  onUserSaved(): void {
+  onUserSaved(_user: User): void {
     this.closeDialog();
     this.clearSelection();
   }

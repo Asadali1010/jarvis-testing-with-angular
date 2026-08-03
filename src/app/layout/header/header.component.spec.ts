@@ -8,6 +8,7 @@ import { AUTH_STORAGE, AuthStorage, AuthUser } from '../../core/services/auth-st
 import { AuthService } from '../../core/services/auth.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { UserService } from '../../core/services/user.service';
 import { HeaderComponent } from './header.component';
 
 class InMemoryAuthStorage implements AuthStorage {
@@ -38,10 +39,26 @@ describe('HeaderComponent', () => {
   let authStorage: InMemoryAuthStorage;
 
   beforeEach(async () => {
+    const storage: Record<string, string> = {};
+
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => storage[key] ?? null,
+      setItem: (key: string, value: string) => {
+        storage[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete storage[key];
+      },
+      clear: () => {
+        Object.keys(storage).forEach((key) => delete storage[key]);
+      },
+    });
+
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [
         AuthService,
+        UserService,
         SettingsService,
         ActivityService,
         ThemeService,
@@ -56,6 +73,10 @@ describe('HeaderComponent', () => {
 
     fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('exposes accessible labels on icon action buttons', () => {
@@ -77,11 +98,11 @@ describe('HeaderComponent', () => {
     themeService.setTheme('light');
     fixture.detectChanges();
 
-    const themeButton = Array.from(
-      fixture.nativeElement.querySelectorAll('.header-actions .icon-button'),
-    ).find((button) =>
-      button.getAttribute('aria-label')?.includes('mode'),
-    ) as HTMLButtonElement;
+    const themeButton = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.header-actions .icon-button'),
+      ) as HTMLButtonElement[]
+    ).find((button) => button.getAttribute('aria-label')?.includes('mode'))!;
 
     expect(themeButton.getAttribute('aria-label')).toBe('Switch to dark mode');
 
@@ -104,5 +125,13 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
 
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('shows profile display name and initials via shared display helpers', () => {
+    const avatar = fixture.nativeElement.querySelector('.user-avatar');
+    const emailLabel = fixture.nativeElement.querySelector('.user-email');
+
+    expect(avatar?.textContent?.trim()).toBe('AU');
+    expect(emailLabel?.textContent?.trim()).toBe('Admin User');
   });
 });

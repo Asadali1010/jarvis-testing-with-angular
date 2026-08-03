@@ -95,8 +95,10 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const errors = Array.from(
-      fixture.nativeElement.querySelectorAll('.field-error'),
+    const errors = (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.field-error'),
+      ) as Element[]
     ).map((element) => element.textContent?.trim());
 
     expect(errors).toContain('Email is required.');

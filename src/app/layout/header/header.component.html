@@ -69,9 +69,11 @@
         (click)="toggleUserMenu()"
       >
         <span class="user-avatar" aria-hidden="true">
-          {{ currentUser()?.email?.charAt(0)?.toUpperCase() ?? 'U' }}
+          {{ getUserInitials(profileUser(), avatarFallback()) }}
         </span>
-        <span class="user-email">{{ currentUser()?.email ?? 'User' }}</span>
+        <span class="user-email">
+          {{ formatUserDisplayName(profileUser(), currentUser()?.email ?? 'User') }}
+        </span>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M7 10l5 5 5-5H7z" />
         </svg>

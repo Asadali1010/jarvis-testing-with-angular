@@ -3,6 +3,7 @@ import { Component, computed, input, output } from '@angular/core';
 
 import { User } from '../../../../core/models/user.model';
 import {
+  formatUserDisplayName,
   formatUserRole,
   getUserInitials,
 } from '../../../../core/utils/user-display.util';
@@ -218,10 +219,7 @@ export class UserDetailComponent {
   readonly closed = output<void>();
   readonly editRequested = output<User>();
 
-  readonly displayName = computed(() => {
-    const u = this.user();
-    return u ? `${u.firstName} ${u.lastName}` : '';
-  });
+  readonly displayName = computed(() => formatUserDisplayName(this.user()));
 
   readonly initials = computed(() => getUserInitials(this.user()));
 

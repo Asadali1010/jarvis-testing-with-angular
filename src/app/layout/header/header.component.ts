@@ -4,6 +4,7 @@ import {
   ElementRef,
   HostListener,
   PLATFORM_ID,
+  computed,
   inject,
   output,
   signal,
@@ -13,7 +14,12 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { ProfileService } from '../../core/services/profile.service';
 import { ThemeService } from '../../core/services/theme.service';
+import {
+  formatUserDisplayName,
+  getUserInitials,
+} from '../../core/utils/user-display.util';
 
 const PAGE_TITLES: Record<string, string> = {
   dashboard: 'Dashboard',
@@ -31,6 +37,7 @@ const PAGE_TITLES: Record<string, string> = {
 export class HeaderComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly profileService = inject(ProfileService);
   private readonly themeService = inject(ThemeService);
   private readonly elementRef = inject(ElementRef);
   private readonly platformId = inject(PLATFORM_ID);
@@ -39,6 +46,14 @@ export class HeaderComponent {
   readonly userMenuOpen = signal(false);
   readonly isDark = this.themeService.isDark;
   readonly currentUser = this.authService.currentUser;
+  readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
+  readonly formatUserDisplayName = formatUserDisplayName;
+  readonly getUserInitials = getUserInitials;
+
+  readonly avatarFallback = computed(() => {
+    const email = this.currentUser()?.email;
+    return email ? email.charAt(0).toUpperCase() : 'U';
+  });
 
   readonly pageTitle = toSignal(
     this.router.events.pipe(
