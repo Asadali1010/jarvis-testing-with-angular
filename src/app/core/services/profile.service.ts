@@ -60,6 +60,7 @@ export class ProfileService {
           role: profile.role,
           department: profile.department,
           status: profile.status,
+          avatar: input.avatar,
           address: normalized.address,
           bio: normalized.bio,
           company: normalized.company,
@@ -86,6 +87,7 @@ export class ProfileService {
         address: normalized.address,
         bio: normalized.bio,
         company: normalized.company,
+        avatar: input.avatar,
       },
       { skipActivity: true },
     );

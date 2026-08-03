@@ -105,6 +105,63 @@ describe('ProfileFormComponent', () => {
     );
   });
 
+  it('handles valid image upload', async () => {
+    const file = new File(['(fake-image-binary)'], 'test.png', { type: 'image/png' });
+    const input = fixture.nativeElement.querySelector('input[type="file"]');
+    
+    // Mocking HTMLInputElement.files is tricky, we call onFileSelected directly or simulate event
+    const event = { target: { files: [file] } } as any;
+    component.onFileSelected(event);
+    fixture.detectChanges();
+
+    expect(component.previewUrl()).toBeTruthy();
+    expect(component.avatarError()).toBeNull();
+  });
+
+  it('rejects invalid image formats', () => {
+    const file = new File(['(fake-text-binary)'], 'test.txt', { type: 'text/plain' });
+    const event = { target: { files: [file] } } as any;
+    component.onFileSelected(event);
+    fixture.detectChanges();
+
+    expect(component.previewUrl()).toBeNull();
+    expect(component.avatarError()).toBe('Unsupported file format. Please use JPG, JPEG, PNG, or WEBP.');
+  });
+
+  it('rejects oversized images', () => {
+    const largeFile = new File(['a'.repeat(3 * 1024 * 1024)], 'large.png', { type: 'image/png' });
+    const event = { target: { files: [largeFile] } } as any;
+    component.onFileSelected(event);
+    fixture.detectChanges();
+
+    expect(component.previewUrl()).toBeNull();
+    expect(component.avatarError()).toBe('Image size must be 2MB or less.');
+  });
+
+  it('removes image when removeImage is called', () => {
+    component.previewUrl.set('some-url');
+    component.removeImage();
+    fixture.detectChanges();
+
+    expect(component.previewUrl()).toBeNull();
+  });
+
+  it('includes avatar in profile update on submit', () => {
+    const savedSpy = vi.fn();
+    component.saved.subscribe(savedSpy);
+
+    component.previewUrl.set('data:image/png;base64,mock');
+    component.form.patchValue({ firstName: 'AvatarUser' });
+    component.onSubmit();
+
+    expect(savedSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ 
+        firstName: 'AvatarUser',
+        avatar: 'data:image/png;base64,mock' 
+      }),
+    );
+  });
+
   it('emits saved when the form submits valid changes', () => {
     const savedSpy = vi.fn();
     component.saved.subscribe(savedSpy);
