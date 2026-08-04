@@ -1,0 +1,134 @@
+{
+  "overallScore": 60.0,
+  "verdict": "request-changes",
+  "summary": "KAN-92 adds profile image upload UI, client-side validation, persistence via ProfileService/UserService, and unit tests in profile-form.component.spec.ts. The provided branch diff (origin/main...main) is empty because the feature was already merged (PR #45, commits 9e902d0/c2e1ec9). Two blockers prevent shipping: Header and Sidebar templates bind to non-existent User.avatarUrl instead of User.avatar, so uploaded images never appear outside the Profile page; and removing an avatar clears the preview but does not persist because updateUser keeps the existing avatar when input.avatar is undefined.",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 58,
+      "gaps": [
+        "AC 'Profile image is shown in the Header, Sidebar, and Profile page' fails for Header/Sidebar: templates use profileUser()?.avatarUrl but User defines avatar (user.model.ts:14).",
+        "AC 'User can update or remove the existing profile image' \u2014 remove does not persist: profile-form sends avatar: undefined on save (profile-form.component.ts:423) and user.service updateUser retains existing.avatar (user.service.ts:218).",
+        "Provided git diff origin/main...main is empty; review based on merged commits 9e902d0 and c2e1ec9 on main."
+      ],
+      "evidence": [
+        "profile-form.component.ts:36-48 file input accept + Change Image / Remove Image controls.",
+        "profile-form.component.ts:374-382 MIME type and 2MB size validation with avatarError messages.",
+        "profile.component.html:29-30 displays user.avatar on Profile page.",
+        "header.component.html:72-73 and sidebar.component.html:10-11 reference avatarUrl.",
+        "profile.service.ts:63,90 passes input.avatar to userService create/update."
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 42,
+      "gaps": [
+        "Property mismatch avatarUrl vs avatar guarantees Header/Sidebar avatar img branch never renders (TypeScript User has no avatarUrl).",
+        "Avatar removal sends undefined; merge logic avatar: input.avatar ?? existing.avatar prevents clearing stored avatar."
+      ],
+      "evidence": [
+        "grep avatarUrl: only header.component.html and sidebar.component.html; User model field is avatar.",
+        "profile-form.component.ts:392-394 removeImage() sets previewUrl null without marking avatar for deletion.",
+        "user.service.ts:218 avatar: input.avatar ?? existing.avatar in updateUser merge."
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 72,
+      "gaps": [
+        "Large base64 avatar strings in localStorage may impact users list payload size; no size cap at service layer."
+      ],
+      "evidence": [
+        "Changes localized to profile-form, profile.service, header/sidebar templates (KAN-92 commit 9e902d0).",
+        "Follow-up c2e1ec9 only adds avatar passthrough to ProfileService; no unrelated module changes.",
+        "Existing header initials fallback still works when avatarUrl condition is falsy."
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 62,
+      "gaps": [
+        "No tests assert Header/Sidebar render uploaded avatar (header.component.spec.ts still expects initials 'AU').",
+        "No test for remove-then-save clearing persisted avatar.",
+        "profile.service.spec.ts has no avatar persistence cases.",
+        "npm test not executed in review environment (npm unavailable)."
+      ],
+      "evidence": [
+        "profile-form.component.spec.ts:108-163 covers upload, invalid format, oversized, remove preview, avatar on submit.",
+        "header.component.spec.ts:130-135 expects initials only, not img.avatar-img."
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 52,
+      "gaps": [
+        "Inconsistent avatar property naming: profile page uses avatar, layout uses avatarUrl.",
+        "profile-form avatar section classes (profile-avatar-section, avatar-container, btn-secondary) have no styles in component styles block (profile-form.component.ts:206-323).",
+        "No CSS rules for .avatar-img or .sidebar-avatar referenced in layout templates."
+      ],
+      "evidence": [
+        "users.component.html:177 uses user.avatar consistently with model.",
+        "profile-form.component.ts inline template references btn-secondary/btn-text but styles array omits avatar/button rules."
+      ]
+    },
+    {
+      "id": "security",
+      "score": 78,
+      "gaps": [
+        "Validation relies on file.type MIME only; no magic-byte or content sniffing (acceptable for client-only demo but spoofable)."
+      ],
+      "evidence": [
+        "profile-form.component.ts:374-377 allowedTypes MIME check only.",
+        "Avatar stored as data URL in localStorage via user.service persistUsers; no external upload endpoint."
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 85,
+      "gaps": [
+        "2MB size limit and supported formats not documented outside inline error strings."
+      ],
+      "evidence": [
+        "Ticket has no docs/logging AC; generic success banner in profile.component.ts:65-68."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Blocker",
+      "title": "Header and Sidebar bind avatarUrl instead of avatar",
+      "detail": "User model exposes avatar?: string but header.component.html:72-73 and sidebar.component.html:10-11 check profileUser()?.avatarUrl. Uploaded images persist on User.avatar and display on Profile page only.",
+      "path": "src/app/layout/header/header.component.html"
+    },
+    {
+      "severity": "Major",
+      "title": "Remove avatar does not persist on save",
+      "detail": "removeImage() clears previewUrl; onSubmit passes avatar: this.previewUrl() || undefined. updateUser merge uses input.avatar ?? existing.avatar, so removed avatars reappear after save/refresh.",
+      "path": "src/app/features/profile/components/profile-form/profile-form.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "Avatar upload UI lacks component styles",
+      "detail": "Template uses profile-avatar-section, avatar-container, btn-secondary, sr-only but inline styles omit rules; may affect mobile/desktop layout polish.",
+      "path": "src/app/features/profile/components/profile-form/profile-form.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "Layout avatar image CSS missing",
+      "detail": "Templates reference class avatar-img and sidebar-avatar but no matching rules in header.component.css or sidebar.component.css.",
+      "path": "src/app/layout/header/header.component.css"
+    }
+  ],
+  "checklist": [
+    "Fix header.component.html and sidebar.component.html to use profileUser()?.avatar (match user.model.ts).",
+    "Support explicit avatar removal: pass null/empty sentinel or use 'avatar' in input merge like address/bio fields in user.service.ts updateUser.",
+    "Add CSS for .avatar-img, .sidebar-avatar, and profile-form avatar section.",
+    "Add header/sidebar spec assertions that img renders when user.avatar is set.",
+    "Re-run npm test on Node >=22 after fixes."
+  ],
+  "ticket": {
+    "key": "KAN-92"
+  },
+  "branch": "main",
+  "base": "origin/main"
+}
