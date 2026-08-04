@@ -101,6 +101,26 @@ describe('UserService', () => {
     });
   });
 
+  it('clears avatar when explicitly removed', () => {
+    const created = service.createUser({
+      ...validUser,
+      avatar: 'data:image/png;base64,test',
+    });
+    expect(created.success).toBe(true);
+    if (!created.success) {
+      return;
+    }
+
+    expect(created.user.avatar).toBe('data:image/png;base64,test');
+
+    const updated = service.updateUser(created.user.id, { avatar: undefined });
+    expect(updated.success).toBe(true);
+    if (updated.success) {
+      expect(updated.user.avatar).toBeUndefined();
+      expect(service.getUserById(created.user.id)?.avatar).toBeUndefined();
+    }
+  });
+
   it('updates and deletes users', () => {
     const created = service.createUser(validUser);
     expect(created.success).toBe(true);

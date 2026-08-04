@@ -22,5 +22,29 @@
     "reportPath": "/app/.jarvis/users/13a8d49b-5fea-48a6-bbc8-3c3ed0aeae07/repos/Asadali1010__jarvis-testing-with-angular/.jarvis/jira-reviews/KAN-90-feature_KAN-90-code-review-optimization-1785754396.json",
     "ok": true,
     "ts": 1785754396
+  },
+  {
+    "kind": "review",
+    "key": "KAN-92",
+    "summary": "user should be able to add image to profile section",
+    "title": "KAN-92: user should be able to add image to profile section",
+    "branch": "feature/sure-kan-92-perfectly",
+    "overallScore": 87.0,
+    "verdict": "approve",
+    "reportPath": "/app/.jarvis/users/13a8d49b-5fea-48a6-bbc8-3c3ed0aeae07/repos/Asadali1010__jarvis-testing-with-angular/.jarvis/jira-reviews/KAN-92-feature_sure-kan-92-perfectly-1785836812.json",
+    "ok": true,
+    "ts": 1785836812
+  },
+  {
+    "kind": "review",
+    "key": "KAN-92",
+    "summary": "user should be able to add image to profile section",
+    "title": "KAN-92: user should be able to add image to profile section",
+    "branch": "feature/sure-kan-92-perfectly",
+    "overallScore": 86.0,
+    "verdict": "approve",
+    "reportPath": "/app/.jarvis/users/13a8d49b-5fea-48a6-bbc8-3c3ed0aeae07/repos/Asadali1010__jarvis-testing-with-angular/.jarvis/jira-reviews/KAN-92-feature_sure-kan-92-perfectly-1785836877.json",
+    "ok": true,
+    "ts": 1785836877
   }
 ]

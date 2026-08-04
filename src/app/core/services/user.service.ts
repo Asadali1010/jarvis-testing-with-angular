@@ -215,7 +215,7 @@ export class UserService {
       role: input.role ?? existing.role,
       department: input.department ?? existing.department,
       status: input.status ?? existing.status,
-      avatar: input.avatar ?? existing.avatar,
+      avatar: 'avatar' in input ? input.avatar : existing.avatar,
       address: 'address' in input ? input.address : existing.address,
       bio: 'bio' in input ? input.bio : existing.bio,
       company: 'company' in input ? input.company : existing.company,

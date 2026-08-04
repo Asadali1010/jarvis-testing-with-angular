@@ -162,6 +162,28 @@ describe('ProfileFormComponent', () => {
     );
   });
 
+  it('clears avatar when image is removed and form is saved', () => {
+    const userWithAvatar = {
+      ...adminProfile,
+      avatar: 'data:image/png;base64,existing',
+    };
+    fixture.componentRef.setInput('user', userWithAvatar);
+    component.patchFromUser(userWithAvatar);
+    fixture.detectChanges();
+
+    const savedSpy = vi.fn();
+    component.saved.subscribe(savedSpy);
+
+    component.removeImage();
+    component.onSubmit();
+
+    expect(savedSpy).toHaveBeenCalled();
+    expect(savedSpy.mock.calls[0][0].avatar).toBeUndefined();
+    expect(
+      TestBed.inject(UserService).getUserById(userWithAvatar.id)?.avatar,
+    ).toBeUndefined();
+  });
+
   it('emits saved when the form submits valid changes', () => {
     const savedSpy = vi.fn();
     component.saved.subscribe(savedSpy);
