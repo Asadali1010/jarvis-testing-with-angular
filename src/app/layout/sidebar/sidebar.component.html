@@ -7,8 +7,8 @@
 >
   <div class="sidebar-header">
     <div class="sidebar-brand-container">
-      @if (profileUser()?.avatarUrl) {
-        <img [src]="profileUser()!.avatarUrl" alt="" class="sidebar-avatar">
+      @if (profileUser()?.avatar) {
+        <img [src]="profileUser()!.avatar" alt="" class="sidebar-avatar">
       } @else {
         <span class="sidebar-brand">Jarvis</span>
       }

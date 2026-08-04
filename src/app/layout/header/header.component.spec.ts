@@ -134,4 +134,22 @@ describe('HeaderComponent', () => {
     expect(avatar?.textContent?.trim()).toBe('AU');
     expect(emailLabel?.textContent?.trim()).toBe('Admin User');
   });
+
+  it('renders avatar image when user has avatar', () => {
+    const userService = TestBed.inject(UserService);
+    const admin = userService
+      .users()
+      .find((user) => user.email === AUTH_CREDENTIALS.email);
+
+    expect(admin).toBeTruthy();
+    userService.updateUser(admin!.id, {
+      avatar: 'data:image/png;base64,header-test',
+    });
+    fixture.detectChanges();
+
+    const img = fixture.nativeElement.querySelector('img.avatar-img') as HTMLImageElement;
+
+    expect(img).toBeTruthy();
+    expect(img.getAttribute('src')).toBe('data:image/png;base64,header-test');
+  });
 });

@@ -314,6 +314,96 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
         color: var(--color-danger);
       }
 
+      .profile-avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .avatar-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 5rem;
+        height: 5rem;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--color-primary) 20%, var(--color-bg-muted)),
+          var(--color-bg-muted)
+        );
+        overflow: hidden;
+      }
+
+      .avatar-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-placeholder {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-primary);
+      }
+
+      .avatar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .avatar-actions .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-bg-muted);
+        color: var(--color-text);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .avatar-actions .btn-secondary:hover {
+        background: var(--color-bg);
+      }
+
+      .btn-text {
+        padding: 0;
+        border: none;
+        background: transparent;
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-danger {
+        color: var(--color-danger);
+      }
+
+      .btn-danger:hover {
+        text-decoration: underline;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       .form-actions {
         display: flex;
         justify-content: flex-end;
@@ -420,7 +510,7 @@ export class ProfileFormComponent {
       address: value.address.trim() || undefined,
       bio: value.bio.trim() || undefined,
       company: value.company.trim() || undefined,
-      avatar: this.previewUrl() || undefined,
+      avatar: this.previewUrl() ?? undefined,
     });
 
     if (result.success) {

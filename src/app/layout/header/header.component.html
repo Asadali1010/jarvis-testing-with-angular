@@ -69,8 +69,8 @@
         (click)="toggleUserMenu()"
       >
         <span class="user-avatar" aria-hidden="true">
-          @if (profileUser()?.avatarUrl) {
-            <img [src]="profileUser()!.avatarUrl" alt="" class="avatar-img">
+          @if (profileUser()?.avatar) {
+            <img [src]="profileUser()!.avatar" alt="" class="avatar-img">
           } @else {
             {{ getUserInitials(profileUser(), avatarFallback()) }}
           }
