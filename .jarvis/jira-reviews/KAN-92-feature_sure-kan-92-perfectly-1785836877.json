@@ -1,0 +1,166 @@
+{
+  "overallScore": 86.0,
+  "verdict": "approve",
+  "summary": "KAN-92 branch closes the remaining gaps for profile image upload: Header/Sidebar now bind User.avatar (fixing broken avatarUrl references on main), avatar removal persists via 'avatar' in input merge in user.service.ts and previewUrl() ?? undefined in profile-form, and avatar-section CSS is added. Together with existing upload/validation/preview logic on the branch, all eight ACs are satisfied. Minor gaps: no sidebar avatar spec, MIME-only validation, npm test blocked by Node v20 in review env.",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 90,
+      "gaps": [
+        "Success feedback appears on profile save (profile.component.ts:64-68), not immediately on file pick; aligns with save-to-persist workflow but is indirect for 'upload actions' AC wording.",
+        "Mobile/desktop AC has no explicit responsive or viewport test coverage."
+      ],
+      "evidence": [
+        "profile-form.component.ts:36-48 file input accept .jpg,.jpeg,.png,.webp and Change Image control.",
+        "profile-form.component.ts:464-472 MIME validation and 2MB cap with avatarError role=alert.",
+        "profile-form.component.ts:482-484 removeImage() clears preview; onSubmit passes avatar: previewUrl() ?? undefined.",
+        "header.component.html:72-73 and sidebar.component.html:10-11 bind profileUser()?.avatar (diff).",
+        "profile.component.html:29-30 displays user.avatar on Profile page.",
+        "user.service.ts:684-689 persistUsers writes users (including avatar) to localStorage."
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 88,
+      "gaps": [
+        "File input value is not reset after selection; re-selecting the same file may not fire change (profile-form.component.ts:457-479)."
+      ],
+      "evidence": [
+        "user.service.ts:218 avatar: 'avatar' in input ? input.avatar : existing.avatar allows explicit undefined to clear avatar.",
+        "profile-form.component.ts:513 ?? operator ensures null previewUrl becomes undefined (not skipped like || on main).",
+        "profile-form.component.ts:475-478 FileReader sets previewUrl immediately on valid upload.",
+        "profile.service.ts:63,90 passes input.avatar through to UserService create/update."
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 85,
+      "gaps": [
+        "Large base64 avatars stored in localStorage may inflate app.users payload; no server-side size guard beyond client 2MB check."
+      ],
+      "evidence": [
+        "Diff touches 9 files: user.service, profile-form, header, sidebar (+ specs/CSS).",
+        "Header initials fallback unchanged when avatar absent (header.component.html:74-76).",
+        "Property rename avatarUrl\u2192avatar aligns with user.model.ts:14."
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 80,
+      "gaps": [
+        "No sidebar.component.spec.ts asserting img.sidebar-avatar when user.avatar is set.",
+        "No integration test simulating page refresh / localStorage reload for avatar persistence.",
+        "npm test failed in review environment: Node v20.19.2 below Angular CLI minimum v22.22.3."
+      ],
+      "evidence": [
+        "profile-form.component.spec.ts:108-139 covers valid upload, invalid format, oversized file.",
+        "profile-form.component.spec.ts:165-185 clears avatar when removed and form saved.",
+        "user.service.spec.ts:104-120 clears avatar when explicitly removed.",
+        "header.component.spec.ts:138-153 renders img.avatar-img when user.avatar set."
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 88,
+      "gaps": [
+        "Avatar upload UI styles live in profile-form inline styles block rather than a shared stylesheet (acceptable for scoped component)."
+      ],
+      "evidence": [
+        "profile-form.component.ts:317-405 adds profile-avatar-section, avatar-container, sr-only styles (+92 lines in diff).",
+        "header.component.css:133-138 .avatar-img object-fit:cover; sidebar.component.css:46-51 .sidebar-avatar sizing.",
+        "Consistent avatar property naming across layout templates and User model."
+      ]
+    },
+    {
+      "id": "security",
+      "score": 78,
+      "gaps": [
+        "Validation relies on file.type MIME only; extension spoofing possible (profile-form.component.ts:464-467).",
+        "Data URLs stored in localStorage without sanitization beyond client-side type check."
+      ],
+      "evidence": [
+        "No external upload endpoint; avatar stored as data URL via UserService.persistUsers.",
+        "accept attribute restricts file picker to image extensions (profile-form.component.ts:41)."
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 85,
+      "gaps": [
+        "2MB limit and supported formats documented only in inline error strings, not README or shared constants."
+      ],
+      "evidence": [
+        "profile.component.ts success banner covers save feedback.",
+        "avatarError role=alert provides accessible error feedback (profile-form.component.ts:51-52)."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Minor",
+      "title": "No sidebar avatar rendering test",
+      "detail": "Header spec covers img.avatar-img when avatar is set; sidebar template changed to profileUser()?.avatar but has no equivalent spec.",
+      "path": "src/app/layout/sidebar/sidebar.component.html"
+    },
+    {
+      "severity": "Minor",
+      "title": "MIME-only file type validation",
+      "detail": "allowedTypes checks file.type only; a renamed non-image file with spoofed MIME could pass client validation.",
+      "path": "src/app/features/profile/components/profile-form/profile-form.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "No refresh-persistence integration test",
+      "detail": "Avatar persistence relies on UserService localStorage round-trip; no spec reloads storage to verify post-refresh display.",
+      "path": "src/app/core/services/user.service.ts"
+    }
+  ],
+  "checklist": [
+    "All eight KAN-92 ACs addressed: upload, update/remove, format validation, error messages, immediate preview, localStorage persistence, Header/Sidebar/Profile display, responsive CSS.",
+    "Prior main blockers fixed: avatarUrl\u2192avatar, avatar removal merge logic, missing avatar-section CSS.",
+    "Run npm test on Node >=22.22.3 in CI to confirm full suite passes.",
+    "Optional: add sidebar.component.spec.ts avatar image assertion mirroring header test."
+  ],
+  "rubric": [
+    {
+      "id": "requirementsCoverage",
+      "weight": 25,
+      "label": "AC mapped to evidence in the diff"
+    },
+    {
+      "id": "correctness",
+      "weight": 20,
+      "label": "Logic, nulls, error handling, edge cases"
+    },
+    {
+      "id": "regressionRisk",
+      "weight": 15,
+      "label": "Blast radius and shared module risk"
+    },
+    {
+      "id": "tests",
+      "weight": 15,
+      "label": "New/updated tests adequacy"
+    },
+    {
+      "id": "codeQuality",
+      "weight": 10,
+      "label": "Conventions vs repo knowledge"
+    },
+    {
+      "id": "security",
+      "weight": 10,
+      "label": "Auth, injection, secrets, data safety"
+    },
+    {
+      "id": "docsObservability",
+      "weight": 5,
+      "label": "Logs, docs, comments where needed"
+    }
+  ],
+  "ticket": {
+    "key": "KAN-92"
+  },
+  "branch": "feature/sure-kan-92-perfectly",
+  "base": "origin/main"
+}
