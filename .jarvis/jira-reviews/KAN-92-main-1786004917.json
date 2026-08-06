@@ -1,0 +1,178 @@
+{
+  "overallScore": 84.0,
+  "verdict": "approve",
+  "summary": "KAN-92 profile image upload is already on main (PR #48, commit 3e8b618). The provided diff origin/main...main is empty \u2014 no incremental changes \u2014 but HEAD meets all eight ACs: upload/update/remove in profile-form, JPG/JPEG/PNG/WEBP + 2MB validation with avatarError, FileReader preview, localStorage persistence via UserService, and avatar display in Header, Sidebar, and Profile. Success feedback is on profile save; upload errors surface immediately. Minor gaps only (empty review diff, MIME-only checks, FileReader test race, no sidebar avatar spec). Repo knowledge (.jarvis-context.md) was not available.",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 90,
+      "gaps": [
+        "Provided git diff origin/main...main is empty; KAN-92 is already merged on main (PR #48 / 3e8b618), not in the reviewed diff range.",
+        "AC 'Success and error messages are displayed for upload actions' \u2014 success is the profile save banner (profile.component.ts:64-68), not a dedicated upload-success toast; errors use avatarError on selection.",
+        "AC 'Feature works correctly on desktop and mobile devices' has @media (min-width: 640px) layout breakpoints but no viewport/mobile automated tests."
+      ],
+      "evidence": [
+        "profile-form.component.ts:36-48 Change Image file input accept=.jpg,.jpeg,.png,.webp and Remove Image control.",
+        "profile-form.component.ts:464-472 MIME allow-list and 2MB cap set avatarError with role=alert.",
+        "profile-form.component.ts:482-484 removeImage(); :513 avatar: previewUrl() ?? undefined on submit.",
+        "header.component.html:72-73 and sidebar.component.html:10-11 bind profileUser()?.avatar.",
+        "profile.component.html:29-30 displays user.avatar on Profile page.",
+        "user.service.ts:684-689 persistUsers writes avatar to localStorage key app.users."
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 86,
+      "gaps": [
+        "File input value is not cleared after selection; re-selecting the same file may not re-fire change (profile-form.component.ts:457-479).",
+        "Remove clears preview only until Save; persistence requires onSubmit (profile-form.component.ts:482-484, 506-514).",
+        "Valid-upload unit test asserts previewUrl synchronously while FileReader.onload is async (profile-form.component.spec.ts:108-118)."
+      ],
+      "evidence": [
+        "user.service.ts:218 avatar: 'avatar' in input ? input.avatar : existing.avatar allows explicit undefined to clear.",
+        "profile-form.component.ts:475-478 FileReader sets previewUrl immediately after valid upload.",
+        "profile.service.ts passes input.avatar through create/update paths."
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 85,
+      "gaps": [
+        "Large base64 avatars in localStorage may inflate app.users; no service-layer size guard beyond the 2MB client check."
+      ],
+      "evidence": [
+        "Feature localized to profile-form, profile.service, user.service, header/sidebar templates and CSS.",
+        "Header initials fallback remains when avatar absent (header.component.html:74-76).",
+        "Consistent avatar field on user.model.ts."
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 76,
+      "gaps": [
+        "No sidebar.component.spec.ts asserting img.sidebar-avatar when user.avatar is set.",
+        "No integration test for localStorage reload / post-refresh avatar display.",
+        "Valid-upload test does not await FileReader completion (profile-form.component.spec.ts:108-118).",
+        "npm test not run here: node_modules not installed."
+      ],
+      "evidence": [
+        "profile-form.component.spec.ts:108-139 valid upload, invalid format, oversized file.",
+        "profile-form.component.spec.ts:165-185 clears avatar when removed and form saved.",
+        "user.service.spec.ts:104-120 clears avatar when explicitly removed.",
+        "header.component.spec.ts:138-153 renders img.avatar-img when avatar set."
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 88,
+      "gaps": [
+        "Avatar upload styles live in the profile-form inline styles block rather than a dedicated CSS file (acceptable scoped pattern used elsewhere in the form)."
+      ],
+      "evidence": [
+        "profile-form.component.ts:317-405 profile-avatar-section / avatar-container / sr-only styles.",
+        "header.component.css .avatar-img object-fit:cover; sidebar.component.css .sidebar-avatar sizing.",
+        "Consistent avatar naming across layout and User model."
+      ]
+    },
+    {
+      "id": "security",
+      "score": 78,
+      "gaps": [
+        "Validation uses file.type MIME only; extension/MIME spoofing possible (profile-form.component.ts:464-467).",
+        "Data URLs stored in localStorage without magic-byte sniffing beyond client type check."
+      ],
+      "evidence": [
+        "No remote upload endpoint; avatar persisted as data URL via UserService.persistUsers.",
+        "accept attribute limits picker to image extensions (profile-form.component.ts:41)."
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 70,
+      "gaps": [
+        "2MB limit and supported formats only appear in inline error strings, not README or shared constants.",
+        "REPO KNOWLEDGE missing (.jarvis-context.md not present); conventions inferred from source only."
+      ],
+      "evidence": [
+        "profile.component.ts:64-68 success banner on profile save.",
+        "profile-form.component.ts:51-52 avatarError role=alert for accessible error feedback."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Minor",
+      "title": "Empty git diff on reviewed branch",
+      "detail": "origin/main...main produces zero file changes; KAN-92 implementation is already merged on main (PR #48). Review evaluates AC against HEAD, not incremental hunks.",
+      "path": "(git diff origin/main...main)"
+    },
+    {
+      "severity": "Minor",
+      "title": "No sidebar avatar rendering test",
+      "detail": "Header spec covers img.avatar-img; sidebar binds profileUser()?.avatar but has no equivalent component spec.",
+      "path": "src/app/layout/sidebar/sidebar.component.html"
+    },
+    {
+      "severity": "Minor",
+      "title": "MIME-only file type validation",
+      "detail": "allowedTypes checks file.type only; a non-image with a spoofed MIME could pass client validation.",
+      "path": "src/app/features/profile/components/profile-form/profile-form.component.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "Valid-upload test ignores FileReader async",
+      "detail": "handles valid image upload asserts previewUrl() immediately after onFileSelected, but preview is set in reader.onload asynchronously.",
+      "path": "src/app/features/profile/components/profile-form/profile-form.component.spec.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "No refresh-persistence integration test",
+      "detail": "Avatar persistence relies on UserService localStorage; no spec reloads storage to verify post-refresh display.",
+      "path": "src/app/core/services/user.service.ts"
+    }
+  ],
+  "checklist": [
+    "All eight KAN-92 ACs addressed on main: upload, update/remove, format validation, error messages, immediate preview, localStorage persistence, Header/Sidebar/Profile display, responsive CSS.",
+    "Empty diff noted: feature pre-merged via PR #48; no new changes on origin/main...main.",
+    "Run npm install && npm test in CI (per package.json engines) to confirm suite passes.",
+    "Optional: add sidebar.component.spec.ts avatar assertion mirroring header test.",
+    "Optional: await FileReader in valid-upload unit test; reset file input value after selection."
+  ],
+  "rubric": [
+    {
+      "id": "requirementsCoverage",
+      "weight": 25,
+      "label": "AC mapped to evidence in the diff"
+    },
+    {
+      "id": "correctness",
+      "weight": 20,
+      "label": "Logic, nulls, error handling, edge cases"
+    },
+    {
+      "id": "regressionRisk",
+      "weight": 15,
+      "label": "Blast radius and shared module risk"
+    },
+    {
+      "id": "tests",
+      "weight": 15,
+      "label": "New/updated tests adequacy"
+    },
+    {
+      "id": "codeQuality",
+      "weight": 10,
+      "label": "Conventions vs repo knowledge"
+    },
+    {
+      "id": "security",
+      "weight": 10,
+      "label": "Auth, injection, secrets, data safety"
+    },
+    {
+      "id": "docsObservability",
+      "weight": 5,
+      "label": "Logs, docs, comments where needed"
+    }
+  ]
+}
