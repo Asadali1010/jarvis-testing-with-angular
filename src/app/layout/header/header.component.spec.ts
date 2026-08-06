@@ -173,4 +173,21 @@ describe('HeaderComponent', () => {
     expect(img).toBeTruthy();
     expect(img.getAttribute('src')).toBe('data:image/png;base64,header-test');
   });
+
+  it('prevents the header from shrinking in the flex column layout', () => {
+    const header = fixture.nativeElement.querySelector('.app-header') as HTMLElement;
+
+    expect(header).toBeTruthy();
+    expect(getComputedStyle(header).flexShrink).toBe('0');
+  });
+
+  it('keeps header layout stable in dark mode', () => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    fixture.detectChanges();
+
+    const header = fixture.nativeElement.querySelector('.app-header') as HTMLElement;
+
+    expect(header).toBeTruthy();
+    expect(getComputedStyle(header).flexShrink).toBe('0');
+  });
 });
