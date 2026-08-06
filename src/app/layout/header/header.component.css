@@ -90,6 +90,11 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
 }
 
+.theme-toggle-button {
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
 .user-menu {
   position: relative;
 }

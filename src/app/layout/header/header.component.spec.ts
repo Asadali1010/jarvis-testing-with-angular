@@ -112,6 +112,27 @@ describe('HeaderComponent', () => {
     expect(themeButton.getAttribute('aria-label')).toBe('Switch to light mode');
   });
 
+  it('keeps the theme toggle button visible in light mode', () => {
+    document.documentElement.style.setProperty('--color-text', '#0f172a');
+    document.documentElement.style.setProperty('--color-border', '#e2e8f0');
+
+    const themeService = TestBed.inject(ThemeService);
+    themeService.setTheme('light');
+    TestBed.flushEffects();
+    fixture.detectChanges();
+
+    const themeButton = fixture.nativeElement.querySelector(
+      '[aria-label="Switch to dark mode"]',
+    ) as HTMLButtonElement;
+
+    expect(themeButton).toBeTruthy();
+    expect(themeButton.querySelector('svg path')).toBeTruthy();
+
+    const { color } = getComputedStyle(themeButton);
+    expect(color).not.toBe('transparent');
+    expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
   it('exposes expanded state on the user menu trigger', () => {
     const trigger = fixture.nativeElement.querySelector(
       '.user-menu-trigger',
