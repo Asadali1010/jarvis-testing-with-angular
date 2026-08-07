@@ -35,6 +35,13 @@ export const shellRoutes: Routes = [
         loadComponent: () =>
           import('../profile/profile.component').then((m) => m.ProfileComponent),
       },
+      {
+        path: 'calculator',
+        loadComponent: () =>
+          import('../calculator/calculator.component').then(
+            (m) => m.CalculatorComponent,
+          ),
+      },
     ],
   },
 ];
