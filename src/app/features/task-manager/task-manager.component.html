@@ -108,7 +108,7 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="create-ticket-title"
-      appFocusTrap
+      [appFocusTrap]="true"
       (escape)="closeCreate()"
     >
       <h3 id="create-ticket-title" class="modal-title">Create ticket</h3>
