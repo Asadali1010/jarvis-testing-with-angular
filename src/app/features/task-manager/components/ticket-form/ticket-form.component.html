@@ -1,0 +1,85 @@
+<form
+  class="ticket-form"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  novalidate
+  aria-label="Create ticket form"
+>
+  <div class="form-field form-field-full">
+    <label for="ticket-title">Title</label>
+    <input
+      id="ticket-title"
+      type="text"
+      formControlName="title"
+      autocomplete="off"
+      [attr.aria-invalid]="showError('title')"
+      aria-required="true"
+    />
+    @if (showError('title')) {
+      <span class="field-error" role="alert">{{ getError('title') }}</span>
+    }
+  </div>
+
+  <div class="form-field form-field-full">
+    <label for="ticket-description">Description</label>
+    <textarea
+      id="ticket-description"
+      formControlName="description"
+      rows="4"
+      [attr.aria-invalid]="showError('description')"
+      aria-required="true"
+    ></textarea>
+    @if (showError('description')) {
+      <span class="field-error" role="alert">{{ getError('description') }}</span>
+    }
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <label for="ticket-status">Status</label>
+      <select id="ticket-status" formControlName="status" aria-label="Ticket status">
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label for="ticket-priority">Priority</label>
+      <select id="ticket-priority" formControlName="priority" aria-label="Ticket priority">
+        @for (option of priorityOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field form-field-full">
+      <label for="ticket-assignee">
+        Assignee <span class="optional">(optional)</span>
+      </label>
+      <select
+        id="ticket-assignee"
+        formControlName="assigneeId"
+        aria-label="Assign ticket to user"
+      >
+        <option value="">Unassigned</option>
+        @for (user of users(); track user.id) {
+          <option [value]="user.id">
+            {{ formatUserDisplayName(user, user.email) }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (serverError(); as err) {
+    <p class="form-error" role="alert">{{ err }}</p>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-primary">Create ticket</button>
+  </div>
+</form>

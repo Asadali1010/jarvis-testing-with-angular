@@ -1,0 +1,122 @@
+<section class="task-manager" aria-labelledby="task-manager-heading">
+  <header class="task-manager-header">
+    <div class="header-copy">
+      <p class="header-eyebrow">Workspace</p>
+      <h2 id="task-manager-heading">Task Manager</h2>
+      <p>Track tickets, update status, and assign work across your team.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="openCreate()"
+      aria-label="Create ticket"
+    >
+      Create ticket
+    </button>
+  </header>
+
+  @if (error(); as err) {
+    <div class="task-alert task-alert-error" role="alert">
+      <p>{{ err }}</p>
+      <button
+        type="button"
+        class="btn-dismiss"
+        (click)="dismissError()"
+        aria-label="Dismiss error"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (!isEmpty()) {
+    <div class="task-toolbar">
+      <label for="status-filter" class="visually-hidden">Filter by status</label>
+      <select
+        id="status-filter"
+        class="filter-select"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="onStatusFilterChange($event)"
+        aria-label="Filter tickets by status"
+      >
+        @for (option of statusFilterOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  @if (isEmpty()) {
+    <div class="task-empty" role="status">
+      <div class="empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="48" height="48">
+          <path
+            fill="currentColor"
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+          />
+        </svg>
+      </div>
+      <p>No tickets yet</p>
+      <button type="button" class="btn btn-primary" (click)="openCreate()">
+        Create ticket
+      </button>
+    </div>
+  } @else if (hasNoFilterResults()) {
+    <div class="task-empty task-empty-filtered" role="status">
+      <p>No tickets match this status filter. Try another status.</p>
+    </div>
+  } @else {
+    <div class="task-board" role="region" aria-label="Ticket board grouped by status">
+      @for (column of visibleColumns(); track column.status) {
+        <section
+          class="board-column"
+          [attr.aria-label]="column.label + ' tickets'"
+        >
+          <header class="column-header">
+            <h3 class="column-title">{{ column.label }}</h3>
+            <span class="column-count" aria-hidden="true">
+              {{ ticketCountForStatus(column.status) }}
+            </span>
+          </header>
+
+          <ul class="column-list" role="list">
+            @for (ticket of ticketsForStatus(column.status); track ticket.id) {
+              <li class="column-item">
+                <app-ticket-card
+                  [ticket]="ticket"
+                  [users]="activeUsers()"
+                  (statusChange)="onStatusChange(ticket.id, $event)"
+                  (assignChange)="onAssignChange(ticket.id, $event)"
+                />
+              </li>
+            } @empty {
+              <li class="column-empty" role="status">
+                <p>No {{ column.label | lowercase }} tickets</p>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+</section>
+
+@if (showCreateForm()) {
+  <div class="modal-backdrop" role="presentation">
+    <div
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="create-ticket-title"
+      appFocusTrap
+      (escape)="closeCreate()"
+    >
+      <h3 id="create-ticket-title" class="modal-title">Create ticket</h3>
+      <app-ticket-form
+        [users]="activeUsers()"
+        (saved)="onTicketCreated($event)"
+        (cancelled)="closeCreate()"
+      />
+    </div>
+  </div>
+}
