@@ -37,9 +37,20 @@ describe('CalculatorComponent', () => {
 
   it('creates the component', () => {
     expect(component).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calculator-page')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.header-copy')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.header-eyebrow')?.textContent?.trim()).toBe('Tools');
     expect(fixture.nativeElement.querySelector('#calculator-heading')?.textContent?.trim()).toBe(
       'Calculator',
     );
+    expect(
+      fixture.nativeElement.querySelector('.header-copy p:last-of-type')?.textContent?.trim(),
+    ).toBe('Perform basic and scientific calculations.');
+    expect(fixture.nativeElement.querySelector('.calculator-panel')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calc-angle-toggle')?.textContent?.trim()).toBe(
+      'DEG',
+    );
+    expect(fixture.nativeElement.querySelector('#calculator-keys')).toBeTruthy();
     expect(readoutText()).toBe('0');
   });
 
@@ -123,10 +134,22 @@ describe('CalculatorComponent', () => {
   });
 
   it('toggles angle mode between DEG and RAD', () => {
+    const toggle = fixture.nativeElement.querySelector(
+      '.calc-angle-toggle',
+    ) as HTMLButtonElement;
+
+    expect(toggle).toBeTruthy();
+    expect(toggle.textContent?.trim()).toBe('DEG');
     expect(component.angleMode()).toBe('deg');
-    component.toggleAngleMode();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.textContent?.trim()).toBe('RAD');
     expect(component.angleMode()).toBe('rad');
-    component.toggleAngleMode();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.textContent?.trim()).toBe('DEG');
     expect(component.angleMode()).toBe('deg');
   });
 });
