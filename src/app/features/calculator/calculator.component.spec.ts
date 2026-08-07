@@ -37,9 +37,29 @@ describe('CalculatorComponent', () => {
 
   it('creates the component', () => {
     expect(component).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('#calculator-heading')?.textContent?.trim()).toBe(
+    expect(fixture.nativeElement.querySelector('.calculator-page')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calculator-hero')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.hero-copy')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.hero-eyebrow')?.textContent?.trim()).toBe('Tools');
+    expect(fixture.nativeElement.querySelector('.hero-title')?.textContent?.trim()).toBe(
       'Calculator',
     );
+    expect(fixture.nativeElement.querySelector('#calculator-heading')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.hero-lede')?.textContent?.trim()).toBe(
+      'Perform basic and scientific calculations.',
+    );
+    expect(fixture.nativeElement.querySelector('.calculator-device')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calculator-chassis')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calculator-screen')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.screen-mode-label')?.textContent?.trim()).toBe(
+      'Angle',
+    );
+    expect(fixture.nativeElement.querySelector('.calc-angle-toggle')?.textContent?.trim()).toBe(
+      'DEG',
+    );
+    expect(fixture.nativeElement.querySelector('.calculator-display')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#calculator-keys')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.calculator-keypad')).toBeTruthy();
     expect(readoutText()).toBe('0');
   });
 
@@ -123,10 +143,22 @@ describe('CalculatorComponent', () => {
   });
 
   it('toggles angle mode between DEG and RAD', () => {
+    const toggle = fixture.nativeElement.querySelector(
+      '.calc-angle-toggle',
+    ) as HTMLButtonElement;
+
+    expect(toggle).toBeTruthy();
+    expect(toggle.textContent?.trim()).toBe('DEG');
     expect(component.angleMode()).toBe('deg');
-    component.toggleAngleMode();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.textContent?.trim()).toBe('RAD');
     expect(component.angleMode()).toBe('rad');
-    component.toggleAngleMode();
+
+    toggle.click();
+    fixture.detectChanges();
+    expect(toggle.textContent?.trim()).toBe('DEG');
     expect(component.angleMode()).toBe('deg');
   });
 });

@@ -1,55 +1,73 @@
 <section class="calculator-page" aria-labelledby="calculator-heading">
-  <header class="calculator-header">
-    <h2 id="calculator-heading">Calculator</h2>
-    <p>Perform basic and scientific calculations.</p>
+  <header class="calculator-hero calculator-header">
+    <div class="header-copy hero-copy">
+      <p class="header-eyebrow hero-eyebrow">Tools</p>
+      <h2 id="calculator-heading" class="hero-title">Calculator</h2>
+      <p class="hero-lede">Perform basic and scientific calculations.</p>
+    </div>
   </header>
 
-  <div class="calculator-panel" role="application" aria-label="Scientific calculator">
-    <div class="calculator-display-toolbar">
-      <button
-        type="button"
-        class="calc-angle-toggle"
-        (click)="toggleAngleMode()"
-        [attr.aria-label]="'Angle mode: ' + angleMode().toUpperCase()"
-        [attr.aria-pressed]="angleMode() === 'deg'"
-      >
-        {{ angleMode().toUpperCase() }}
-      </button>
-    </div>
-    <div class="calculator-display" aria-live="polite" aria-atomic="true">
-      @if (expression() && result() === null && !error()) {
-        <span class="calculator-expression" aria-hidden="true">{{ expression() }}</span>
-      }
-      <output
-        class="calculator-readout"
-        [class.calculator-readout-error]="error()"
-        aria-label="Calculator result"
-      >
-        {{ displayValue() }}
-      </output>
-      @if (error(); as err) {
-        <p class="calculator-error" role="alert">{{ err }}</p>
-      }
-    </div>
+  <div class="calculator-device">
+    <div
+      class="calculator-panel calculator-chassis"
+      role="application"
+      aria-label="Scientific calculator"
+    >
+      <div class="calculator-screen" aria-label="Calculator display">
+        <div class="calculator-display-toolbar">
+          <span class="screen-mode-label" aria-hidden="true">Angle</span>
+          <button
+            type="button"
+            class="calc-angle-toggle"
+            (click)="toggleAngleMode()"
+            [attr.aria-label]="'Angle mode: ' + angleMode().toUpperCase()"
+            [attr.aria-pressed]="angleMode() === 'deg'"
+          >
+            {{ angleMode().toUpperCase() }}
+          </button>
+        </div>
 
-    <div id="calculator-keys" class="calculator-keys" role="group" aria-label="Calculator buttons">
-      @for (button of buttons; track button.label + button.value) {
-        <button
-          type="button"
-          class="calc-btn"
-          [class.calc-btn-digit]="button.variant === 'digit'"
-          [class.calc-btn-operator]="button.variant === 'operator'"
-          [class.calc-btn-function]="button.variant === 'function'"
-          [class.calc-btn-action]="button.variant === 'action'"
-          [class.calc-btn-equals]="button.variant === 'equals'"
-          [class.calc-btn-constant]="button.variant === 'constant'"
-          [style.grid-column]="button.colspan ? 'span ' + button.colspan : null"
-          [attr.aria-label]="button.ariaLabel"
-          (click)="onButtonClick(button)"
-        >
-          {{ button.label }}
-        </button>
-      }
+        <div class="calculator-display" aria-live="polite" aria-atomic="true">
+          @if (expression() && result() === null && !error()) {
+            <span class="calculator-expression" aria-hidden="true">{{ expression() }}</span>
+          }
+          <output
+            class="calculator-readout"
+            [class.calculator-readout-error]="error()"
+            aria-label="Calculator result"
+          >
+            {{ displayValue() }}
+          </output>
+          @if (error(); as err) {
+            <p class="calculator-error" role="alert">{{ err }}</p>
+          }
+        </div>
+      </div>
+
+      <div
+        id="calculator-keys"
+        class="calculator-keys calculator-keypad"
+        role="group"
+        aria-label="Calculator buttons"
+      >
+        @for (button of buttons; track button.label + button.value) {
+          <button
+            type="button"
+            class="calc-btn"
+            [class.calc-btn-digit]="button.variant === 'digit'"
+            [class.calc-btn-operator]="button.variant === 'operator'"
+            [class.calc-btn-function]="button.variant === 'function'"
+            [class.calc-btn-action]="button.variant === 'action'"
+            [class.calc-btn-equals]="button.variant === 'equals'"
+            [class.calc-btn-constant]="button.variant === 'constant'"
+            [style.grid-column]="button.colspan ? 'span ' + button.colspan : null"
+            [attr.aria-label]="button.ariaLabel"
+            (click)="onButtonClick(button)"
+          >
+            {{ button.label }}
+          </button>
+        }
+      </div>
     </div>
   </div>
 </section>
