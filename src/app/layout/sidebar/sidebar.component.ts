@@ -17,11 +17,12 @@ import { SettingsService } from '../../core/services/settings.service';
 interface NavItem {
   label: string;
   route: string;
-  icon: 'dashboard' | 'users' | 'settings' | 'profile' | 'calculator';
+  icon: 'dashboard' | 'task-manager' | 'users' | 'settings' | 'profile' | 'calculator';
 }
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', route: '/dashboard', icon: 'dashboard' },
+  { label: 'Task Manager', route: '/task-manager', icon: 'task-manager' },
   { label: 'Users', route: '/users', icon: 'users' },
   { label: 'Calculator', route: '/calculator', icon: 'calculator' },
   { label: 'Settings', route: '/settings', icon: 'settings' },

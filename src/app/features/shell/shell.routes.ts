@@ -19,6 +19,13 @@ export const shellRoutes: Routes = [
           ),
       },
       {
+        path: 'task-manager',
+        loadComponent: () =>
+          import('../task-manager/task-manager.component').then(
+            (m) => m.TaskManagerComponent,
+          ),
+      },
+      {
         path: 'users',
         loadComponent: () =>
           import('../users/users.component').then((m) => m.UsersComponent),

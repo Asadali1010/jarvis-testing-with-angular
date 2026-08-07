@@ -1,0 +1,69 @@
+<article
+  class="ticket-card"
+  [attr.aria-label]="'Ticket: ' + ticket().title"
+>
+  <header class="card-header">
+    <h4 class="card-title">{{ ticket().title }}</h4>
+    <span
+      class="priority-badge"
+      [class.priority-low]="ticket().priority === 'low'"
+      [class.priority-medium]="ticket().priority === 'medium'"
+      [class.priority-high]="ticket().priority === 'high'"
+      [class.priority-urgent]="ticket().priority === 'urgent'"
+      [attr.aria-label]="'Priority: ' + priorityLabel(ticket().priority)"
+    >
+      {{ priorityLabel(ticket().priority) }}
+    </span>
+  </header>
+
+  <p class="card-description">{{ ticket().description }}</p>
+
+  <div class="card-meta">
+    <time [attr.datetime]="ticket().updatedAt">
+      Updated {{ ticket().updatedAt | date: 'mediumDate' }}
+    </time>
+    @if (assignee(); as user) {
+      <div class="assignee-row">
+        <span class="assignee-avatar" aria-hidden="true">
+          {{ getUserInitials(user) }}
+        </span>
+        <span>{{ formatUserDisplayName(user, user.email) }}</span>
+      </div>
+    } @else {
+      <span>Unassigned</span>
+    }
+  </div>
+
+  <div class="card-controls">
+    <div class="control-field">
+      <label [for]="'status-' + ticket().id">Status</label>
+      <select
+        [id]="'status-' + ticket().id"
+        [ngModel]="ticket().status"
+        (ngModelChange)="onStatusChange($event)"
+        [attr.aria-label]="'Change status for ' + ticket().title"
+      >
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="control-field">
+      <label [for]="'assignee-' + ticket().id">Assignee</label>
+      <select
+        [id]="'assignee-' + ticket().id"
+        [ngModel]="ticket().assigneeId ?? ''"
+        (ngModelChange)="onAssignChange($event)"
+        [attr.aria-label]="'Assign ' + ticket().title + ' to user'"
+      >
+        <option value="">Unassigned</option>
+        @for (user of users(); track user.id) {
+          <option [value]="user.id">
+            {{ formatUserDisplayName(user, user.email) }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+</article>

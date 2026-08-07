@@ -106,6 +106,12 @@ interface QuickAction {
 export class QuickActionsComponent {
   readonly actions: QuickAction[] = [
     {
+      label: 'Create Ticket',
+      description: 'Open a new support ticket',
+      route: '/task-manager?action=create',
+      ariaLabel: 'Create Ticket — open create ticket dialog',
+    },
+    {
       label: 'Add User',
       description: 'Create a new team member',
       route: '/users?action=add',
