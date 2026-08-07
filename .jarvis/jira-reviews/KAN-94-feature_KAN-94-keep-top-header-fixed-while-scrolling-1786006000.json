@@ -1,0 +1,142 @@
+{
+  "overallScore": 88.0,
+  "verdict": "approve",
+  "summary": "This change keeps the top navigation bar visible while users scroll through page content, instead of the bar moving off-screen with the rest of the page. The approach applies to all main app screens (dashboard, users, settings, and profile) and uses the same theme variables in light and dark mode. The layout changes are small, focused, and low-risk. Automated tests confirm the scroll area and header placement, but a quick manual check on a phone is still advisable because tests do not simulate real scrolling or small-screen browser chrome.",
+  "criteria": [
+    {
+      "id": "requirementsCoverage",
+      "score": 91,
+      "gaps": [
+        "AC 'layout remains fully responsive on desktop and mobile devices' is addressed only by existing breakpoints and CSS; no mobile viewport or resize test was added (shell.component.spec.ts)."
+      ],
+      "evidence": [
+        "shell.component.css: .app-shell/.app-main height:100vh + overflow:hidden; .app-content overflow-y:auto + min-height:0 confines scroll to main content.",
+        "shell.component.html: app-header sits as sibling above main.app-content containing router-outlet — header stays outside scroll region on all shell child routes (dashboard, users, settings, profile in shell.routes.ts).",
+        "header.component.css: flex-shrink:0 prevents header compression; theme tokens (--color-bg-elevated, --color-border) ensure light/dark consistency.",
+        "AC 'header does not overlap or hide page content' satisfied by document-flow placement (header not inside overflow-y:auto container)."
+      ]
+    },
+    {
+      "id": "correctness",
+      "score": 90,
+      "gaps": [
+        "app-footer remains a fixed sibling below .app-content (shell.component.html:25); it does not scroll with page content — acceptable for app chrome but untested."
+      ],
+      "evidence": [
+        "Flex column scroll-containment pattern (overflow hidden on shell/main, overflow-y auto on content) is the standard correct approach for pinned headers without position:fixed overlap.",
+        "min-height:0 on .app-content (shell.component.css:20) enables flex child to shrink and scroll correctly.",
+        "header.component.css: z-index:20 keeps header above page content while remaining below sidebar overlay (z-index 30/40 in sidebar.component.css)."
+      ]
+    },
+    {
+      "id": "regressionRisk",
+      "score": 80,
+      "gaps": [
+        "Replacing min-height:100vh with height:100vh + overflow:hidden may clip or mis-size on mobile browsers where dynamic viewport chrome affects 100vh (shell.component.css:3-4, 14-15).",
+        "Some feature components define their own overflow-y:auto (e.g. activity-timeline, users modal) — nested scroll regions may feel awkward but are pre-existing."
+      ],
+      "evidence": [
+        "Diff changes only 4 layout/test files; no routing, auth, or data-layer changes.",
+        "Login page uses a separate layout (app.routes.ts guest route) and is unaffected.",
+        "Previous behavior scrolled entire document including header; new behavior changes scroll root to .app-content only."
+      ]
+    },
+    {
+      "id": "tests",
+      "score": 78,
+      "gaps": [
+        "Tests assert computed overflowY and DOM structure but do not simulate scroll events or verify header remains visible while content scrollTop changes (shell.component.spec.ts).",
+        "No assertions for overflow:hidden on .app-shell or .app-main — the properties that enforce the fix.",
+        "No responsive viewport or mobile breakpoint test despite responsive AC.",
+        "ng test not executed in review environment: Node v20.19.2 vs Angular CLI minimum v22.22.3."
+      ],
+      "evidence": [
+        "New shell.component.spec.ts (138 lines): 4 tests covering scroll container in light/dark and header outside .app-content.",
+        "header.component.spec.ts: +2 tests for flex-shrink:0 in default and dark themes.",
+        "Tests use data-theme attribute consistent with ThemeService convention."
+      ]
+    },
+    {
+      "id": "codeQuality",
+      "score": 92,
+      "gaps": [
+        "Redundant height:100vh on both .app-shell and .app-main (shell.component.css:3,14) — harmless but could be simplified to one level."
+      ],
+      "evidence": [
+        "Minimal 4-file diff (+163/-2) focused on layout concern.",
+        "Follows existing CSS variable and BEM-like class naming (.app-shell, .app-main, .app-content, .app-header).",
+        "New spec mirrors patterns from header.component.spec.ts (InMemoryAuthStorage, ThemeService providers)."
+      ]
+    },
+    {
+      "id": "security",
+      "score": 100,
+      "gaps": [],
+      "evidence": [
+        "CSS-only layout changes; no auth, injection, storage, or network surface modified."
+      ]
+    },
+    {
+      "id": "docsObservability",
+      "score": 90,
+      "gaps": [
+        "No README or inline comment explaining scroll-containment layout intent (not required by ticket)."
+      ],
+      "evidence": [
+        "Bug-fix ticket with no documentation deliverable; self-explanatory CSS properties."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "severity": "Minor",
+      "title": "Automated tests do not simulate scrolling",
+      "detail": "Shell tests verify overflow-y:auto on .app-content and header DOM placement but never set scrollTop or assert header visibility during scroll.",
+      "path": "src/app/layout/shell/shell.component.spec.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "Parent overflow containment untested",
+      "detail": "overflow:hidden on .app-shell and .app-main is essential to the fix but has no test assertion.",
+      "path": "src/app/layout/shell/shell.component.css"
+    },
+    {
+      "severity": "Minor",
+      "title": "No mobile viewport validation for responsive AC",
+      "detail": "Responsive AC relies on existing media queries; no test resizes viewport or targets mobile breakpoints.",
+      "path": "src/app/layout/shell/shell.component.spec.ts"
+    },
+    {
+      "severity": "Minor",
+      "title": "100vh may behave inconsistently on mobile browsers",
+      "detail": "Fixed height:100vh on shell containers can interact with mobile browser address-bar chrome, potentially clipping content.",
+      "path": "src/app/layout/shell/shell.component.css"
+    },
+    {
+      "severity": "Info",
+      "title": "Test suite not executed in review environment",
+      "detail": "ng test blocked by Node v20.19.2 vs Angular CLI minimum v22.22.3; CI should confirm green build.",
+      "path": "package.json"
+    }
+  ],
+  "checklist": [
+    "Manual: scroll long content on dashboard, users, settings, profile — header stays pinned.",
+    "Manual: confirm page content is not hidden beneath the header at top of scroll.",
+    "Manual: verify behavior in light and dark themes.",
+    "Manual: smoke-test on mobile viewport (phone or devtools) for clipping or double-scroll.",
+    "CI: run npm test on Node >=22.22.3 to confirm new shell and header specs pass.",
+    "Optional: add shell spec assertions for overflow:hidden on .app-shell/.app-main and a scrollTop simulation test."
+  ],
+  "rubric": [
+    { "id": "requirementsCoverage", "weight": 25, "label": "AC mapped to evidence in the diff" },
+    { "id": "correctness", "weight": 20, "label": "Logic, nulls, error handling, edge cases" },
+    { "id": "regressionRisk", "weight": 15, "label": "Blast radius and shared module risk" },
+    { "id": "tests", "weight": 15, "label": "New/updated tests adequacy" },
+    { "id": "codeQuality", "weight": 10, "label": "Conventions vs repo knowledge" },
+    { "id": "security", "weight": 10, "label": "Auth, injection, secrets, data safety" },
+    { "id": "docsObservability", "weight": 5, "label": "Logs, docs, comments where needed" }
+  ],
+  "ticket": { "key": "KAN-94" },
+  "branch": "feature/KAN-94-keep-top-header-fixed-while-scrolling",
+  "base": "origin/main"
+}
