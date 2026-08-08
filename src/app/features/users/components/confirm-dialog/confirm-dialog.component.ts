@@ -51,7 +51,14 @@ import { FocusTrapDirective } from '../../../../core/directives/focus-trap.direc
         align-items: center;
         justify-content: center;
         padding: 1rem;
-        background: rgb(15 23 42 / 0.45);
+        background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+      }
+
+      @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .dialog-backdrop {
+          backdrop-filter: blur(var(--glass-blur));
+          -webkit-backdrop-filter: blur(var(--glass-blur));
+        }
       }
 
       .dialog-panel {
@@ -59,9 +66,22 @@ import { FocusTrapDirective } from '../../../../core/directives/focus-trap.direc
         max-width: 24rem;
         padding: 1.5rem;
         border-radius: var(--radius-lg);
-        border: 1px solid var(--color-border);
-        background: var(--color-bg-elevated);
-        box-shadow: var(--shadow-md);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+      }
+
+      @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .dialog-panel {
+          background: var(--glass-background);
+          backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+          -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+        }
+      }
+
+      @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .dialog-panel {
+          background: var(--color-bg-elevated);
+        }
       }
 
       .dialog-title {

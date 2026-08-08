@@ -3,7 +3,7 @@ import { Component, input } from '@angular/core';
 @Component({
   selector: 'app-dashboard-widget',
   template: `
-    <section class="dashboard-widget" [attr.aria-labelledby]="headingId()">
+    <section class="dashboard-widget glass-panel" [attr.aria-labelledby]="headingId()">
       <header class="dashboard-widget-header">
         <h3 [id]="headingId()" class="dashboard-widget-title">{{ title() }}</h3>
         @if (subtitle()) {
@@ -21,10 +21,6 @@ import { Component, input } from '@angular/core';
         display: flex;
         flex-direction: column;
         height: 100%;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        background: var(--color-bg-elevated);
-        box-shadow: var(--shadow-sm);
         overflow: hidden;
       }
 

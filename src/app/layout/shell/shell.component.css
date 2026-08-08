@@ -2,7 +2,23 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(
+      ellipse 70% 50% at 12% 18%,
+      color-mix(in srgb, var(--color-primary) 14%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 65% 48% at 88% 22%,
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 75% 45% at 50% 100%,
+      color-mix(in srgb, var(--color-primary) 8%, transparent),
+      transparent 58%
+    );
   color: var(--color-text);
 }
 
@@ -29,8 +45,16 @@
   margin: 0;
   padding: 0;
   border: none;
-  background: rgb(15 23 42 / 0.45);
+  background: color-mix(in srgb, var(--color-text) 28%, transparent);
   cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sidebar-backdrop {
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  }
 }
 
 @media (min-width: 768px) {

@@ -24,6 +24,13 @@
   --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
   --shadow-md: 0 4px 12px rgb(15 23 42 / 0.08);
 
+  --glass-blur: 16px;
+  --glass-background: color-mix(in srgb, var(--color-bg-elevated) 72%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-border) 55%, transparent);
+  --glass-shadow:
+    0 8px 32px rgb(15 23 42 / 0.08),
+    inset 0 1px 0 rgb(255 255 255 / 0.45);
+
   --transition-theme: background-color 0.25s ease, color 0.25s ease,
     border-color 0.25s ease, box-shadow 0.25s ease;
 }
@@ -43,6 +50,13 @@
   --color-danger: #f87171;
   --color-success: #4ade80;
   --color-focus-ring: #1d4ed8;
+
+  --glass-blur: 20px;
+  --glass-background: color-mix(in srgb, var(--color-bg-elevated) 62%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-border) 40%, transparent);
+  --glass-shadow:
+    0 8px 32px rgb(0 0 0 / 0.4),
+    inset 0 1px 0 rgb(255 255 255 / 0.06);
 }
 
 *,
@@ -54,6 +68,23 @@
 html {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
+  background-image:
+    radial-gradient(
+      ellipse 80% 60% at 15% 10%,
+      color-mix(in srgb, var(--color-primary) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 85% 15%,
+      color-mix(in srgb, var(--color-primary) 10%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 75% 50% at 50% 95%,
+      color-mix(in srgb, var(--color-primary) 8%, transparent),
+      transparent 60%
+    );
+  background-attachment: fixed;
   color: var(--color-text);
   transition: var(--transition-theme);
 }
@@ -61,7 +92,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--color-bg);
+  background-color: transparent;
   color: var(--color-text);
   line-height: 1.5;
   transition: var(--transition-theme);
@@ -123,4 +154,34 @@ textarea:focus-visible {
 .btn:disabled {
   opacity: 0.72;
   cursor: not-allowed;
+}
+
+.glass-panel,
+.glass-card {
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-panel {
+  border-radius: var(--radius-lg);
+}
+
+.glass-card {
+  border-radius: var(--radius-md);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .glass-card {
+    background: var(--glass-background);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .glass-card {
+    background: var(--color-bg-elevated);
+  }
 }

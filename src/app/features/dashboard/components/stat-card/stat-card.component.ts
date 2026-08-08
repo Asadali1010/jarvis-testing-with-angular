@@ -5,7 +5,7 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
 @Component({
   selector: 'app-stat-card',
   template: `
-    <article class="stat-card" [attr.aria-label]="title() + ': ' + value()">
+    <article class="stat-card glass-card" [attr.aria-label]="title() + ': ' + value()">
       <div class="stat-card-icon" aria-hidden="true">
         <ng-content select="[statIcon]" />
       </div>
@@ -32,10 +32,7 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
         gap: 1rem;
         align-items: flex-start;
         padding: 1.25rem;
-        border: 1px solid var(--color-border);
         border-radius: var(--radius-lg);
-        background: var(--color-bg-elevated);
-        box-shadow: var(--shadow-sm);
         transition:
           transform 0.2s ease,
           box-shadow 0.2s ease,
@@ -44,7 +41,7 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
 
       .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
+        box-shadow: var(--glass-shadow);
         border-color: var(--color-primary);
       }
 
