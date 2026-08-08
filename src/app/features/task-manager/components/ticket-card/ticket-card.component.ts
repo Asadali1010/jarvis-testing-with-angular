@@ -25,15 +25,12 @@ import {
         gap: 0.875rem;
         padding: 1rem;
         border-radius: var(--radius-md);
-        border: 1px solid var(--color-border);
-        background: var(--color-bg-elevated);
-        box-shadow: var(--shadow-sm);
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
 
       .ticket-card:hover {
-        border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-        box-shadow: var(--shadow-md);
+        border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
+        box-shadow: var(--glass-shadow);
       }
 
       .card-header {

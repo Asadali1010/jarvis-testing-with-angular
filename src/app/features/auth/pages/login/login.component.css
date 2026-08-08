@@ -12,10 +12,23 @@
 .login-panel {
   width: min(100%, 26rem);
   padding: 2rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  background: var(--color-bg-elevated);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--glass-shadow);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .login-panel {
+    background: var(--glass-background);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .login-panel {
+    background: var(--color-bg-elevated);
+  }
 }
 
 .login-header {
