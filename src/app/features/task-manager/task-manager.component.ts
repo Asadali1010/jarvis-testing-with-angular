@@ -8,6 +8,12 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  CdkDropListGroup,
+} from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -33,6 +39,9 @@ interface StatusColumn {
   imports: [
     LowerCasePipe,
     FormsModule,
+    CdkDropListGroup,
+    CdkDropList,
+    CdkDrag,
     FocusTrapDirective,
     TicketCardComponent,
     TicketFormComponent,
@@ -51,6 +60,7 @@ export class TaskManagerComponent implements OnInit {
 
   readonly statusFilter = signal<StatusFilter>('all');
   readonly showCreateForm = signal(false);
+  readonly draggingTicketId = signal<string | null>(null);
 
   readonly statusColumns: StatusColumn[] = [
     { status: 'open', label: 'Open' },
@@ -133,6 +143,26 @@ export class TaskManagerComponent implements OnInit {
       return;
     }
     this.error.set(null);
+  }
+
+  onTicketDrop(
+    event: CdkDragDrop<Ticket[]>,
+    targetStatus: TicketStatus,
+  ): void {
+    const ticket = event.item.data as Ticket;
+    if (!ticket || ticket.status === targetStatus) {
+      return;
+    }
+
+    this.onStatusChange(ticket.id, targetStatus);
+  }
+
+  onDragStarted(ticketId: string): void {
+    this.draggingTicketId.set(ticketId);
+  }
+
+  onDragEnded(): void {
+    this.draggingTicketId.set(null);
   }
 
   onAssignChange(ticketId: string, assigneeId: string | null): void {

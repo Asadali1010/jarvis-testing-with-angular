@@ -252,6 +252,48 @@
 
 .column-item {
   margin: 0;
+  cursor: default;
+}
+
+.column-item.cdk-drag-dragging {
+  z-index: 1;
+}
+
+.column-list.cdk-drop-list-dragging .column-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.column-list.cdk-drop-list-receiving {
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-bg-muted));
+  outline: 2px dashed color-mix(in srgb, var(--color-primary) 45%, transparent);
+  outline-offset: -2px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 12px 28px color-mix(in srgb, var(--color-text) 18%, transparent),
+    0 4px 8px color-mix(in srgb, var(--color-text) 10%, transparent);
+  opacity: 0.95;
+}
+
+.cdk-drag-preview .ticket-card {
+  margin: 0;
+}
+
+.cdk-drag-placeholder {
+  min-height: 5rem;
+  border-radius: var(--radius-md);
+  border: 2px dashed color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  opacity: 1;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .column-empty {
@@ -320,6 +362,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .btn {
+    transition: none;
+  }
+
+  .column-list.cdk-drop-list-dragging .column-item:not(.cdk-drag-placeholder),
+  .cdk-drag-placeholder,
+  .cdk-drag-animating {
     transition: none;
   }
 }
