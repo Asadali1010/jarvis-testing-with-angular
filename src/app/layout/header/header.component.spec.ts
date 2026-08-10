@@ -6,6 +6,7 @@ import { AUTH_CREDENTIALS } from '../../core/constants/auth.constants';
 import { ActivityService } from '../../core/services/activity.service';
 import { AUTH_STORAGE, AuthStorage, AuthUser } from '../../core/services/auth-storage';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { UserService } from '../../core/services/user.service';
@@ -37,6 +38,12 @@ class InMemoryAuthStorage implements AuthStorage {
 describe('HeaderComponent', () => {
   let fixture: ComponentFixture<HeaderComponent>;
   let authStorage: InMemoryAuthStorage;
+
+  function getNotificationButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector(
+      '[aria-label="View notifications"]',
+    ) as HTMLButtonElement;
+  }
 
   beforeEach(async () => {
     const storage: Record<string, string> = {};
@@ -131,6 +138,58 @@ describe('HeaderComponent', () => {
     const { color } = getComputedStyle(themeButton);
     expect(color).not.toBe('transparent');
     expect(color).not.toBe('rgba(0, 0, 0, 0)');
+  });
+
+  it('exposes expanded state on the notification bell trigger', () => {
+    const trigger = getNotificationButton();
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(trigger.getAttribute('aria-haspopup')).toBe('true');
+    expect(trigger.getAttribute('aria-controls')).toBe('notification-panel');
+
+    trigger.click();
+    fixture.detectChanges();
+
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('opens and closes the notification panel when the bell is clicked', () => {
+    const trigger = getNotificationButton();
+
+    expect(fixture.nativeElement.querySelector('#notification-panel')).toBeNull();
+
+    trigger.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#notification-panel')).toBeTruthy();
+
+    trigger.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#notification-panel')).toBeNull();
+  });
+
+  it('renders notifications from NotificationService in the panel', () => {
+    const notificationService = TestBed.inject(NotificationService);
+    const notifications = notificationService.notifications();
+
+    expect(notifications.length).toBeGreaterThanOrEqual(1);
+
+    getNotificationButton().click();
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector(
+      '#notification-panel',
+    ) as HTMLElement;
+
+    expect(panel).toBeTruthy();
+    expect(panel.querySelectorAll('.notification-item').length).toBe(
+      notifications.length,
+    );
+
+    const first = notifications[0]!;
+    expect(panel.textContent).toContain(first.title);
+    expect(panel.textContent).toContain(first.message);
   });
 
   it('exposes expanded state on the user menu trigger', () => {

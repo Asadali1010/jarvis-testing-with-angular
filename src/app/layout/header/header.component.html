@@ -23,18 +23,56 @@
   </div>
 
   <div class="header-actions">
-    <button
-      type="button"
-      class="icon-button"
-      aria-label="View notifications"
-    >
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
-        <path
-          fill="currentColor"
-          d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2z"
-        />
-      </svg>
-    </button>
+    <div class="notification-menu">
+      <button
+        type="button"
+        class="icon-button"
+        aria-label="View notifications"
+        [attr.aria-expanded]="notificationPanelOpen()"
+        aria-haspopup="true"
+        aria-controls="notification-panel"
+        (click)="toggleNotificationPanel()"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+          <path
+            fill="currentColor"
+            d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2z"
+          />
+        </svg>
+      </button>
+
+      @if (notificationPanelOpen()) {
+        <div
+          id="notification-panel"
+          class="notification-panel"
+          role="region"
+          aria-label="Notifications"
+        >
+          <div class="notification-panel-header">
+            <h2 class="notification-panel-title">Notifications</h2>
+          </div>
+
+          @if (notifications().length === 0) {
+            <p class="notification-empty">No notifications yet.</p>
+          } @else {
+            <ul class="notification-list">
+              @for (notification of notifications(); track notification.id) {
+                <li
+                  class="notification-item"
+                  [class.notification-item--unread]="!notification.read"
+                >
+                  <p class="notification-title">{{ notification.title }}</p>
+                  <p class="notification-message">{{ notification.message }}</p>
+                  <time class="notification-time" [dateTime]="notification.timestamp">
+                    {{ notification.timestamp | date: 'medium' }}
+                  </time>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
 
     <button
       type="button"

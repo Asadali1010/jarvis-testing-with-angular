@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DatePipe, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -14,6 +14,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { ProfileService } from '../../core/services/profile.service';
 import { ThemeService } from '../../core/services/theme.service';
 import {
@@ -30,7 +31,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [DatePipe, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -39,11 +40,14 @@ export class HeaderComponent {
   private readonly authService = inject(AuthService);
   private readonly profileService = inject(ProfileService);
   private readonly themeService = inject(ThemeService);
+  private readonly notificationService = inject(NotificationService);
   private readonly elementRef = inject(ElementRef);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly menuToggle = output<void>();
   readonly userMenuOpen = signal(false);
+  readonly notificationPanelOpen = signal(false);
+  readonly notifications = this.notificationService.notifications;
   readonly isDark = this.themeService.isDark;
   readonly currentUser = this.authService.currentUser;
   readonly profileUser = computed(() => this.profileService.getProfileForCurrentUser());
@@ -70,23 +74,35 @@ export class HeaderComponent {
       return;
     }
 
-    if (!this.userMenuOpen()) {
+    if (!this.userMenuOpen() && !this.notificationPanelOpen()) {
       return;
     }
 
     const target = event.target as Node | null;
     if (target && !this.elementRef.nativeElement.contains(target)) {
       this.userMenuOpen.set(false);
+      this.notificationPanelOpen.set(false);
     }
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
     this.userMenuOpen.set(false);
+    this.notificationPanelOpen.set(false);
+  }
+
+  toggleNotificationPanel(): void {
+    this.notificationPanelOpen.update((open) => !open);
+    if (this.notificationPanelOpen()) {
+      this.userMenuOpen.set(false);
+    }
   }
 
   toggleUserMenu(): void {
     this.userMenuOpen.update((open) => !open);
+    if (this.userMenuOpen()) {
+      this.notificationPanelOpen.set(false);
+    }
   }
 
   toggleTheme(): void {
