@@ -3,7 +3,22 @@
   [attr.aria-label]="'Ticket: ' + ticket().title"
 >
   <header class="card-header">
-    <h4 class="card-title">{{ ticket().title }}</h4>
+    <div class="card-header-main">
+      <button
+        type="button"
+        class="drag-handle"
+        cdkDragHandle
+        [attr.aria-label]="'Drag ticket: ' + ticket().title"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M9 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm9-14a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+          />
+        </svg>
+      </button>
+      <h4 class="card-title">{{ ticket().title }}</h4>
+    </div>
     <span
       class="priority-badge"
       [class.priority-low]="ticket().priority === 'low'"

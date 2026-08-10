@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -15,7 +16,7 @@ import {
 
 @Component({
   selector: 'app-ticket-card',
-  imports: [DatePipe, FormsModule],
+  imports: [CdkDragHandle, DatePipe, FormsModule],
   templateUrl: './ticket-card.component.html',
   styles: [
     `
@@ -38,6 +39,45 @@ import {
         align-items: flex-start;
         justify-content: space-between;
         gap: 0.75rem;
+      }
+
+      .card-header-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .drag-handle {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: 0.125rem;
+        padding: 0;
+        border: none;
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .drag-handle:hover {
+        color: var(--color-text);
+        background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+      }
+
+      .drag-handle:focus-visible {
+        outline: 2px solid var(--color-focus-ring);
+        outline-offset: 1px;
+      }
+
+      .drag-handle:active {
+        cursor: grabbing;
       }
 
       .card-title {

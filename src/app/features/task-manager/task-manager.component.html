@@ -66,7 +66,12 @@
       <p>No tickets match this status filter. Try another status.</p>
     </div>
   } @else {
-    <div class="task-board" role="region" aria-label="Ticket board grouped by status">
+    <div
+      class="task-board"
+      cdkDropListGroup
+      role="region"
+      aria-label="Ticket board grouped by status"
+    >
       @for (column of visibleColumns(); track column.status) {
         <section
           class="board-column"
@@ -79,9 +84,23 @@
             </span>
           </header>
 
-          <ul class="column-list" role="list">
+          <ul
+            class="column-list"
+            cdkDropList
+            role="list"
+            [id]="'column-' + column.status"
+            [cdkDropListData]="ticketsForStatus(column.status)"
+            (cdkDropListDropped)="onTicketDrop($event, column.status)"
+          >
             @for (ticket of ticketsForStatus(column.status); track ticket.id) {
-              <li class="column-item">
+              <li
+                class="column-item"
+                cdkDrag
+                [cdkDragData]="ticket"
+                (cdkDragStarted)="onDragStarted(ticket.id)"
+                (cdkDragEnded)="onDragEnded()"
+                [attr.aria-grabbed]="draggingTicketId() === ticket.id ? 'true' : 'false'"
+              >
                 <app-ticket-card
                   [ticket]="ticket"
                   [users]="activeUsers()"
