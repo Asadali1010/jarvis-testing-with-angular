@@ -135,4 +135,11 @@ describe('ShellComponent fixed-header scroll layout', () => {
     expect(appContent.contains(headerHost)).toBe(false);
     expect(appContent.querySelector('.app-header')).toBeNull();
   });
+
+  it('keeps .app-main overflow visible so header dropdowns are not clipped', () => {
+    const appMain = fixture.nativeElement.querySelector('.app-main') as HTMLElement;
+
+    expect(appMain).toBeTruthy();
+    expect(getComputedStyle(appMain).overflow).toBe('visible');
+  });
 });

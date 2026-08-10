@@ -169,6 +169,21 @@ describe('HeaderComponent', () => {
     expect(fixture.nativeElement.querySelector('#notification-panel')).toBeNull();
   });
 
+  it('layers the notification panel above other header content when open', () => {
+    getNotificationButton().click();
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector(
+      '#notification-panel',
+    ) as HTMLElement;
+
+    expect(panel).toBeTruthy();
+
+    const panelStyle = getComputedStyle(panel);
+    expect(panelStyle.position).toBe('absolute');
+    expect(Number.parseInt(panelStyle.zIndex, 10)).toBeGreaterThanOrEqual(50);
+  });
+
   it('renders notifications from NotificationService in the panel', () => {
     const notificationService = TestBed.inject(NotificationService);
     const notifications = notificationService.notifications();
