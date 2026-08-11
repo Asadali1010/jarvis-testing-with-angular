@@ -162,6 +162,13 @@
 .dashboard-widgets {
   display: grid;
   gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1280px) {
+  .dashboard-widgets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .info-list {
@@ -270,4 +277,89 @@
   .overview-bar-fill {
     transition: none;
   }
+}
+
+.widget-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.widget-link:hover {
+  text-decoration: underline;
+}
+
+.widget-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.notifications-list,
+.department-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.notifications-list li,
+.department-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.notifications-list li:last-child,
+.department-list li:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.notification-item--unread .notification-item-title {
+  font-weight: 700;
+}
+
+.notification-item-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.notification-item-time {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.department-list li {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.department-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.department-count {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
 }

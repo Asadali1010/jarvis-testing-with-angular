@@ -6,6 +6,7 @@ import { AUTH_CREDENTIALS } from '../../core/constants/auth.constants';
 import { AUTH_STORAGE, AuthStorage, AuthUser } from '../../core/services/auth-storage';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
+import { TicketService } from '../../core/services/ticket.service';
 import { UserService } from '../../core/services/user.service';
 import { DashboardComponent } from './dashboard.component';
 
@@ -61,6 +62,7 @@ describe('DashboardComponent', () => {
         AuthService,
         UserService,
         ActivityService,
+        TicketService,
         { provide: AUTH_STORAGE, useClass: InMemoryAuthStorage },
         { provide: PLATFORM_ID, useValue: 'browser' },
         provideRouter([]),
@@ -82,6 +84,38 @@ describe('DashboardComponent', () => {
 
   function getText(selector: string): string | undefined {
     return fixture.nativeElement.querySelector(selector)?.textContent?.trim();
+  }
+
+  function getWidgetTitles(): string[] {
+    return (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('app-dashboard-widget'),
+      ) as Element[]
+    ).map((widget) =>
+      widget.querySelector('.dashboard-widget-title')?.textContent?.trim(),
+    );
+  }
+
+  function getWidgetByTitle(title: string): Element | undefined {
+    return (
+      Array.from(
+        fixture.nativeElement.querySelectorAll('app-dashboard-widget'),
+      ) as Element[]
+    ).find(
+      (widget) =>
+        widget.querySelector('.dashboard-widget-title')?.textContent?.trim() ===
+        title,
+    );
+  }
+
+  function getInfoListValue(widget: Element, label: string): string | undefined {
+    const rows = Array.from(widget.querySelectorAll('.info-list div')) as Element[];
+    const row = rows.find((entry) => getTextFrom(entry, 'dt') === label);
+    return row ? getTextFrom(row, 'dd') : undefined;
+  }
+
+  function getTextFrom(parent: Element, selector: string): string | undefined {
+    return parent.querySelector(selector)?.textContent?.trim();
   }
 
   it('renders a welcome hero with personalized greeting', () => {
@@ -137,20 +171,64 @@ describe('DashboardComponent', () => {
     expect(links).toEqual(['Add User', 'View Users', 'Edit Profile', 'Open Settings']);
   });
 
-  it('renders four reusable dashboard widgets', () => {
+  it('renders seven reusable dashboard widgets', () => {
     const widgets = fixture.nativeElement.querySelectorAll('app-dashboard-widget');
-    expect(widgets.length).toBe(4);
+    expect(widgets.length).toBeGreaterThanOrEqual(7);
 
-    const widgetTitles = (Array.from(widgets) as Element[]).map((widget) =>
-      widget.querySelector('.dashboard-widget-title')?.textContent?.trim(),
-    );
+    const widgetTitles = getWidgetTitles();
 
     expect(widgetTitles).toEqual([
       'System Information',
       'Latest Updates',
       'Recent Activity',
       'User Overview',
+      'Support Tickets',
+      'Notifications',
+      'Team by Department',
     ]);
+  });
+
+  it('shows support ticket status counts from TicketService seed data', () => {
+    const ticketService = TestBed.inject(TicketService);
+    const tickets = ticketService.tickets();
+    const expectedCounts = {
+      Open: tickets.filter((ticket) => ticket.status === 'open').length,
+      'In progress': tickets.filter((ticket) => ticket.status === 'in-progress')
+        .length,
+      Done: tickets.filter((ticket) => ticket.status === 'done').length,
+    };
+
+    const supportWidget = getWidgetByTitle('Support Tickets');
+    expect(supportWidget).toBeTruthy();
+
+    expect(getInfoListValue(supportWidget!, 'Open')).toBe(
+      expectedCounts.Open.toString(),
+    );
+    expect(getInfoListValue(supportWidget!, 'In progress')).toBe(
+      expectedCounts['In progress'].toString(),
+    );
+    expect(getInfoListValue(supportWidget!, 'Done')).toBe(
+      expectedCounts.Done.toString(),
+    );
+  });
+
+  it('lists expected departments in the team breakdown widget', () => {
+    const userService = TestBed.inject(UserService);
+    const expectedDepartments = [
+      ...new Set(userService.users().map((user) => user.department)),
+    ].sort();
+
+    const departmentWidget = getWidgetByTitle('Team by Department');
+    expect(departmentWidget).toBeTruthy();
+
+    const departmentNames = (
+      Array.from(
+        departmentWidget!.querySelectorAll('.department-name'),
+      ) as Element[]
+    ).map((element) => element.textContent?.trim());
+
+    expect(departmentNames.length).toBe(expectedDepartments.length);
+    expect(departmentNames.sort()).toEqual(expectedDepartments);
   });
 
   it('shows an activity timeline with empty state when no events exist', () => {
