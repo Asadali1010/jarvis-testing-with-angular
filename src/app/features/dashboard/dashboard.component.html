@@ -203,6 +203,84 @@
           </div>
         </div>
       </app-dashboard-widget>
+
+      <app-dashboard-widget
+        title="Support Tickets"
+        subtitle="Queue status overview"
+        headingId="widget-support-tickets"
+      >
+        <dl class="info-list">
+          <div>
+            <dt>Open</dt>
+            <dd>{{ ticketCounts().open }}</dd>
+          </div>
+          <div>
+            <dt>In progress</dt>
+            <dd>{{ ticketCounts()['in-progress'] }}</dd>
+          </div>
+          <div>
+            <dt>Done</dt>
+            <dd>{{ ticketCounts().done }}</dd>
+          </div>
+        </dl>
+        <a class="widget-link" routerLink="/task-manager">Open task manager</a>
+      </app-dashboard-widget>
+
+      <app-dashboard-widget
+        title="Notifications"
+        subtitle="Recent alerts"
+        headingId="widget-notifications"
+      >
+        <p class="widget-stat">
+          {{ unreadNotificationCount() }}
+          {{ unreadNotificationCount() === 1 ? 'unread alert' : 'unread alerts' }}
+        </p>
+        @if (latestNotifications().length === 0) {
+          <p class="widget-detail">No notifications yet.</p>
+        } @else {
+          <ul class="notifications-list">
+            @for (notification of latestNotifications(); track notification.id) {
+              <li [class.notification-item--unread]="!notification.read">
+                <span class="notification-item-title">{{ notification.title }}</span>
+                <time
+                  class="notification-item-time"
+                  [attr.datetime]="notification.timestamp"
+                >
+                  {{ notification.timestamp | date: 'medium' }}
+                </time>
+              </li>
+            }
+          </ul>
+        }
+        <button
+          type="button"
+          class="widget-link"
+          aria-label="View notifications"
+          aria-controls="notification-panel"
+          (click)="openHeaderNotifications()"
+        >
+          View all notifications
+        </button>
+      </app-dashboard-widget>
+
+      <app-dashboard-widget
+        title="Team by Department"
+        subtitle="Headcount by team"
+        headingId="widget-team-by-department"
+      >
+        @if (departmentBreakdown().length === 0) {
+          <p class="widget-detail">No department data available.</p>
+        } @else {
+          <ul class="department-list">
+            @for (department of departmentBreakdown(); track department.name) {
+              <li>
+                <span class="department-name">{{ department.name }}</span>
+                <span class="department-count">{{ department.count }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </app-dashboard-widget>
     </aside>
   </div>
 </section>

@@ -1,19 +1,23 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   Component,
   DestroyRef,
   OnInit,
+  PLATFORM_ID,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { interval } from 'rxjs';
 
 import { UserStats } from '../../core/models/user.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { ProfileService } from '../../core/services/profile.service';
+import { TicketService } from '../../core/services/ticket.service';
 import { UserService } from '../../core/services/user.service';
 import {
   formatSystemStatus,
@@ -36,6 +40,7 @@ interface StatTrend {
   selector: 'app-dashboard',
   imports: [
     DatePipe,
+    RouterLink,
     StatCardComponent,
     ActivityTimelineComponent,
     QuickActionsComponent,
@@ -49,7 +54,11 @@ export class DashboardComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly profileService = inject(ProfileService);
   private readonly activityService = inject(ActivityService);
+  private readonly ticketService = inject(TicketService);
+  private readonly notificationService = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly currentUser = this.authService.currentUser;
   readonly stats = this.userService.stats;
@@ -109,10 +118,61 @@ export class DashboardComponent implements OnInit {
     return `${currentStats.total} team members · ${currentStats.active} ${activeLabel} · ${formatSystemStatus(currentStats.systemStatus)}`;
   });
 
+  readonly ticketCounts = computed(() => {
+    const tickets = this.ticketService.tickets();
+    return {
+      open: tickets.filter((ticket) => ticket.status === 'open').length,
+      'in-progress': tickets.filter((ticket) => ticket.status === 'in-progress')
+        .length,
+      done: tickets.filter((ticket) => ticket.status === 'done').length,
+    };
+  });
+
+  readonly unreadNotificationCount = computed(
+    () =>
+      this.notificationService
+        .notifications()
+        .filter((notification) => !notification.read).length,
+  );
+
+  readonly latestNotifications = computed(() =>
+    [...this.notificationService.notifications()]
+      .sort(
+        (left, right) =>
+          new Date(right.timestamp).getTime() -
+          new Date(left.timestamp).getTime(),
+      )
+      .slice(0, 3),
+  );
+
+  readonly departmentBreakdown = computed(() => {
+    const counts = new Map<string, number>();
+
+    for (const user of this.userService.users()) {
+      counts.set(user.department, (counts.get(user.department) ?? 0) + 1);
+    }
+
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, count }))
+      .sort((left, right) => right.count - left.count);
+  });
+
   ngOnInit(): void {
     interval(60_000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.now.set(new Date()));
+  }
+
+  openHeaderNotifications(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const trigger = this.document.querySelector<HTMLButtonElement>(
+      '[aria-label="View notifications"]',
+    );
+    trigger?.click();
+    trigger?.focus();
   }
 
   private computeActivePercent(stats: UserStats): number {
