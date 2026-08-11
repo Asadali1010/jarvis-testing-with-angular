@@ -7,7 +7,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
   selector: 'app-activity-timeline',
   imports: [DatePipe],
   template: `
-    <section class="activity-timeline" aria-labelledby="activity-timeline-heading">
+    <section class="activity-timeline glass-panel" aria-labelledby="activity-timeline-heading">
       <h3 id="activity-timeline-heading" class="activity-timeline-heading">
         Recent Activity
       </h3>
@@ -94,12 +94,15 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         display: flex;
         flex-direction: column;
         min-height: 0;
+        padding: var(--space-6);
       }
 
       .activity-timeline-heading {
-        margin: 0 0 1rem;
-        font-size: 1rem;
-        font-weight: 600;
+        margin: 0 0 var(--space-4);
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
       }
 
@@ -111,16 +114,22 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: var(--space-3);
       }
 
       .activity-item {
         display: flex;
-        gap: 0.75rem;
+        gap: var(--space-3);
         align-items: flex-start;
-        padding: 0.75rem;
+        padding: var(--space-3);
         border-radius: var(--radius-md);
-        background: var(--color-bg-muted);
+        border: 1px solid var(--color-border);
+        background: color-mix(in srgb, var(--color-bg-muted) 70%, transparent);
+        transition: var(--transition-interactive);
+      }
+
+      .activity-item:hover {
+        border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
       }
 
       .activity-icon {
@@ -131,7 +140,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         width: 2.25rem;
         height: 2.25rem;
         border-radius: var(--radius-sm);
-        background: var(--color-bg-elevated);
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-elevated));
         color: var(--color-primary);
       }
 
@@ -141,20 +150,21 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
       }
 
       .activity-title {
-        margin: 0 0 0.125rem;
-        font-size: 0.9375rem;
+        margin: 0 0 var(--space-1);
+        font-size: var(--text-sm);
         font-weight: 600;
         color: var(--color-text);
       }
 
       .activity-description {
-        margin: 0 0 0.25rem;
-        font-size: 0.875rem;
+        margin: 0 0 var(--space-1);
+        font-size: var(--text-sm);
+        line-height: var(--leading-relaxed);
         color: var(--color-text-muted);
       }
 
       .activity-time {
-        font-size: 0.75rem;
+        font-size: var(--text-xs);
         color: var(--color-text-muted);
       }
 
@@ -163,8 +173,8 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.75rem;
-        padding: 2rem 1rem;
+        gap: var(--space-3);
+        padding: var(--space-8) var(--space-4);
         text-align: center;
         border: 1px dashed var(--color-border);
         border-radius: var(--radius-md);
@@ -176,7 +186,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
       }
 
       .activity-empty-hint {
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
       }
 
       .activity-spinner {

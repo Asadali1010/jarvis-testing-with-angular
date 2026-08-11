@@ -22,29 +22,32 @@ import { Component, input } from '@angular/core';
         flex-direction: column;
         height: 100%;
         overflow: hidden;
+        padding: 0;
       }
 
       .dashboard-widget-header {
-        padding: 1rem 1.25rem 0.75rem;
+        padding: var(--space-4) var(--space-5) var(--space-3);
         border-bottom: 1px solid var(--color-border);
       }
 
       .dashboard-widget-title {
         margin: 0;
-        font-size: 1rem;
-        font-weight: 600;
+        font-family: var(--font-display);
+        font-size: var(--text-base);
+        font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
       }
 
       .dashboard-widget-subtitle {
-        margin: 0.25rem 0 0;
-        font-size: 0.8125rem;
+        margin: var(--space-1) 0 0;
+        font-size: var(--text-xs);
         color: var(--color-text-muted);
       }
 
       .dashboard-widget-body {
         flex: 1;
-        padding: 1.25rem;
+        padding: var(--space-5);
         min-height: 0;
       }
     `,

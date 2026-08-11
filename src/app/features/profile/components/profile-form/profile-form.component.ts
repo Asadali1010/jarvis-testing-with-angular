@@ -208,12 +208,12 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       .profile-form {
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: var(--space-5);
       }
 
       .profile-readonly-grid {
         display: grid;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       @media (min-width: 640px) {
@@ -225,34 +225,34 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       .profile-readonly {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
-        padding: 0.75rem;
+        gap: var(--space-1);
+        padding: var(--space-3);
         border-radius: var(--radius-md);
-        background: var(--color-bg-muted);
+        background: color-mix(in srgb, var(--color-bg-muted) 70%, transparent);
         border: 1px solid var(--color-border);
       }
 
       .profile-readonly-label {
-        font-size: 0.8125rem;
+        font-size: var(--text-xs);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
       }
 
       .profile-readonly-value {
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
         color: var(--color-text);
       }
 
       .profile-readonly-hint {
-        font-size: 0.8125rem;
+        font-size: var(--text-xs);
         color: var(--color-text-muted);
       }
 
       .form-grid {
         display: grid;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       @media (min-width: 640px) {
@@ -267,8 +267,8 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
 
       .form-field label {
         display: block;
-        margin-bottom: 0.375rem;
-        font-size: 0.875rem;
+        margin-bottom: var(--space-2);
+        font-size: var(--text-sm);
         font-weight: 600;
         color: var(--color-text);
       }
@@ -281,13 +281,15 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       .form-field input,
       .form-field textarea {
         width: 100%;
-        padding: 0.5rem 0.75rem;
+        min-height: 2.75rem;
+        padding: var(--space-2) var(--space-3);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
-        background: var(--color-bg-elevated);
+        background: var(--color-bg);
         color: var(--color-text);
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
         font-family: inherit;
+        transition: var(--transition-interactive);
       }
 
       .form-field textarea {
@@ -309,8 +311,8 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
 
       .field-error,
       .form-error {
-        margin: 0.375rem 0 0;
-        font-size: 0.8125rem;
+        margin: var(--space-2) 0 0;
+        font-size: var(--text-xs);
         color: var(--color-danger);
       }
 
@@ -318,8 +320,8 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.75rem;
-        padding-bottom: 1.25rem;
+        gap: var(--space-3);
+        padding-bottom: var(--space-5);
         border-bottom: 1px solid var(--color-border);
       }
 
@@ -336,6 +338,7 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
           var(--color-bg-muted)
         );
         overflow: hidden;
+        box-shadow: var(--shadow-sm);
       }
 
       .avatar-preview {
@@ -345,7 +348,8 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       }
 
       .avatar-placeholder {
-        font-size: 1.25rem;
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
         font-weight: 700;
         color: var(--color-primary);
       }
@@ -354,24 +358,27 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 0.75rem;
+        gap: var(--space-3);
       }
 
       .avatar-actions .btn-secondary {
         display: inline-flex;
         align-items: center;
-        padding: 0.5rem 1rem;
+        min-height: 2.75rem;
+        padding: var(--space-2) var(--space-4);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
         background: var(--color-bg-muted);
         color: var(--color-text);
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
         font-weight: 600;
         cursor: pointer;
+        transition: var(--transition-interactive);
       }
 
       .avatar-actions .btn-secondary:hover {
         background: var(--color-bg);
+        border-color: var(--color-primary);
       }
 
       .btn-text {
@@ -379,7 +386,7 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
         border: none;
         background: transparent;
         font: inherit;
-        font-size: 0.875rem;
+        font-size: var(--text-sm);
         font-weight: 600;
         cursor: pointer;
       }
@@ -407,7 +414,8 @@ import { formatUserRole } from '../../../../core/utils/user-display.util';
       .form-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.75rem;
+        gap: var(--space-3);
+        padding-top: var(--space-2);
       }
     `,
   ],

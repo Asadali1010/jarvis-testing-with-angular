@@ -29,20 +29,17 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
     `
       .stat-card {
         display: flex;
-        gap: 1rem;
+        gap: var(--space-4);
         align-items: flex-start;
-        padding: 1.25rem;
+        padding: var(--space-5);
         border-radius: var(--radius-lg);
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          border-color 0.2s ease;
+        transition: var(--transition-interactive);
       }
 
       .stat-card:hover {
         transform: translateY(-2px);
-        box-shadow: var(--glass-shadow);
-        border-color: var(--color-primary);
+        box-shadow: var(--shadow-lg);
+        border-color: color-mix(in srgb, var(--color-primary) 28%, var(--glass-border));
       }
 
       .stat-card-icon {
@@ -53,7 +50,7 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
         width: 2.75rem;
         height: 2.75rem;
         border-radius: var(--radius-md);
-        background: var(--color-bg-muted);
+        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-muted));
         color: var(--color-primary);
       }
 
@@ -68,25 +65,27 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
       }
 
       .stat-card-title {
-        margin: 0 0 0.25rem;
-        font-size: 0.8125rem;
+        margin: 0 0 var(--space-1);
+        font-size: var(--text-xs);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
       }
 
       .stat-card-value {
         margin: 0;
-        font-size: 1.625rem;
+        font-family: var(--font-display);
+        font-size: var(--text-2xl);
         font-weight: 700;
-        line-height: 1.2;
+        letter-spacing: var(--tracking-tight);
+        line-height: var(--leading-tight);
         color: var(--color-text);
       }
 
       .stat-card-trend {
-        margin: 0.375rem 0 0;
-        font-size: 0.8125rem;
+        margin: var(--space-2) 0 0;
+        font-size: var(--text-xs);
         font-weight: 500;
       }
 
@@ -103,10 +102,6 @@ export type StatTrendDirection = 'up' | 'down' | 'neutral';
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .stat-card {
-          transition: none;
-        }
-
         .stat-card:hover {
           transform: none;
         }
