@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: var(--transition-theme);
+}
+
+:host ::ng-deep h1 {
+  font-size: var(--text-3xl);
+  margin: 0 0 var(--space-4);
+}
+
+:host ::ng-deep h2 {
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-3);
+}
+
+:host ::ng-deep h3 {
+  font-size: var(--text-xl);
+  margin: 0 0 var(--space-3);
+}
+
+:host ::ng-deep p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
+  max-width: 65ch;
+}
+
+:host ::ng-deep a {
+  color: var(--color-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  transition: var(--transition-interactive);
+}
+
+:host ::ng-deep a:hover {
+  color: var(--color-primary-hover);
+}

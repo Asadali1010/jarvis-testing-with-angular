@@ -1,11 +1,17 @@
 <section class="profile-page" aria-labelledby="profile-heading">
   <header class="profile-header">
     @if (mode() === 'view') {
-      <h2 id="profile-heading">Your profile</h2>
-      <p>Review your account details and workspace identity.</p>
+      <div class="header-copy">
+        <p class="header-eyebrow">Account</p>
+        <h2 id="profile-heading">Your profile</h2>
+        <p>Review your account details and workspace identity.</p>
+      </div>
     } @else {
-      <h2 id="profile-heading">Edit profile</h2>
-      <p>Update your contact information and bio.</p>
+      <div class="header-copy">
+        <p class="header-eyebrow">Account</p>
+        <h2 id="profile-heading">Edit profile</h2>
+        <p>Update your contact information and bio.</p>
+      </div>
     }
   </header>
 

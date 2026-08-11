@@ -15,18 +15,28 @@
     </button>
 
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true">JE</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path
+            fill="currentColor"
+            d="M12 2L2 7l10 5 10-5-10-5zm0 8.5L4.5 7.5 12 4l7.5 3.5L12 10.5z"
+          />
+        </svg>
+      </span>
       <span class="brand-name">Jarvis Enterprise</span>
     </div>
 
-    <h1 class="page-title">{{ pageTitle() }}</h1>
+    <div class="page-context">
+      <span class="page-context__label">Current view</span>
+      <h1 class="page-title">{{ pageTitle() }}</h1>
+    </div>
   </div>
 
   <div class="header-actions">
     <div class="notification-menu">
       <button
         type="button"
-        class="icon-button"
+        class="icon-button notification-button"
         aria-label="View notifications"
         [attr.aria-expanded]="notificationPanelOpen()"
         aria-haspopup="true"
@@ -39,6 +49,10 @@
             d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 1 0-14 0v5l-2 2v1h18v-1l-2-2z"
           />
         </svg>
+        @let hasUnreadNotifications = notifications().length > 0;
+        @if (hasUnreadNotifications) {
+          <span class="notification-badge" aria-hidden="true"></span>
+        }
       </button>
 
       @if (notificationPanelOpen()) {
@@ -50,6 +64,9 @@
         >
           <div class="notification-panel-header">
             <h2 class="notification-panel-title">Notifications</h2>
+            <span class="notification-panel-count">
+              {{ notifications().length }}
+            </span>
           </div>
 
           @if (notifications().length === 0) {
@@ -73,6 +90,8 @@
         </div>
       }
     </div>
+
+    <div class="header-divider" aria-hidden="true"></div>
 
     <button
       type="button"
@@ -101,6 +120,7 @@
       <button
         type="button"
         class="user-menu-trigger"
+        [class.user-menu-trigger--open]="userMenuOpen()"
         [attr.aria-expanded]="userMenuOpen()"
         aria-haspopup="menu"
         aria-controls="user-menu-panel"
@@ -113,20 +133,29 @@
             {{ getUserInitials(profileUser(), avatarFallback()) }}
           }
         </span>
-        <span class="user-email">
-          {{ formatUserDisplayName(profileUser(), currentUser()?.email ?? 'User') }}
+        <span class="user-info">
+          <span class="user-name">
+            {{ formatUserDisplayName(profileUser(), currentUser()?.email ?? 'User') }}
+          </span>
+          <span class="user-role">Administrator</span>
         </span>
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
+        <svg class="user-chevron" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M7 10l5 5 5-5H7z" />
         </svg>
       </button>
 
       @if (userMenuOpen()) {
         <div id="user-menu-panel" class="user-menu-panel" role="menu">
+          <div class="user-menu-panel__header">
+            <span class="user-menu-panel__name">
+              {{ formatUserDisplayName(profileUser(), currentUser()?.email ?? 'User') }}
+            </span>
+            <span class="user-menu-panel__email">{{ currentUser()?.email }}</span>
+          </div>
           <a routerLink="/profile" class="menu-item" role="menuitem" (click)="userMenuOpen.set(false)">
             Profile
           </a>
-          <button type="button" class="menu-item" role="menuitem" (click)="logout()">
+          <button type="button" class="menu-item menu-item--danger" role="menuitem" (click)="logout()">
             Log out
           </button>
         </div>

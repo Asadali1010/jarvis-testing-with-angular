@@ -12,7 +12,7 @@ interface QuickAction {
   selector: 'app-quick-actions',
   imports: [RouterLink],
   template: `
-    <nav class="quick-actions" aria-label="Quick actions">
+    <nav class="quick-actions glass-panel" aria-label="Quick actions">
       <h3 class="quick-actions-heading">Quick Actions</h3>
       <ul class="quick-actions-list">
         @for (action of actions; track action.label) {
@@ -32,10 +32,16 @@ interface QuickAction {
   `,
   styles: [
     `
+      .quick-actions {
+        padding: var(--space-6);
+      }
+
       .quick-actions-heading {
-        margin: 0 0 1rem;
-        font-size: 1rem;
-        font-weight: 600;
+        margin: 0 0 var(--space-4);
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
       }
 
@@ -44,7 +50,7 @@ interface QuickAction {
         margin: 0;
         padding: 0;
         display: grid;
-        gap: 0.75rem;
+        gap: var(--space-3);
       }
 
       @media (min-width: 640px) {
@@ -56,23 +62,22 @@ interface QuickAction {
       .quick-action-link {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
-        padding: 1rem;
+        gap: var(--space-1);
+        padding: var(--space-4);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
-        background: var(--color-bg-elevated);
+        background: color-mix(in srgb, var(--color-bg-elevated) 80%, transparent);
         text-decoration: none;
         color: inherit;
-        transition:
-          border-color 0.2s ease,
-          background-color 0.2s ease,
-          transform 0.2s ease;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-interactive);
       }
 
       .quick-action-link:hover {
-        border-color: var(--color-primary);
-        background: var(--color-bg-muted);
+        border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+        background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-elevated));
         transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
       }
 
       .quick-action-link:focus-visible {
@@ -81,21 +86,18 @@ interface QuickAction {
       }
 
       .quick-action-label {
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
         font-weight: 600;
         color: var(--color-text);
       }
 
       .quick-action-description {
-        font-size: 0.8125rem;
+        font-size: var(--text-xs);
+        line-height: var(--leading-relaxed);
         color: var(--color-text-muted);
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .quick-action-link {
-          transition: none;
-        }
-
         .quick-action-link:hover {
           transform: none;
         }

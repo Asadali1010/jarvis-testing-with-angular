@@ -64,10 +64,10 @@ import { FocusTrapDirective } from '../../../../core/directives/focus-trap.direc
       .dialog-panel {
         width: 100%;
         max-width: 24rem;
-        padding: 1.5rem;
-        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        border-radius: var(--radius-xl);
         border: 1px solid var(--glass-border);
-        box-shadow: var(--glass-shadow);
+        box-shadow: var(--shadow-xl);
       }
 
       @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -85,57 +85,25 @@ import { FocusTrapDirective } from '../../../../core/directives/focus-trap.direc
       }
 
       .dialog-title {
-        margin: 0 0 0.5rem;
-        font-size: 1.125rem;
-        font-weight: 600;
+        margin: 0 0 var(--space-2);
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
       }
 
       .dialog-message {
-        margin: 0 0 1.25rem;
-        font-size: 0.9375rem;
+        margin: 0 0 var(--space-5);
+        font-size: var(--text-sm);
+        line-height: var(--leading-relaxed);
         color: var(--color-text-muted);
-        line-height: 1.5;
       }
 
       .dialog-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.75rem;
-      }
-
-      .btn {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md);
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid transparent;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
-      }
-
-      .btn-secondary {
-        background: var(--color-bg-muted);
-        border-color: var(--color-border);
-        color: var(--color-text);
-      }
-
-      .btn-secondary:hover {
-        background: var(--color-border);
-      }
-
-      .btn-danger {
-        background: var(--color-danger);
-        color: #fff;
-      }
-
-      .btn-danger:hover {
-        filter: brightness(1.08);
-      }
-
-      .btn:focus-visible {
-        outline: 2px solid var(--color-focus-ring);
-        outline-offset: 2px;
+        gap: var(--space-3);
       }
     `,
   ],

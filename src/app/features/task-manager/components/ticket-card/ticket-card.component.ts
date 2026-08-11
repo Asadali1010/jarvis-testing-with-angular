@@ -23,28 +23,28 @@ import {
       .ticket-card {
         display: flex;
         flex-direction: column;
-        gap: 0.875rem;
-        padding: 1rem;
+        gap: var(--space-4);
+        padding: var(--space-4);
         border-radius: var(--radius-md);
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: var(--transition-interactive);
       }
 
       .ticket-card:hover {
         border-color: color-mix(in srgb, var(--color-primary) 35%, var(--glass-border));
-        box-shadow: var(--glass-shadow);
+        box-shadow: var(--shadow-md);
       }
 
       .card-header {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 0.75rem;
+        gap: var(--space-3);
       }
 
       .card-header-main {
         display: flex;
         align-items: flex-start;
-        gap: 0.5rem;
+        gap: var(--space-2);
         flex: 1;
         min-width: 0;
       }
@@ -54,9 +54,9 @@ import {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 1.5rem;
-        height: 1.5rem;
-        margin-top: 0.125rem;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-top: var(--space-1);
         padding: 0;
         border: none;
         border-radius: var(--radius-sm);
@@ -64,6 +64,7 @@ import {
         color: var(--color-text-muted);
         cursor: grab;
         touch-action: none;
+        transition: var(--transition-interactive);
       }
 
       .drag-handle:hover {
@@ -82,20 +83,22 @@ import {
 
       .card-title {
         margin: 0;
-        font-size: 0.9375rem;
+        font-family: var(--font-display);
+        font-size: var(--text-sm);
         font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
-        line-height: 1.35;
+        line-height: var(--leading-normal);
       }
 
       .priority-badge {
         flex-shrink: 0;
-        padding: 0.125rem 0.5rem;
+        padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: 0.6875rem;
+        font-size: var(--text-xs);
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
       }
 
       .priority-low {
@@ -109,8 +112,8 @@ import {
       }
 
       .priority-high {
-        background: color-mix(in srgb, #f59e0b 18%, transparent);
-        color: #b45309;
+        background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+        color: var(--color-accent);
       }
 
       .priority-urgent {
@@ -120,9 +123,9 @@ import {
 
       .card-description {
         margin: 0;
-        font-size: 0.8125rem;
+        font-size: var(--text-xs);
+        line-height: var(--leading-relaxed);
         color: var(--color-text-muted);
-        line-height: 1.5;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -132,9 +135,9 @@ import {
       .card-meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.75rem;
+        gap: var(--space-3);
         align-items: center;
-        font-size: 0.75rem;
+        font-size: var(--text-xs);
         color: var(--color-text-muted);
       }
 
@@ -144,36 +147,41 @@ import {
 
       .card-controls {
         display: grid;
-        gap: 0.625rem;
+        gap: var(--space-3);
       }
 
       .control-field label {
         display: block;
-        margin-bottom: 0.25rem;
-        font-size: 0.75rem;
+        margin-bottom: var(--space-1);
+        font-size: var(--text-xs);
         font-weight: 600;
         color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
       }
 
       .control-field select {
         width: 100%;
-        padding: 0.375rem 0.625rem;
+        min-height: 2.25rem;
+        padding: var(--space-2) var(--space-3);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-sm);
         background: var(--color-bg-muted);
         color: var(--color-text);
-        font-size: 0.8125rem;
+        font-size: var(--text-xs);
+        transition: var(--transition-interactive);
       }
 
       .control-field select:focus-visible {
-        outline: 2px solid var(--color-focus-ring);
-        outline-offset: 1px;
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
       }
 
       .assignee-row {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: var(--space-2);
       }
 
       .assignee-avatar {
@@ -188,7 +196,7 @@ import {
           color-mix(in srgb, var(--color-primary) 20%, var(--color-bg-muted)),
           var(--color-bg-muted)
         );
-        font-size: 0.625rem;
+        font-size: var(--text-xs);
         font-weight: 700;
         color: var(--color-primary);
       }

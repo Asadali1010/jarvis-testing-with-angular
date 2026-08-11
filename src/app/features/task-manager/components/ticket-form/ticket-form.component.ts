@@ -20,13 +20,13 @@ import { formatUserDisplayName } from '../../../../core/utils/user-display.util'
       .ticket-form {
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: var(--space-5);
       }
 
       .form-field label {
         display: block;
-        margin-bottom: 0.375rem;
-        font-size: 0.875rem;
+        margin-bottom: var(--space-2);
+        font-size: var(--text-sm);
         font-weight: 600;
         color: var(--color-text);
       }
@@ -40,12 +40,15 @@ import { formatUserDisplayName } from '../../../../core/utils/user-display.util'
       .form-field select,
       .form-field textarea {
         width: 100%;
-        padding: 0.5rem 0.75rem;
+        min-height: 2.75rem;
+        padding: var(--space-2) var(--space-3);
         border: 1px solid var(--color-border);
         border-radius: var(--radius-md);
-        background: var(--color-bg-elevated);
+        background: var(--color-bg);
         color: var(--color-text);
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
+        font-family: inherit;
+        transition: var(--transition-interactive);
       }
 
       .form-field textarea {
@@ -56,20 +59,21 @@ import { formatUserDisplayName } from '../../../../core/utils/user-display.util'
       .form-field input:focus-visible,
       .form-field select:focus-visible,
       .form-field textarea:focus-visible {
-        outline: 2px solid var(--color-focus-ring);
-        outline-offset: 1px;
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
       }
 
       .field-error,
       .form-error {
-        margin: 0.375rem 0 0;
-        font-size: 0.8125rem;
+        margin: var(--space-2) 0 0;
+        font-size: var(--text-xs);
         color: var(--color-danger);
       }
 
       .form-grid {
         display: grid;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       @media (min-width: 640px) {
@@ -85,41 +89,8 @@ import { formatUserDisplayName } from '../../../../core/utils/user-display.util'
       .form-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.75rem;
-      }
-
-      .btn {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md);
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid transparent;
-      }
-
-      .btn-primary {
-        background: var(--color-primary);
-        color: var(--color-primary-contrast);
-      }
-
-      .btn-primary:hover:not(:disabled) {
-        background: var(--color-primary-hover);
-      }
-
-      .btn-secondary {
-        background: var(--color-bg-muted);
-        border-color: var(--color-border);
-        color: var(--color-text);
-      }
-
-      .btn:disabled {
-        opacity: 0.72;
-        cursor: not-allowed;
-      }
-
-      .btn:focus-visible {
-        outline: 2px solid var(--color-focus-ring);
-        outline-offset: 2px;
+        gap: var(--space-3);
+        padding-top: var(--space-2);
       }
     `,
   ],

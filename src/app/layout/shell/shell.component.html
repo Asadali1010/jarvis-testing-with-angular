@@ -3,6 +3,11 @@
   [class.app-shell--compact]="compactMode()"
   [class.app-shell--no-animations]="!animationsEnabled()"
 >
+  <div class="shell-ambient" aria-hidden="true">
+    <span class="shell-ambient__orb shell-ambient__orb--primary"></span>
+    <span class="shell-ambient__orb shell-ambient__orb--accent"></span>
+  </div>
+
   @if (mobileNavOpen()) {
     <button
       type="button"
@@ -20,7 +25,9 @@
   <div class="app-main">
     <app-header (menuToggle)="toggleMobileNav()" />
     <main id="main-content" class="app-content" tabindex="-1">
-      <router-outlet />
+      <div class="app-content__inner">
+        <router-outlet />
+      </div>
     </main>
     <app-footer />
   </div>

@@ -82,9 +82,9 @@ import {
       .user-detail-identity {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
+        gap: var(--space-4);
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-6);
         border-bottom: 1px solid var(--color-border);
       }
 
@@ -102,6 +102,7 @@ import {
           var(--color-bg-muted)
         );
         overflow: hidden;
+        box-shadow: var(--shadow-sm);
       }
 
       .user-detail-avatar img {
@@ -111,32 +112,35 @@ import {
       }
 
       .user-detail-initials {
-        font-size: 1.25rem;
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
         font-weight: 700;
         color: var(--color-primary);
       }
 
       .user-detail-name {
-        margin: 0 0 0.25rem;
-        font-size: 1.25rem;
+        margin: 0 0 var(--space-1);
+        font-family: var(--font-display);
+        font-size: var(--text-xl);
         font-weight: 700;
+        letter-spacing: var(--tracking-tight);
         color: var(--color-text);
       }
 
       .user-detail-role {
-        margin: 0 0 0.5rem;
-        font-size: 0.9375rem;
+        margin: 0 0 var(--space-2);
+        font-size: var(--text-sm);
         color: var(--color-text-muted);
       }
 
       .status-badge {
         display: inline-block;
-        padding: 0.125rem 0.5rem;
+        padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: 0.75rem;
+        font-size: var(--text-xs);
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.05em;
       }
 
       .status-active {
@@ -150,9 +154,9 @@ import {
       }
 
       .user-detail-fields {
-        margin: 0 0 1.5rem;
+        margin: 0 0 var(--space-6);
         display: grid;
-        gap: 1rem;
+        gap: var(--space-4);
       }
 
       @media (min-width: 480px) {
@@ -166,49 +170,24 @@ import {
       }
 
       .user-detail-fields dt {
-        margin: 0 0 0.25rem;
-        font-size: 0.8125rem;
+        margin: 0 0 var(--space-1);
+        font-size: var(--text-xs);
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
       }
 
       .user-detail-fields dd {
         margin: 0;
-        font-size: 0.9375rem;
+        font-size: var(--text-sm);
         color: var(--color-text);
       }
 
       .user-detail-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.75rem;
-      }
-
-      .btn {
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md);
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        border: 1px solid transparent;
-      }
-
-      .btn-primary {
-        background: var(--color-primary);
-        color: var(--color-primary-contrast);
-      }
-
-      .btn-secondary {
-        background: var(--color-bg-muted);
-        border-color: var(--color-border);
-        color: var(--color-text);
-      }
-
-      .btn:focus-visible {
-        outline: 2px solid var(--color-focus-ring);
-        outline-offset: 2px;
+        gap: var(--space-3);
       }
     `,
   ],

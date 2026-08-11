@@ -7,11 +7,21 @@
 >
   <div class="sidebar-header">
     <div class="sidebar-brand-container">
-      @if (profileUser()?.avatar) {
-        <img [src]="profileUser()!.avatar" alt="" class="sidebar-avatar">
-      } @else {
+      <span class="sidebar-brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <path
+            fill="currentColor"
+            d="M12 2L2 7l10 5 10-5-10-5zm0 8.5L4.5 7.5 12 4l7.5 3.5L12 10.5zm-8 3.25L12 18l8-4.25v4.5L12 22l-8-3.75v-4.5z"
+          />
+        </svg>
+      </span>
+      <div class="sidebar-brand-text">
+        @if (profileUser()?.avatar) {
+          <img [src]="profileUser()!.avatar" alt="" class="sidebar-avatar">
+        }
         <span class="sidebar-brand">Jarvis</span>
-      }
+        <span class="sidebar-brand-tagline">Enterprise Suite</span>
+      </div>
     </div>
     @if (showCollapseToggle()) {
       <button
@@ -20,17 +30,18 @@
         [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
         (click)="toggleCollapsed()"
       >
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
-        <path
-          fill="currentColor"
-          d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
-        />
-      </svg>
-    </button>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18">
+          <path
+            fill="currentColor"
+            d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+          />
+        </svg>
+      </button>
     }
   </div>
 
   <nav class="sidebar-nav">
+    <p class="nav-section-label">Navigation</p>
     <ul class="nav-list">
       @for (item of navItems; track item.route) {
         <li>
@@ -100,4 +111,9 @@
       }
     </ul>
   </nav>
+
+  <div class="sidebar-footer">
+    <span class="sidebar-footer__status" aria-hidden="true"></span>
+    <span class="sidebar-footer__text">All systems operational</span>
+  </div>
 </aside>
