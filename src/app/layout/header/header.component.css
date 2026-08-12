@@ -10,10 +10,10 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  min-height: 4.25rem;
-  padding: 0 var(--space-4);
+  min-height: 4.75rem;
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--glass-shadow);
   position: relative;
   overflow: visible;
   z-index: 20;
@@ -108,7 +108,7 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   overflow: visible;
 }
 
@@ -128,7 +128,7 @@
   height: 2.75rem;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-button);
   background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -138,12 +138,18 @@
 .icon-button:hover {
   background: color-mix(in srgb, var(--color-bg-muted) 75%, transparent);
   color: var(--color-text);
+  box-shadow: var(--shadow-sm);
 }
 
 .icon-button:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
+}
+
+.icon-button:active {
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-muted));
+  color: var(--color-primary);
 }
 
 .theme-toggle-button {
@@ -179,23 +185,23 @@
 
 .notification-panel {
   position: absolute;
-  top: calc(100% + var(--space-2));
+  top: calc(100% + var(--space-3));
   right: 0;
   z-index: 50;
   width: min(24rem, calc(100vw - 2rem));
   max-height: 26rem;
   overflow-y: auto;
-  padding: var(--space-2);
+  padding: var(--space-3);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow);
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .notification-panel {
     background: var(--glass-background);
-    backdrop-filter: blur(calc(var(--glass-blur) + 4px)) saturate(1.3);
-    -webkit-backdrop-filter: blur(calc(var(--glass-blur) + 4px)) saturate(1.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
   }
 }
 
@@ -250,8 +256,8 @@
 }
 
 .notification-item {
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  border-radius: var(--radius-button);
   transition: var(--transition-interactive);
 }
 
@@ -295,25 +301,27 @@
 .user-menu-trigger {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  min-height: 2.75rem;
-  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+  gap: var(--space-3);
+  min-height: 2.875rem;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-button);
   background: color-mix(in srgb, var(--color-bg-elevated) 55%, transparent);
   color: var(--color-text);
   font: inherit;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   transition: var(--transition-interactive);
 }
 
 .user-menu-trigger:hover {
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .user-menu-trigger--open {
   border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-bg-elevated));
   box-shadow: var(--shadow-md);
 }
 
@@ -384,21 +392,21 @@
 
 .user-menu-panel {
   position: absolute;
-  top: calc(100% + var(--space-2));
+  top: calc(100% + var(--space-3));
   right: 0;
   z-index: 50;
   min-width: 12.5rem;
-  padding: var(--space-2);
+  padding: var(--space-3);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-card);
+  box-shadow: var(--glass-shadow);
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .user-menu-panel {
     background: var(--glass-background);
-    backdrop-filter: blur(calc(var(--glass-blur) + 4px)) saturate(1.3);
-    -webkit-backdrop-filter: blur(calc(var(--glass-blur) + 4px)) saturate(1.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.25);
   }
 }
 
@@ -435,10 +443,10 @@
   display: flex;
   width: 100%;
   align-items: center;
-  min-height: 2.5rem;
-  padding: var(--space-2) var(--space-3);
+  min-height: 2.75rem;
+  padding: var(--space-3) var(--space-4);
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-button);
   background: transparent;
   color: var(--color-text);
   font: inherit;
@@ -487,7 +495,7 @@
   }
 
   .app-header {
-    padding: 0 var(--space-6);
+    padding: var(--space-3) var(--space-8) var(--space-3) var(--space-6);
   }
 }
 

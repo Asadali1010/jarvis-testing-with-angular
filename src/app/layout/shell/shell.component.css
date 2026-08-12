@@ -3,6 +3,7 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  overflow-x: clip;
   background-color: var(--color-bg);
   color: var(--color-text);
   isolation: isolate;
@@ -47,14 +48,17 @@
   flex-direction: column;
   min-width: 0;
   height: 100vh;
-  overflow: visible;
+  overflow: hidden;
+  overflow-x: clip;
 }
 
 .app-content {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   overflow-y: auto;
-  padding: var(--space-4);
+  overflow-x: clip;
+  padding: var(--space-5) var(--space-4);
   scroll-behavior: smooth;
 }
 
@@ -62,6 +66,7 @@
   width: 100%;
   max-width: 88rem;
   margin-inline: auto;
+  padding-inline: var(--space-1);
 }
 
 .sidebar-backdrop {
@@ -88,17 +93,25 @@
     display: none;
   }
 
+  .app-shell {
+    gap: var(--space-2);
+  }
+
   .app-content {
-    padding: var(--space-6) var(--space-8);
+    padding: var(--space-8) var(--space-8) var(--space-10);
+  }
+
+  .app-content__inner {
+    padding-inline: var(--space-2);
   }
 
   .app-shell--compact .app-content {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6);
   }
 }
 
 .app-shell--compact .app-content {
-  padding: var(--space-4);
+  padding: var(--space-4) var(--space-4);
 }
 
 .app-shell--no-animations *,

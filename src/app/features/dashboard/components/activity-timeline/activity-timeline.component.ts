@@ -94,11 +94,12 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         display: flex;
         flex-direction: column;
         min-height: 0;
-        padding: var(--space-6);
+        padding: var(--space-8);
+        border-radius: var(--radius-card);
       }
 
       .activity-timeline-heading {
-        margin: 0 0 var(--space-4);
+        margin: 0 0 var(--space-6);
         font-family: var(--font-display);
         font-size: var(--text-lg);
         font-weight: 700;
@@ -110,7 +111,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         list-style: none;
         margin: 0;
         padding: 0;
-        max-height: 18rem;
+        max-height: 20rem;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -119,17 +120,19 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
 
       .activity-item {
         display: flex;
-        gap: var(--space-3);
+        gap: var(--space-4);
         align-items: flex-start;
-        padding: var(--space-3);
-        border-radius: var(--radius-md);
-        border: 1px solid var(--color-border);
-        background: color-mix(in srgb, var(--color-bg-muted) 70%, transparent);
+        padding: var(--space-4);
+        border-radius: var(--radius-card);
+        border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+        background: color-mix(in srgb, var(--color-bg-elevated) 75%, transparent);
+        box-shadow: var(--shadow-sm);
         transition: var(--transition-interactive);
       }
 
       .activity-item:hover {
-        border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
+        border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+        box-shadow: var(--shadow-md);
       }
 
       .activity-icon {
@@ -140,7 +143,7 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         width: 2.25rem;
         height: 2.25rem;
         border-radius: var(--radius-sm);
-        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-bg-elevated));
+        background: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg-elevated));
         color: var(--color-primary);
       }
 
@@ -174,10 +177,10 @@ import { ActivityEvent } from '../../../../core/models/activity.model';
         align-items: center;
         justify-content: center;
         gap: var(--space-3);
-        padding: var(--space-8) var(--space-4);
+        padding: var(--space-10) var(--space-6);
         text-align: center;
-        border: 1px dashed var(--color-border);
-        border-radius: var(--radius-md);
+        border: 1px dashed color-mix(in srgb, var(--color-border) 70%, transparent);
+        border-radius: var(--radius-card);
         color: var(--color-text-muted);
       }
 
