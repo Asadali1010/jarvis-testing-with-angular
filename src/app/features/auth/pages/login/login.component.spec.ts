@@ -5,6 +5,7 @@ import { AUTH_CREDENTIALS } from '../../../../core/constants/auth.constants';
 import { guestGuard } from '../../../../core/guards/guest.guard';
 import { AUTH_STORAGE, AuthStorage, AuthUser } from '../../../../core/services/auth-storage';
 import { AuthService } from '../../../../core/services/auth.service';
+import { SignupComponent } from '../signup/signup.component';
 import { LoginComponent } from './login.component';
 
 class InMemoryAuthStorage implements AuthStorage {
@@ -44,6 +45,11 @@ describe('LoginComponent', () => {
           {
             path: 'login',
             component: LoginComponent,
+            canActivate: [guestGuard],
+          },
+          {
+            path: 'signup',
+            component: SignupComponent,
             canActivate: [guestGuard],
           },
           {
@@ -88,6 +94,9 @@ describe('LoginComponent', () => {
     expect(getEmailInput()).toBeTruthy();
     expect(getPasswordInput()).toBeTruthy();
     expect(getSubmitButton().textContent?.trim()).toBe('Sign in');
+    expect(
+      fixture.nativeElement.querySelector('a[href="/signup"]'),
+    ).toBeTruthy();
   });
 
   it('shows validation messages for empty fields', async () => {
@@ -232,5 +241,17 @@ describe('LoginComponent', () => {
 
     await router.navigateByUrl('/login');
     expect(router.url).toBe('/dashboard');
+  });
+
+  it('navigates to signup via the Sign up link', async () => {
+    const signUpLink = fixture.nativeElement.querySelector(
+      'a[href="/signup"]',
+    ) as HTMLAnchorElement;
+
+    signUpLink.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(router.url).toBe('/signup');
   });
 });
