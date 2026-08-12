@@ -85,6 +85,12 @@
   font-size: var(--text-sm);
 }
 
+.form-alert-success {
+  border-color: color-mix(in srgb, var(--color-success) 35%, transparent);
+  background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg-elevated));
+  color: var(--color-success);
+}
+
 .form-field {
   display: grid;
   gap: var(--space-2);
@@ -122,6 +128,30 @@
   margin: 0;
   font-size: var(--text-xs);
   color: var(--color-danger);
+}
+
+.login-forgot {
+  margin: calc(var(--space-2) * -1) 0 0;
+  text-align: right;
+  font-size: var(--text-sm);
+}
+
+.login-forgot a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition-interactive);
+}
+
+.login-forgot a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.login-forgot a:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-ring) 45%, transparent);
 }
 
 .login-button {

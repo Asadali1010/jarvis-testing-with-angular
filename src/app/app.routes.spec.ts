@@ -24,6 +24,23 @@ describe('app routes', () => {
     expect(loginRoute?.canActivate).toContain(guestGuard);
   });
 
+  it('protects forgot-password with guestGuard', () => {
+    const forgotPasswordRoute = routes.find(
+      (route) => route.path === 'forgot-password',
+    );
+
+    expect(forgotPasswordRoute?.canActivate).toContain(guestGuard);
+  });
+
+  it('protects reset-password with guestGuard', () => {
+    const resetPasswordRoute = routes.find(
+      (route) => route.path === 'reset-password',
+    );
+
+    expect(resetPasswordRoute?.canActivate).toContain(guestGuard);
+    expect(resetPasswordRoute?.loadComponent).toBeTruthy();
+  });
+
   it('protects authenticated shell routes with authGuard', () => {
     const shellRoute = routes.find(
       (route) => route.path === '' && route.loadChildren,
