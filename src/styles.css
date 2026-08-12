@@ -4,27 +4,31 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* Ocean & copper palette */
-  --color-bg: #f4f2ed;
-  --color-bg-elevated: #fffcf8;
-  --color-bg-muted: #e8e4dc;
-  --color-border: #d1cbc0;
-  --color-text: #1a1814;
-  --color-text-muted: #5c564e;
-  --color-primary: #0f766e;
-  --color-primary-hover: #0d9488;
+  /* Apple minimalist palette */
+  --color-bg: #f5f5f7;
+  --color-bg-elevated: #ffffff;
+  --color-bg-muted: #e8e8ed;
+  --color-border: #d2d2d7;
+  --color-text: #1d1d1f;
+  --color-text-muted: #86868b;
+  --color-primary: #0066cc;
+  --color-primary-hover: #0077ed;
   --color-primary-contrast: #ffffff;
-  --color-accent: #b45309;
-  --color-accent-hover: #c2410c;
+  --color-accent: #0066cc;
+  --color-accent-hover: #0077ed;
   --color-accent-contrast: #ffffff;
-  --color-danger: #be123c;
-  --color-success: #15803d;
-  --color-focus-ring: #14b8a6;
+  --color-danger: #ff3b30;
+  --color-success: #34c759;
+  --color-focus-ring: #0066cc;
 
   /* Typography */
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-display: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -50,19 +54,21 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.125rem;
-  --radius-2xl: 1.5rem;
+  /* Radius — 16px soft corners on cards and buttons */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-button: 1rem;
+  --radius-card: 1rem;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgb(26 24 20 / 0.05), 0 1px 3px rgb(26 24 20 / 0.04);
-  --shadow-md: 0 4px 6px rgb(26 24 20 / 0.04), 0 8px 16px rgb(26 24 20 / 0.06);
-  --shadow-lg: 0 8px 16px rgb(26 24 20 / 0.06), 0 16px 32px rgb(26 24 20 / 0.08);
-  --shadow-xl: 0 12px 24px rgb(26 24 20 / 0.08), 0 24px 48px rgb(26 24 20 / 0.1);
+  /* Shadows — soft diffused ambient depth */
+  --shadow-sm: 0 1px 2px rgb(29 29 31 / 0.04), 0 1px 4px rgb(29 29 31 / 0.03);
+  --shadow-md: 0 4px 12px rgb(29 29 31 / 0.06), 0 2px 6px rgb(29 29 31 / 0.04);
+  --shadow-lg: 0 8px 24px rgb(29 29 31 / 0.08), 0 4px 12px rgb(29 29 31 / 0.05);
+  --shadow-xl: 0 16px 40px rgb(29 29 31 / 0.1), 0 8px 20px rgb(29 29 31 / 0.06);
 
   /* Motion */
   --duration-fast: 150ms;
@@ -83,13 +89,13 @@
     transform var(--duration-fast) var(--ease-out),
     opacity var(--duration-fast) var(--ease-out);
 
-  /* Glass */
-  --glass-blur: 18px;
-  --glass-background: color-mix(in srgb, var(--color-bg-elevated) 68%, transparent);
-  --glass-border: color-mix(in srgb, var(--color-border) 50%, transparent);
+  /* Glass — frosted glassmorphism */
+  --glass-blur: 20px;
+  --glass-background: color-mix(in srgb, var(--color-bg-elevated) 72%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-border) 45%, transparent);
   --glass-shadow:
     var(--shadow-lg),
-    inset 0 1px 0 rgb(255 255 255 / 0.55);
+    inset 0 1px 0 rgb(255 255 255 / 0.65);
 }
 
 [data-theme='dark'] {
@@ -137,19 +143,19 @@ html {
   background-color: var(--color-bg);
   background-image:
     radial-gradient(
-      ellipse 80% 60% at 12% 8%,
-      color-mix(in srgb, var(--color-primary) 14%, transparent),
-      transparent 70%
+      ellipse 90% 70% at 50% -10%,
+      rgb(255 255 255 / 0.9),
+      transparent 55%
     ),
     radial-gradient(
-      ellipse 70% 55% at 88% 12%,
-      color-mix(in srgb, var(--color-accent) 10%, transparent),
-      transparent 65%
-    ),
-    radial-gradient(
-      ellipse 75% 50% at 50% 98%,
+      ellipse 60% 50% at 100% 0%,
       color-mix(in srgb, var(--color-primary) 6%, transparent),
       transparent 60%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 0% 100%,
+      color-mix(in srgb, var(--color-primary) 4%, transparent),
+      transparent 55%
     );
   background-attachment: fixed;
   color: var(--color-text);
@@ -173,8 +179,14 @@ h5,
 h6 {
   font-family: var(--font-display);
   font-weight: 700;
+  color: var(--color-text);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-tight);
+}
+
+p {
+  color: var(--color-text);
+  line-height: var(--leading-relaxed);
 }
 
 code,
@@ -222,8 +234,8 @@ textarea:focus-visible {
   justify-content: center;
   gap: var(--space-2);
   min-height: 2.75rem;
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-button);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -231,7 +243,7 @@ textarea:focus-visible {
   line-height: var(--leading-tight);
   cursor: pointer;
   border: 1px solid transparent;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   transition: var(--transition-interactive);
 }
 
@@ -289,13 +301,13 @@ textarea:focus-visible {
 }
 
 .glass-panel {
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  border-radius: var(--radius-card);
+  padding: var(--space-8);
 }
 
 .glass-card {
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
 }
 
 .glass-panel:hover,

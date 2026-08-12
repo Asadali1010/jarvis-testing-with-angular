@@ -33,11 +33,12 @@ interface QuickAction {
   styles: [
     `
       .quick-actions {
-        padding: var(--space-6);
+        padding: var(--space-8);
+        border-radius: var(--radius-card);
       }
 
       .quick-actions-heading {
-        margin: 0 0 var(--space-4);
+        margin: 0 0 var(--space-6);
         font-family: var(--font-display);
         font-size: var(--text-lg);
         font-weight: 700;
@@ -50,7 +51,7 @@ interface QuickAction {
         margin: 0;
         padding: 0;
         display: grid;
-        gap: var(--space-3);
+        gap: var(--space-4);
       }
 
       @media (min-width: 640px) {
@@ -63,10 +64,11 @@ interface QuickAction {
         display: flex;
         flex-direction: column;
         gap: var(--space-1);
-        padding: var(--space-4);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-md);
-        background: color-mix(in srgb, var(--color-bg-elevated) 80%, transparent);
+        min-height: 2.75rem;
+        padding: var(--space-5);
+        border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+        border-radius: var(--radius-card);
+        background: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
         text-decoration: none;
         color: inherit;
         box-shadow: var(--shadow-sm);
@@ -74,10 +76,14 @@ interface QuickAction {
       }
 
       .quick-action-link:hover {
-        border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-        background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-elevated));
+        border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+        background: color-mix(in srgb, var(--color-primary) 5%, var(--color-bg-elevated));
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
+      }
+
+      .quick-action-link:hover .quick-action-label {
+        color: var(--color-primary);
       }
 
       .quick-action-link:focus-visible {
@@ -89,6 +95,7 @@ interface QuickAction {
         font-size: var(--text-sm);
         font-weight: 600;
         color: var(--color-text);
+        transition: color var(--duration-fast) var(--ease-out);
       }
 
       .quick-action-description {

@@ -23,11 +23,12 @@ import { Component, input } from '@angular/core';
         height: 100%;
         overflow: hidden;
         padding: 0;
+        border-radius: var(--radius-card);
       }
 
       .dashboard-widget-header {
-        padding: var(--space-4) var(--space-5) var(--space-3);
-        border-bottom: 1px solid var(--color-border);
+        padding: var(--space-5) var(--space-6) var(--space-4);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
       }
 
       .dashboard-widget-title {
@@ -42,12 +43,13 @@ import { Component, input } from '@angular/core';
       .dashboard-widget-subtitle {
         margin: var(--space-1) 0 0;
         font-size: var(--text-xs);
+        font-weight: 500;
         color: var(--color-text-muted);
       }
 
       .dashboard-widget-body {
         flex: 1;
-        padding: var(--space-5);
+        padding: var(--space-6);
         min-height: 0;
       }
     `,
