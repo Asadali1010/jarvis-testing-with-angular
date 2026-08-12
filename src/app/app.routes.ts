@@ -16,6 +16,14 @@ export const routes: Routes = [
     canActivate: [guestGuard],
   },
   {
+    path: 'signup',
+    loadComponent: () =>
+      import('./features/auth/pages/signup/signup.component').then(
+        (m) => m.SignupComponent,
+      ),
+    canActivate: [guestGuard],
+  },
+  {
     path: '',
     loadChildren: () =>
       import('./features/shell/shell.routes').then((m) => m.shellRoutes),
