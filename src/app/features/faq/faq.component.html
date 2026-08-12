@@ -1,0 +1,64 @@
+<section class="faq-page" aria-labelledby="faq-heading">
+  <header class="faq-hero">
+    <div class="hero-copy">
+      <p class="hero-eyebrow">Help center</p>
+      <h2 id="faq-heading">Frequently asked questions</h2>
+      <p class="hero-lede">
+        Answers about authentication, the dashboard, task manager, users, settings, and profile
+        in Jarvis Enterprise.
+      </p>
+    </div>
+  </header>
+
+  <div class="faq-sections">
+    @for (category of categories; track category.id) {
+      <section
+        class="faq-category"
+        [attr.aria-labelledby]="'faq-category-' + category.id"
+      >
+        <div class="faq-category-header">
+          <h3 [id]="'faq-category-' + category.id">{{ category.title }}</h3>
+          <p>{{ category.description }}</p>
+        </div>
+
+        <div class="faq-accordion" role="presentation">
+          @for (item of category.items; track item.id) {
+            <div class="faq-item">
+              <h4 class="faq-question-heading">
+                <button
+                  type="button"
+                  class="faq-trigger"
+                  [id]="triggerId(item.id)"
+                  [attr.aria-expanded]="isOpen(item.id)"
+                  [attr.aria-controls]="answerId(item.id)"
+                  (click)="toggleItem(item.id)"
+                >
+                  <span class="faq-question-text">{{ item.question }}</span>
+                  <span class="faq-icon" aria-hidden="true"></span>
+                </button>
+              </h4>
+              <div
+                [id]="answerId(item.id)"
+                class="faq-answer"
+                role="region"
+                [attr.aria-labelledby]="triggerId(item.id)"
+                [hidden]="!isOpen(item.id)"
+              >
+                <p>{{ item.answer }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <aside class="faq-cta glass-card" aria-labelledby="faq-cta-heading">
+    <h3 id="faq-cta-heading">Still need help?</h3>
+    <p>
+      Review notification and security options in Settings, or contact your workspace administrator
+      for account changes.
+    </p>
+    <a routerLink="/settings" class="btn btn-primary">Go to Settings</a>
+  </aside>
+</section>

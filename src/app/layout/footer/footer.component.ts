@@ -21,6 +21,7 @@ import { RouterLink } from '@angular/router';
 
         <nav class="app-footer__nav" aria-label="Footer">
           <a routerLink="/dashboard" class="app-footer__link">Dashboard</a>
+          <a routerLink="/faq" class="app-footer__link">FAQ</a>
           <a routerLink="/settings" class="app-footer__link">Settings</a>
           <a routerLink="/profile" class="app-footer__link">Profile</a>
         </nav>
