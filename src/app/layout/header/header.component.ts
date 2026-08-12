@@ -27,6 +27,7 @@ const PAGE_TITLES: Record<string, string> = {
   users: 'Users',
   settings: 'Settings',
   profile: 'Profile',
+  faq: 'FAQ',
 };
 
 @Component({
