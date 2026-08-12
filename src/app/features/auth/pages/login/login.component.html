@@ -12,6 +12,12 @@
       (ngSubmit)="onSubmit()"
       novalidate
     >
+      @if (successMessage()) {
+        <p class="form-alert form-alert-success" role="status" aria-live="polite">
+          {{ successMessage() }}
+        </p>
+      }
+
       @if (authError()) {
         <p class="form-alert" role="alert" aria-live="polite">
           {{ authError() }}
@@ -54,6 +60,10 @@
           </p>
         }
       </div>
+
+      <p class="login-forgot">
+        <a routerLink="/forgot-password">Forgot password?</a>
+      </p>
 
       <button
         type="submit"

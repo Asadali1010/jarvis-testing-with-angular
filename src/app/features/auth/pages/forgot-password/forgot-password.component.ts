@@ -1,47 +1,39 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
-import { PASSWORD_RESET_COMPLETE_MESSAGE } from '../../../../core/constants/auth.constants';
 import { AuthService } from '../../../../core/services/auth.service';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-forgot-password',
   imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.css',
 })
-export class LoginComponent implements OnInit {
+export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
 
   readonly submitted = signal(false);
   readonly authError = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
+  readonly resetToken = signal<string | null>(null);
   readonly isLoading = this.authService.isLoading;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
-    password: ['', Validators.required],
   });
-
-  ngOnInit(): void {
-    if (this.route.snapshot.queryParamMap.get('reset') === 'success') {
-      this.successMessage.set(PASSWORD_RESET_COMPLETE_MESSAGE);
-    }
-  }
 
   async onSubmit(): Promise<void> {
     this.submitted.set(true);
     this.authError.set(null);
+    this.successMessage.set(null);
+    this.resetToken.set(null);
 
     const email = this.form.controls.email.value.trim();
-    const password = this.form.controls.password.value.trim();
-    this.form.patchValue({ email, password }, { emitEvent: false });
+    this.form.patchValue({ email }, { emitEvent: false });
     this.form.updateValueAndValidity();
 
     if (this.form.invalid) {
@@ -53,31 +45,30 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const result = await this.authService.login(email, password);
+    const result = await this.authService.requestPasswordReset(email);
 
     if (result.success) {
-      await this.router.navigate(['/dashboard']);
+      this.successMessage.set(result.message);
+      this.resetToken.set(result.resetToken ?? null);
       return;
     }
 
     this.authError.set(result.error);
   }
 
-  showError(controlName: 'email' | 'password'): boolean {
+  showError(controlName: 'email'): boolean {
     const control = this.form.controls[controlName];
     return (control.touched || this.submitted()) && control.invalid;
   }
 
-  getErrorMessage(controlName: 'email' | 'password'): string {
+  getErrorMessage(controlName: 'email'): string {
     const control = this.form.controls[controlName];
 
     if (control.hasError('required')) {
-      return controlName === 'email'
-        ? 'Email is required.'
-        : 'Password is required.';
+      return 'Email is required.';
     }
 
-    if (controlName === 'email' && control.hasError('pattern')) {
+    if (control.hasError('pattern')) {
       return 'Enter a valid email address.';
     }
 
