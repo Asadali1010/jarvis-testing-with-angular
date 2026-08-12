@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 
 export interface AuthUser {
   email: string;
+  displayName?: string;
 }
 
 export interface AuthStorage {

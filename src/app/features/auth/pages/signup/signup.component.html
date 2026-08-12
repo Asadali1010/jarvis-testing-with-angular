@@ -1,0 +1,144 @@
+<div class="signup-page">
+  <div class="signup-panel" aria-labelledby="signup-heading">
+    <header class="signup-header">
+      <p class="signup-eyebrow">Jarvis Enterprise</p>
+      <h1 id="signup-heading">Create your account</h1>
+      <p class="signup-subtitle">
+        Join your workspace with a few quick details.
+      </p>
+    </header>
+
+    <form
+      class="signup-form"
+      [formGroup]="form"
+      (ngSubmit)="onSubmit()"
+      novalidate
+    >
+      @if (authError()) {
+        <p class="form-alert" role="alert" aria-live="polite">
+          {{ authError() }}
+        </p>
+      }
+
+      <div class="form-field">
+        <label for="fullName">Full Name</label>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          autocomplete="name"
+          [attr.aria-invalid]="showError('fullName')"
+          [attr.aria-describedby]="
+            showError('fullName') ? 'fullName-error' : null
+          "
+        />
+        @if (showError('fullName')) {
+          <p id="fullName-error" class="field-error" role="alert">
+            {{ getErrorMessage('fullName') }}
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          inputmode="email"
+          [attr.aria-invalid]="showError('email')"
+          [attr.aria-describedby]="showError('email') ? 'email-error' : null"
+        />
+        @if (showError('email')) {
+          <p id="email-error" class="field-error" role="alert">
+            {{ getErrorMessage('email') }}
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <div class="password-input-wrap">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="new-password"
+            [attr.aria-invalid]="showError('password')"
+            [attr.aria-describedby]="
+              showError('password') ? 'password-error' : null
+            "
+          />
+          <button
+            id="password-toggle"
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility('password')"
+            [attr.aria-label]="
+              showPassword() ? 'Hide password' : 'Show password'
+            "
+          >
+            {{ showPassword() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (showError('password')) {
+          <p id="password-error" class="field-error" role="alert">
+            {{ getErrorMessage('password') }}
+          </p>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-input-wrap">
+          <input
+            id="confirmPassword"
+            [type]="showConfirmPassword() ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            autocomplete="new-password"
+            [attr.aria-invalid]="showError('confirmPassword')"
+            [attr.aria-describedby]="
+              showError('confirmPassword') ? 'confirmPassword-error' : null
+            "
+          />
+          <button
+            id="confirm-password-toggle"
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility('confirmPassword')"
+            [attr.aria-label]="
+              showConfirmPassword() ? 'Hide password' : 'Show password'
+            "
+          >
+            {{ showConfirmPassword() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (showError('confirmPassword')) {
+          <p id="confirmPassword-error" class="field-error" role="alert">
+            {{ getErrorMessage('confirmPassword') }}
+          </p>
+        }
+      </div>
+
+      <button
+        type="submit"
+        class="signup-button"
+        [disabled]="isLoading()"
+        [attr.aria-busy]="isLoading()"
+      >
+        @if (isLoading()) {
+          <span class="button-spinner" aria-hidden="true"></span>
+          Creating account…
+        } @else {
+          Create Account
+        }
+      </button>
+    </form>
+
+    <p class="signup-footer">
+      Already have an account?
+      <a routerLink="/login">Sign In</a>
+    </p>
+  </div>
+</div>

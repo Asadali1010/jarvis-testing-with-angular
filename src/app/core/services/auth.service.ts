@@ -8,6 +8,10 @@ export type LoginResult =
   | { success: true; user: AuthUser }
   | { success: false; error: string };
 
+export type SignupResult =
+  | { success: true; user: AuthUser }
+  | { success: false; error: string };
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly storage = inject(AUTH_STORAGE);
@@ -62,6 +66,62 @@ export class AuthService {
       const displayName =
         trimmedEmail.split('@')[0]?.replace(/\./g, ' ') ?? trimmedEmail;
       this.activityService.recordLogin(displayName);
+
+      return { success: true, user: authenticatedUser };
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async signup(
+    fullName: string,
+    email: string,
+    password: string,
+  ): Promise<SignupResult> {
+    if (this.isLoading()) {
+      return {
+        success: false,
+        error: 'A signup request is already in progress.',
+      };
+    }
+
+    const trimmedFullName = fullName.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail) {
+      return { success: false, error: 'Email is required.' };
+    }
+
+    if (!trimmedPassword) {
+      return { success: false, error: 'Password is required.' };
+    }
+
+    if (!this.isValidEmail(trimmedEmail)) {
+      return { success: false, error: 'Enter a valid email address.' };
+    }
+
+    if (trimmedPassword.length < 8) {
+      return {
+        success: false,
+        error: 'Password must be at least 8 characters.',
+      };
+    }
+
+    this.isLoading.set(true);
+
+    try {
+      await this.simulateNetworkDelay();
+
+      const authenticatedUser: AuthUser = {
+        email: trimmedEmail,
+        ...(trimmedFullName ? { displayName: trimmedFullName } : {}),
+      };
+      const token = this.createMockToken(authenticatedUser);
+
+      this.storage.setToken(token, authenticatedUser);
+      this.token.set(token);
+      this.user.set(authenticatedUser);
 
       return { success: true, user: authenticatedUser };
     } finally {
