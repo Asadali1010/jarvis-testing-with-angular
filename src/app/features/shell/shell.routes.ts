@@ -54,6 +54,13 @@ export const shellRoutes: Routes = [
         loadComponent: () =>
           import('../faq/faq.component').then((m) => m.FaqComponent),
       },
+      {
+        path: 'construction-scheduler',
+        loadComponent: () =>
+          import('../construction-scheduler/construction-scheduler.component').then(
+            (m) => m.ConstructionSchedulerComponent,
+          ),
+      },
     ],
   },
 ];

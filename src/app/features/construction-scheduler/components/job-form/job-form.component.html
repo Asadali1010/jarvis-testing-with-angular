@@ -1,0 +1,122 @@
+<form
+  class="job-form"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  novalidate
+  [attr.aria-label]="isEditing() ? 'Edit job form' : 'Create job form'"
+>
+  <div class="form-field form-field-full">
+    <label for="job-name">Name</label>
+    <input
+      id="job-name"
+      type="text"
+      formControlName="name"
+      autocomplete="off"
+      [attr.aria-invalid]="showError('name')"
+      aria-required="true"
+      aria-label="Job name"
+    />
+    @if (showError('name')) {
+      <span class="field-error" role="alert">{{ getError('name') }}</span>
+    }
+  </div>
+
+  <div class="form-field form-field-full">
+    <label for="job-site">Site</label>
+    <input
+      id="job-site"
+      type="text"
+      formControlName="site"
+      autocomplete="off"
+      [attr.aria-invalid]="showError('site')"
+      aria-required="true"
+      aria-label="Job site"
+    />
+    @if (showError('site')) {
+      <span class="field-error" role="alert">{{ getError('site') }}</span>
+    }
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <label for="job-start-date">Start date</label>
+      <input
+        id="job-start-date"
+        type="date"
+        formControlName="startDate"
+        [attr.aria-invalid]="showError('startDate') || showDateRangeError()"
+        aria-required="true"
+        aria-label="Job start date"
+      />
+      @if (showError('startDate')) {
+        <span class="field-error" role="alert">{{ getError('startDate') }}</span>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="job-end-date">End date</label>
+      <input
+        id="job-end-date"
+        type="date"
+        formControlName="endDate"
+        [attr.aria-invalid]="showError('endDate') || showDateRangeError()"
+        aria-required="true"
+        aria-label="Job end date"
+      />
+      @if (showError('endDate')) {
+        <span class="field-error" role="alert">{{ getError('endDate') }}</span>
+      }
+    </div>
+
+    <div class="form-field form-field-full">
+      <label for="job-status">Status</label>
+      <select
+        id="job-status"
+        formControlName="status"
+        aria-label="Job status"
+      >
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-field form-field-full">
+      <fieldset class="crew-fieldset">
+        <legend>Crew <span class="optional">(optional)</span></legend>
+        <div class="crew-options" role="group" aria-label="Assign crew members">
+          @for (user of users(); track user.id) {
+            <label class="crew-option">
+              <input
+                type="checkbox"
+                [checked]="isCrewSelected(user.id)"
+                (change)="toggleCrewMember(user.id, $any($event.target).checked)"
+                [attr.aria-label]="'Assign ' + formatUserDisplayName(user, user.email)"
+              />
+              {{ formatUserDisplayName(user, user.email) }}
+            </label>
+          }
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  @if (showDateRangeError()) {
+    <p class="field-error" role="alert">
+      End date must be on or after start date.
+    </p>
+  }
+
+  @if (serverError(); as err) {
+    <p class="form-error" role="alert">{{ err }}</p>
+  }
+
+  <div class="form-actions">
+    <button type="button" class="btn btn-secondary" (click)="cancelled.emit()">
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-primary">
+      {{ isEditing() ? 'Save changes' : 'Create job' }}
+    </button>
+  </div>
+</form>

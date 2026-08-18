@@ -1,0 +1,159 @@
+<section class="construction-scheduler" aria-labelledby="construction-scheduler-heading">
+  <header class="scheduler-header">
+    <div class="header-copy">
+      <p class="header-eyebrow">Operations</p>
+      <h2 id="construction-scheduler-heading">Construction Scheduler</h2>
+      <p>Plan site work, track job timelines, and manage crew assignments.</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="openCreate()"
+      aria-label="Create job"
+    >
+      Create job
+    </button>
+  </header>
+
+  @if (error(); as err) {
+    <div class="scheduler-alert scheduler-alert-error" role="alert">
+      <p>{{ err }}</p>
+      <button
+        type="button"
+        class="btn-dismiss"
+        (click)="dismissError()"
+        aria-label="Dismiss error"
+      >
+        ×
+      </button>
+    </div>
+  }
+
+  @if (!isEmpty()) {
+    <div class="scheduler-toolbar">
+      <label for="job-status-filter" class="visually-hidden">Filter by status</label>
+      <select
+        id="job-status-filter"
+        class="filter-select"
+        [ngModel]="statusFilter()"
+        (ngModelChange)="onStatusFilterChange($event)"
+        aria-label="Filter jobs by status"
+      >
+        @for (option of statusFilterOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  @if (isEmpty()) {
+    <div class="scheduler-empty" role="status">
+      <div class="empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="48" height="48">
+          <path
+            fill="currentColor"
+            d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+          />
+        </svg>
+      </div>
+      <p>No jobs yet</p>
+      <button type="button" class="btn btn-primary" (click)="openCreate()">
+        Create job
+      </button>
+    </div>
+  } @else if (hasNoFilterResults()) {
+    <div class="scheduler-empty scheduler-empty-filtered" role="status">
+      <p>No jobs match this status filter. Try another status.</p>
+    </div>
+  } @else {
+    @if (timelineRange(); as range) {
+      <div
+        class="timeline-section"
+        role="region"
+        aria-label="Construction job timeline"
+      >
+        <div class="timeline-header">
+          <span class="timeline-range-label">
+            {{ range.startLabel }} – {{ range.endLabel }}
+          </span>
+        </div>
+        <div class="timeline-scroll">
+          <div class="timeline-track" aria-hidden="true">
+            @for (bar of timelineBars(); track bar.job.id) {
+              <div
+                [class]="'timeline-bar ' + statusClass(bar.job.status)"
+                [style.left.%]="bar.leftPercent"
+                [style.width.%]="bar.widthPercent"
+                [attr.title]="bar.job.name + ': ' + bar.job.startDate + ' to ' + bar.job.endDate"
+              >
+                <span class="timeline-bar-label">{{ bar.job.name }}</span>
+              </div>
+            }
+          </div>
+          <ul class="timeline-legend" role="list" aria-label="Jobs on timeline">
+            @for (bar of timelineBars(); track bar.job.id) {
+              <li>
+                <span
+                  class="timeline-legend-item"
+                  [attr.aria-label]="bar.job.name + ', ' + bar.job.startDate + ' to ' + bar.job.endDate"
+                >
+                  <span
+                    [class]="'timeline-legend-dot ' + statusClass(bar.job.status)"
+                    aria-hidden="true"
+                  ></span>
+                  {{ bar.job.name }}
+                  <time [attr.datetime]="bar.job.startDate">{{ bar.job.startDate | date: 'mediumDate' }}</time>
+                  –
+                  <time [attr.datetime]="bar.job.endDate">{{ bar.job.endDate | date: 'mediumDate' }}</time>
+                </span>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    }
+
+    <ul class="job-list" role="list" aria-label="Construction jobs">
+      @for (job of filteredJobs(); track job.id) {
+        <li class="job-list-item">
+          <app-job-card
+            [job]="job"
+            [users]="activeUsers()"
+            (edit)="openEdit($event)"
+            (delete)="onDelete($event)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</section>
+
+@if (showForm()) {
+  <div class="modal-backdrop" role="presentation">
+    <div
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="editingJob() ? 'edit-job-title' : 'create-job-title'"
+      [appFocusTrap]="true"
+      (escape)="closeForm()"
+    >
+      @if (editingJob(); as job) {
+        <h3 id="edit-job-title" class="modal-title">Edit job</h3>
+        <app-job-form
+          [job]="job"
+          [users]="activeUsers()"
+          (saved)="onJobSaved($event)"
+          (cancelled)="closeForm()"
+        />
+      } @else {
+        <h3 id="create-job-title" class="modal-title">Create job</h3>
+        <app-job-form
+          [users]="activeUsers()"
+          (saved)="onJobSaved($event)"
+          (cancelled)="closeForm()"
+        />
+      }
+    </div>
+  </div>
+}

@@ -17,7 +17,7 @@ import { SettingsService } from '../../core/services/settings.service';
 interface NavItem {
   label: string;
   route: string;
-  icon: 'dashboard' | 'task-manager' | 'users' | 'settings' | 'profile' | 'calculator' | 'faq';
+  icon: 'dashboard' | 'task-manager' | 'users' | 'settings' | 'profile' | 'calculator' | 'faq' | 'construction-scheduler';
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Task Manager', route: '/task-manager', icon: 'task-manager' },
   { label: 'Users', route: '/users', icon: 'users' },
   { label: 'Calculator', route: '/calculator', icon: 'calculator' },
+  { label: 'Construction Scheduler', route: '/construction-scheduler', icon: 'construction-scheduler' },
   { label: 'FAQ', route: '/faq', icon: 'faq' },
   { label: 'Settings', route: '/settings', icon: 'settings' },
   { label: 'Profile', route: '/profile', icon: 'profile' },

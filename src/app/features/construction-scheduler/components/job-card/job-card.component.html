@@ -1,0 +1,57 @@
+<article
+  class="job-card glass-card"
+  [attr.aria-label]="'Job: ' + job().name"
+>
+  <header class="card-header">
+    <h4 class="card-title">{{ job().name }}</h4>
+    <span
+      [class]="'status-badge ' + statusClass(job().status)"
+      [attr.aria-label]="'Status: ' + statusLabel(job().status)"
+    >
+      {{ statusLabel(job().status) }}
+    </span>
+  </header>
+
+  <p class="card-site">{{ job().site }}</p>
+
+  <div class="crew-section">
+    <p class="crew-label" id="crew-label-{{ job().id }}">Crew</p>
+    @if (crewMembers().length) {
+      <ul
+        class="crew-list"
+        role="list"
+        [attr.aria-labelledby]="'crew-label-' + job().id"
+      >
+        @for (member of crewMembers(); track member.id) {
+          <li class="crew-member">
+            <span class="crew-avatar" aria-hidden="true">
+              {{ getUserInitials(member) }}
+            </span>
+            <span>{{ formatUserDisplayName(member, member.email) }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="crew-empty">No crew assigned</p>
+    }
+  </div>
+
+  <div class="card-actions">
+    <button
+      type="button"
+      class="btn btn-secondary btn-icon"
+      (click)="edit.emit(job())"
+      [attr.aria-label]="'Edit job: ' + job().name"
+    >
+      Edit
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary btn-icon"
+      (click)="delete.emit(job())"
+      [attr.aria-label]="'Delete job: ' + job().name"
+    >
+      Delete
+    </button>
+  </div>
+</article>
